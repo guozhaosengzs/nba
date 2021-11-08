@@ -7,6 +7,6 @@ From https://www.kaggle.com/wyattowalsh/basketball \
 **Team** 30 rows, 7 colums 
 
 From https://www.kaggle.com/drgilermo/nba-players-stats?select=Seasons_Stats.csv \
-**Players** 3921 rows, 8 colums \
-**Seasons_Stats** 24690 rows, 53 colums
+**Players** 3922 rows, 8 colums \
+**Seasons_Stats** 24691 rows, 53 colums
 
