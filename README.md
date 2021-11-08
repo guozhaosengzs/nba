@@ -1,5 +1,5 @@
 # NBA
-SQL RDD and Web-App for data on NBA games, teams, and players \\
+SQL RDD and Web-App for data on NBA games, teams, and players \
 
 ### Datasets
 From https://www.kaggle.com/wyattowalsh/basketball \\
