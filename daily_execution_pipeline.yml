@@ -1,7 +1,0 @@
-name: Basketball Dataset Pipeline - Daily Update
-steps:
-  - kernel: wyattowalsh/basketball-dataset-update-common-player-info
-  - kernel: wyattowalsh/basketball-dataset-update-games
-  - status: 1s
-  - output: wyattowalsh/basketball-dataset-update-common-player-info
-  - output: wyattowalsh/basketball-dataset-update-games
