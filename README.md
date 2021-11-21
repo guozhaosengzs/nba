@@ -22,7 +22,7 @@ Changed Team name abbrivations in Game to current used abbreviation in consisten
 Note: This step uses SQL and done in a separate database named Test(This database has been dropped, only resulted excel exported.)
 
 Step3:(cleaning3.ipynb)\
-Dropped some duplicate columns and redundant dependent column\
+Dropped some duplicate columns and redundant dependent column in Game and Seasons_stats to keep schema in 3NF\
 Justify to make sure that each schema is in 3NF(see normalization concerns.pdf)
 Result: data_cleaned
 
