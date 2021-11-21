@@ -11,11 +11,19 @@ From https://www.kaggle.com/drgilermo/nba-players-stats?select=Seasons_Stats.csv
 **Seasons_Stats** 24691 rows, 53 colums\
 Result: data_oringinal 
 
-### Database Design and Entity Resolution
-Use Pandas to clean Null Values and duplicate rows.(see 550_Project_Preprocessing.ipynb)\
-Delete some dated records from Game and Season_Stats table that has no corresponding Player info or Team info using SQL\
-Changed several Team name abbrivation in Season_Stats to current used abbreviation in consistent with Table Team using SQL.\
-Droped some redundant dependent column to keep each schema in 3NF using python(see 550_Project_Preprocessing2.ipynb,idea see Normalization Concerns.pdf)\
+### Data Cleaning,Database Design and Entity Resolution
+Step1:(cleaning1.ipynb)\
+Use Pandas to clean Null Values,duplicate rows and columns that are mostly nulls.(preprocessing1.ipynb)\
+
+Step2:(cleaning2.sql)\
+Delete rows from Game where participating teams are dated that they do not have team information\
+Delete rows from Seasons_Stats where involved teams are dated that they do not have team information\
+Changed Team name abbrivations in Game to current used abbreviation in consistent with Team Table.\
+Note: This step uses SQL and done in a separate database named Test(This database has been dropped, only resulted excel exported.)
+
+Step3:(cleaning3.sql)\
+Dropped some dublicate columns and redundant dependent column\
+Justify to make sure that each schema is in 3NF(see normalization concerns.pdf)
 Result: data_cleaned
 
 
