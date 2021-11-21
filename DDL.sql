@@ -89,6 +89,6 @@ FOREIGN KEY (Team_Abbreviation_Away) REFERENCES Team(Abbreviation),
 FOREIGN KEY (Team_Abbreviation_Home) REFERENCES Team(Abbreviation)
 );
 -- Drop Game Table
-DROP TABLE Game;
+-- DROP TABLE Game;
 
 
