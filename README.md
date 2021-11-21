@@ -21,7 +21,7 @@ Delete rows from Seasons_Stats where involved teams are dated that they do not h
 Changed Team name abbrivations in Game to current used abbreviation in consistent with Team Table.\
 Note: This step uses SQL and done in a separate database named Test(This database has been dropped, only resulted excel exported.)
 
-Step3:(cleaning3.sql)\
+Step3:(cleaning3.ipynb)\
 Dropped some dublicate columns and redundant dependent column\
 Justify to make sure that each schema is in 3NF(see normalization concerns.pdf)
 Result: data_cleaned
