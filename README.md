@@ -23,7 +23,9 @@ Note: This step uses SQL and done in a separate database named Test(This databas
 
 Step3:(cleaning3.ipynb)\
 Dropped some duplicate columns and redundant dependent column in Game and Seasons_stats to keep schema in 3NF\
-Justify to make sure that each schema is in 3NF(see normalization concerns.pdf)
+Justify to make sure that each schema is in 3NF(see normalization concerns.pdf)\
 Result: data_cleaned
+
+Later changes in RDS: cleaned records in Game before season 1950 and after season 2017 to keep Game consistent with seasonal stats.
 
 
