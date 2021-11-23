@@ -24,7 +24,7 @@ app.get('/search/players', routes.search_player)
 app.get('/search/team', routes.search_team)
 
 //page home: route 6-
-app.get('player_avg', routes.player_avg)
+app.get('/player_avg', routes.player_avg)
 
 app.listen(config.server_port, () => {
     console.log(`Server running at http://${config.server_host}:${config.server_port}/`);

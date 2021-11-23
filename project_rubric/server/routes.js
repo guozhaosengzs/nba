@@ -140,6 +140,26 @@ async function player(req, res) {
     // returns a list of seasonal information for one specific player
     // Query Parameter(s): player(string), page (int)*, pagesize (int)* (default: 10)
 
+    var player = req.query.player_name;
+    const page = req.query.page ? req.query.page : 1;
+    const pagesize = req.query.pagesize ? req.query.pagesize : 10;
+    var offset = pagesize * (page - 1);
+    connection.query(`
+    select Year as Season, Tm as Team, Height, Weight,
+    Born as Birth_Year, Birth_City, Birth_State, College,
+    Pos, (PTS/G) as PPG, (AST/G) as APG, (TRB/G) as RPG, PF, eFG_Percentage as EFG
+    from Players natural join Seasons_Stats
+    where Player like "${player}"
+    order by Season desc limit ${offset}, ${pagesize};
+    `, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    });  
+
 }
 
 // Route 4(handler)
@@ -231,8 +251,26 @@ async function search_team(req, res) {
 // Route 6 (handler)
 async function player_avg(req, res) {
     // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
-
-
+    const page = req.query.page ? req.query.page : 1;
+    const pagesize = req.query.pagesize ? req.query.pagesize : 10;
+    var offset = pagesize * (page - 1);
+    connection.query(`
+    with player_yearly_stats as (select Player, Year as Season, Tm as Team, Height, Weight,
+        Born as Birth_Year, Birth_City, Birth_State, College,
+        Pos, (PTS/G) as PPG, (AST/G) as APG, (TRB/G) as RPG, PF, eFG_Percentage as EFG
+        from Players natural join Seasons_Stats
+        group by player ,year) select Player, Height, Weight, Birth_Year, Birth_City, Birth_State, College,
+        Pos as Position, avg(PPG) as PointPerSeason, avg(APG) as AssistPerSeason, avg(PF) as PersonalFoulPerSeason, avg(EFG) as EFGPerSeason
+        from player_yearly_stats group by Player order by PointPerSeason desc
+        limit ${offset}, ${pagesize};
+    `, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }}
+    );
 }
 
 
