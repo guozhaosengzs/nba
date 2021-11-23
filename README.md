@@ -26,4 +26,6 @@ Dropped some duplicate columns and redundant dependent column in Game and Season
 Justify to make sure that each schema is in 3NF(see normalization concerns.pdf)
 Result: data_cleaned
 
+Later changes in RDS: cleaned records in Game before season 1950 and after season 2017 to keep Game consistent with seasonal stats.
+
 
