@@ -1,0 +1,10 @@
+{
+    "rds_host": "database-2.cl3dd4wmanmm.us-east-2.rds.amazonaws.com",
+    "rds_port": "3306",
+    "rds_user": "xuegepi",
+    "rds_password" : "thisisa550project",
+    "rds_db": "NBA",
+    "server_host": "127.0.0.1",
+    "server_port":"8080"
+
+}
