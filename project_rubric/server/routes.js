@@ -14,6 +14,7 @@ const connection = mysql.createConnection({
 connection.connect();
 
 
+
 // ********************************************
 //            Game Page
 // ********************************************
@@ -168,8 +169,57 @@ async function search_player(req, res) {
     // sorted by the specified attribute of interest from highest to lowest, limit by 10.
     // If All_Time is True, then the handler returns players’ stats aggregated over all seasons. 
     // Otherwise, the handler returns players’ stats given one specific season.
-    // Query Parameter(s): All_Time (boolean), Season (int), Name (string)*, Team (string)*, Position (string)*
-
+    // Query Parameter(s): All_Time (boolean), Season (int), Attribute (string), Name (string)*, Team (string)*, Position (string)*
+    const Attributes = ['Games', 'Points', 'Assists', 'Rebounds', 'FGs','PFs']
+    if (!(req.query.All_Time) || !(req.query.Season) || !(req.query.Attribute)){
+        console.log(req.query.All_Time, req.query.Season, req.query.Attribute)
+        res.writeHead(500, {'Error': 'Please pass required parameters'});
+        res.end();
+    } else {
+        const attribute = req.query.Attribute;
+        const name = req.query.Name ? '%' + req.query.Name + '%' : '%';
+        const team = req.query.Team ? '%' + req.query.Team + '%' : '%';
+        const position = req.query.Position ? '%' + req.query.Position + '%' : '%';
+        if (!Attributes.includes(attribute)) {
+            res.writeHead(500, {'Error': 'Please pass required parameters'});
+            res.end();
+        } else {
+            if (req.query.All_Time == true) {
+                connection.query(`
+                select Player, Pos, sum(G) as Games, sum(PTS) as Points, 
+                sum(AST) as Assits, sum(TRB) as Rebounds, sum(PF) as PFs, sum(FG) as FGs
+                from Seasons_Stats
+                where Player like '${name}' and Tm like '${team}' and Pos like '${position}'
+                group by Player
+                order by ${attribute} DESC limit 10;`,
+                function (error, results, fields) {
+                    if (error) {
+                        console.log(error)
+                        res.json({ error: error })
+                    } else if (results) {
+                        res.json({ results: results })
+                    }
+                });
+            } else {
+                const season = req.query.Season;
+                connection.query(`
+                select Player, Pos, sum(G) as Games, sum(PTS) as Points,
+                sum(AST) as Assits, sum(TRB) as Rebounds, sum(PF) as PFs, sum(FG) as FGs
+                from Seasons_Stats
+                where Player like '${name}' and Tm like '${team}' and Pos like '${position}' and Year = ${season}
+                group by Player
+                order by ${attribute} DESC limit 10
+                `, function (error, results, fields) {
+                    if (error) {
+                        console.log(error)
+                        res.json({ error: error })
+                    } else if (results) {
+                        res.json({ results: results })
+                    }
+                });     
+            }
+        }
+    }
 
 }
 
@@ -244,11 +294,26 @@ async function search_team(req, res) {
 
 }
 
+
+// Route 6 (handler)
+async function get_team(req, res) {
+    const teamName = req.query.Team_Name ? '%' + req.query.Team_Name + '%' : '%';
+    connection.query(`select ID from Team where Full_Name like '${teamName}' limit 1`,
+    function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    });
+}
+
 // ********************************************
 //            Home Page
 // ********************************************
 
-// Route 6 (handler)
+// Route 7 (handler)
 async function player_avg(req, res) {
     // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
     const page = req.query.page ? req.query.page : 1;
@@ -281,5 +346,6 @@ module.exports = {
     player,
     search_player,
     search_team,
+    get_team,
     player_avg
 }
