@@ -125,13 +125,14 @@ async function search_games(req, res) {
     // returns a list of games that satisfy the searching params
     // Query Parameter(s): Date_From(string)*, Date_To(string)*, Home (string)*, Away (string)*, City (string)* page (int)*, pagesize (int)* (default: 10) 
 
-    const Date_From= req.query.Date_From ? req.query.Date_From : '2018-04-01'
-    const Date_To= req.query.Date_To ? req.query.Date_To : '2018-04-11'
+    const Date_To = req.query.Date_To ? req.query.Date_To : '2018-04-11'
+    const Date_From = req.query.Date_From ? req.query.Date_From : Date_To
     const Home = req.query.Home  ? req.query.Home  : ''
-    const Away= req.query.Away ? req.query.Away : ''
-    const City= req.query.City ? req.query.City : ''
-    const pgsize = req.query.pagesize ? req.query.pagesize : 10
-    const offsetnum = pgsize * (req.query.page - 1)
+    const Away = req.query.Away ? req.query.Away : ''
+    const City = req.query.City ? req.query.City : ''
+    const page = req.query.page ? req.query.page : 1;
+    const pgsize = req.query.pagesize ? req.query.pagesize : 10;
+    var offsetnum = pgsize * (page - 1);
     connection.query(
      `WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT
             FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
