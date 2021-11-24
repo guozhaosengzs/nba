@@ -173,7 +173,7 @@ async function search_team(req, res) {
         connection.query(
             `SELECT * FROM Team WHERE ID = ${team_id};
 
-            with player_stats as (select Year, Player, Tm, P.height, 
+            with player_stats as (select Year as Season, Player, Tm, P.height, 
                 P.weight, (Seasons_Stats.PTS/Seasons_Stats.G) as avgPoints, (Seasons_Stats.TRB/Seasons_Stats.G) as avgRebounds,
                 (Seasons_Stats.AST/Seasons_Stats.G) as avgAssits,
                 ROW_NUMBER() over (PARTITION BY Seasons_Stats.Year ORDER BY (Seasons_Stats.PTS/Seasons_Stats.G) DESC) AS ptslist
@@ -182,30 +182,30 @@ async function search_team(req, res) {
                 group by Year, Player
                 order by Year DESC, avgPoints)
                 select * from player_stats where ptslist = 1 limit 10;
-
+            
             with all_games as (
-                    SELECT (PTS_HOME - PTS_AWAY) as winPts, TEAM_ABBREVIATION_HOME as opponent, Pts_Home as opponentScore, Pts_Away as selfScore
+                    SELECT Season_ID, (PTS_AWAY - PTS_HOME) as winPts, Team_Abbreviation_Away as self, TEAM_ABBREVIATION_HOME as opponent, Pts_Home as opponentScore, Pts_Away as selfScore
                     from Game
-                    where Season_ID = 22017 and
-                          TEAM_ABBREVIATION_AWAY = 'OKC'
-                    UNION
-                    SELECT - (PTS_HOME - PTS_AWAY) as winPts, TEAM_ABBREVIATION_AWAY as opponent, Pts_Away as opponentScore, Pts_Home as selfScore
-                    from Game
-                    where Season_ID = 22017 and
-                          TEAM_ABBREVIATION_HOME = 'OKC')
-                 select * from all_games where winPts >= all(select winPts from all_games);
-
-            with all_games as (
-                    SELECT (PTS_HOME - PTS_AWAY) as winPts, TEAM_ABBREVIATION_HOME as opponent, Pts_Home as opponentScore, Pts_Away as selfScore
-                    from Game
-                    where Season_ID = 22017 and
+                    where
                           TEAM_ABBREVIATION_AWAY in (select Abbreviation from Team WHERE ID = ${team_id})
                     UNION
-                    SELECT - (PTS_HOME - PTS_AWAY) as winPts, TEAM_ABBREVIATION_AWAY as opponent, Pts_Away as opponentScore, Pts_Home as selfScore
+                    SELECT Season_ID, (PTS_HOME - PTS_AWAY) as winPts, TEAM_ABBREVIATION_HOME as self, TEAM_ABBREVIATION_AWAY as opponent, Pts_Away as opponentScore, Pts_Home as selfScore
                     from Game
-                    where Season_ID = 22017 and
+                    where
                           TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id}))
-                 select * from all_games where winPts <= all(select winPts from all_games);
+                 select Season_ID as Season, self, opponent, selfScore, opponentScore, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY winPts DESC ) as rankList from all_games order by rankList ASC, Season_ID DESC  LIMIT 10;
+
+            with all_games as (
+                    SELECT Season_ID, (PTS_HOME - PTS_AWAY) as lossPts, Team_Abbreviation_Away as self, TEAM_ABBREVIATION_HOME as opponent, Pts_Home as opponentScore, Pts_Away as selfScore
+                    from Game
+                    where
+                          TEAM_ABBREVIATION_AWAY in (select Abbreviation from Team WHERE ID = ${team_id})
+                    UNION
+                    SELECT Season_ID, (PTS_AWAY - PTS_HOME) as lossPts, TEAM_ABBREVIATION_HOME as self, TEAM_ABBREVIATION_AWAY as opponent, Pts_Away as opponentScore, Pts_Home as selfScore
+                    from Game
+                    where
+                          TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id}))
+                 select Season_ID as Season, self, opponent, selfScore, opponentScore, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY lossPts DESC ) as rankList from all_games order by rankList ASC, Season_ID DESC  LIMIT 10;
 `, [1, 2, 3, 4], function (error, results, fields) {
             if (error) {
                 console.log(error)
@@ -215,7 +215,7 @@ async function search_team(req, res) {
                     {'TeamInfo': results[0], 
                     'LeadingPlayer': results[1],
                     'Match_Won_By_Most': results[2],
-                    'Match_Lost_By_Most': results[3]
+                    'Match_Lost_By_Most': results[2]
                  }})
             }
         })
