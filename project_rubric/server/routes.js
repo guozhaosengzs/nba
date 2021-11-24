@@ -125,8 +125,8 @@ async function search_games(req, res) {
     // returns a list of games that satisfy the searching params
     // Query Parameter(s): Date_From(string)*, Date_To(string)*, Home (string)*, Away (string)*, City (string)* page (int)*, pagesize (int)* (default: 10) 
 
+    const Date_From = req.query.Date_From ? req.query.Date_From : '1950-11-01'
     const Date_To = req.query.Date_To ? req.query.Date_To : '2018-04-11'
-    const Date_From = req.query.Date_From ? req.query.Date_From : Date_To
     const Home = req.query.Home  ? req.query.Home  : ''
     const Away = req.query.Away ? req.query.Away : ''
     const City = req.query.City ? req.query.City : ''
