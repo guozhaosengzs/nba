@@ -446,6 +446,81 @@ async function player_avg(req, res) {
 
 
 
+// ********************************************
+//            Mean Facts Page
+// ********************************************
+
+// Route 10 (handler)
+async function first_all_nba(req, res) {
+    // Query Parameter(s): Season (int)
+    const season = req.query.Season ? req.query.Season : 2015;
+    connection.query(`
+    with gameStats as (select Season_ID, WL_Home, Team_Abbreviation_Home, Team_Abbreviation_Away, Game_ID from Game where Season_ID = ${season}),
+  topTeams as (select * from
+    (select Team_Abbreviation_Home, sum(case when WL_Home = 'W' then 1 else 0 end) as homeWins
+    from gameStats
+    group by Team_Abbreviation_Home) as hw
+    join
+    (select Team_Abbreviation_Away, sum(case when WL_Home = 'W' then 0 else 1 end) as awayWins
+    from gameStats
+    group by Team_Abbreviation_Away) as aw
+    on hw.Team_Abbreviation_Home = aw.Team_Abbreviation_Away
+    where homeWins + awayWins > 50),
+  playerStats as (select Player, Height, Weight, Pos, Tm, (PTS/G) as pointsPerGame, row_number() over (partition by Pos order by (PTS/G) desc ) as posRank
+  from (select * from Seasons_Stats where Year = ${season}) as seasonalStats natural join Players
+  where Tm in (select Team_Abbreviation_Away from topTeams)),
+  topPlayers as (select Player, Pos, Tm,Height, Weight, pointsPerGame from playerStats where posRank=1)
+select Player, Pos, Tm, pointsPerGame, Height, Weight,(homeWins+awayWins) as totalWins from topPlayers join topTeams on topPlayers.Tm = topTeams.Team_Abbreviation_Away;
+    `, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }}
+    );
+}
+
+// Route 11 (handler)
+async function only_got_numbers(req, res) {
+    // Query Parameter(s): Season (int), page (int)*, pagesize (int)* (default: 10)
+    const page = req.query.page ? req.query.page : 1;
+    const pagesize = req.query.pagesize ? req.query.pagesize : 10;
+    var offset = pagesize * (page - 1);
+    const season = req.query.Season ? req.query.Season : 2015;
+    connection.query(`
+    select Player, Pos, Tm, pointsPerGame, (AST/G) as assistsPerGame, (TRB/G) as reboundsPerGame, DWS, OWS, FG, FGA, FT, FTA, (homeWins + awayWins) as totalWins, (homeLosses + awayLosses) as totalLosses from
+    (select *, (PTS/G) as pointsPerGame, row_number() over (partition by Tm, Season_ID order by (PTS/G) desc) as tmRank
+    from
+    (select *, max(homeLosses+homeWins+awayLosses+awayWins) as allGames from
+    (select Team_Abbreviation_Home, Season_ID, sum(case when WL_Home = 'W' then 1 else 0 end) as homeWins,
+            sum(case when WL_Home = 'W' then 0 else 1 end) as homeLosses
+    from Game where Season_ID = ${season}
+    group by Team_Abbreviation_Home, Season_ID) as hw
+    join
+    (select Team_Abbreviation_Away, Season_ID as si, sum(case when WL_Home = 'W' then 0 else 1 end) as awayWins,
+            sum(case when WL_Home = 'W' then 1 else 0 end) as awayLosses
+    from Game where Season_ID = ${season}
+    group by Team_Abbreviation_Away, Season_ID) as aw
+    on hw.Team_Abbreviation_Home = aw.Team_Abbreviation_Away and hw.Season_ID = aw.si
+    where homeWins + awayWins < homeLosses + awayLosses
+    group by Team_Abbreviation_Home, hw.Season_ID) as badTeams join
+        Seasons_Stats
+        on badTeams.Team_Abbreviation_Home = Seasons_Stats.Tm and badTeams.Season_ID = Seasons_Stats.Year group by  Player, Season_ID) as allPlayers
+    where tmRank=1
+        limit ${offset}, ${pagesize};
+    `, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }}
+    );
+}
+
+
+
 module.exports = {
     game,
     game_team_info,
@@ -455,5 +530,7 @@ module.exports = {
     search_player,
     search_team,
     get_team,
-    player_avg
+    player_avg,
+    first_all_nba,
+    only_got_numbers
 }
