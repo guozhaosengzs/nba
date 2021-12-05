@@ -356,7 +356,7 @@ async function search_team_info(req, res) {
     }
 }
 
-// Route 12 (handler)
+// Route 8 (handler)
 async function search_team_win(req, res) {
     // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with 
     //      the average stats of its leading player for that season; 
@@ -393,7 +393,7 @@ async function search_team_win(req, res) {
 }
 
 
-// Route 13 (handler)
+// Route 9 (handler)
 async function search_team_loses(req, res) {
     // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with 
     //      the average stats of its leading player for that season; 
@@ -429,7 +429,7 @@ async function search_team_loses(req, res) {
     }
 }
 
-// Route 14 (handler)
+// Route 10 (handler)
 async function search_team_player(req, res) {
     // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with 
     //      the average stats of its leading player for that season; 
@@ -467,7 +467,7 @@ async function search_team_player(req, res) {
 
 
 
-// Route 8 (handler)
+// Route 11 (handler)
 async function get_team(req, res) {
     //Get Team_Id from team_name
     const teamName = req.query.Team_Name ? '%' + req.query.Team_Name + '%' : '%';
@@ -486,7 +486,7 @@ async function get_team(req, res) {
 //            Home Page
 // ********************************************
 
-// Route 9 (handler)
+// Route 12 (handler)
 async function player_avg(req, res) {
     // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
     const page = req.query.page ? req.query.page : 1;
@@ -521,7 +521,7 @@ async function player_avg(req, res) {
 //            Mean Facts Page
 // ********************************************
 
-// Route 10 (handler)
+// Route 13 (handler)
 async function first_all_nba(req, res) {
     // Query Parameter(s): Season (int)
     const season = req.query.Season ? req.query.Season : 2015;
@@ -553,7 +553,7 @@ select Player, Pos, Tm, pointsPerGame, Height, Weight,(homeWins+awayWins) as tot
     );
 }
 
-// Route 11 (handler)
+// Route 14 (handler)
 async function only_got_numbers(req, res) {
     // Query Parameter(s): Season (int), page (int)*, pagesize (int)* (default: 10)
     const page = req.query.page ? req.query.page : 1;
