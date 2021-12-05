@@ -519,7 +519,116 @@ async function only_got_numbers(req, res) {
     );
 }
 
+// Route 11 (handler)
+async function only_got_numbers(req, res) {
+    // Query Parameter(s): Season (int), page (int)*, pagesize (int)* (default: 10)
+    const page = req.query.page ? req.query.page : 1;
+    const pagesize = req.query.pagesize ? req.query.pagesize : 10;
+    var offset = pagesize * (page - 1);
+    const season = req.query.Season ? req.query.Season : 2015;
+    connection.query(`
+    select Player, Pos, Tm, pointsPerGame, (AST/G) as assistsPerGame, (TRB/G) as reboundsPerGame, DWS, OWS, FG, FGA, FT, FTA, (homeWins + awayWins) as totalWins, (homeLosses + awayLosses) as totalLosses from
+    (select *, (PTS/G) as pointsPerGame, row_number() over (partition by Tm, Season_ID order by (PTS/G) desc) as tmRank
+    from
+    (select *, max(homeLosses+homeWins+awayLosses+awayWins) as allGames from
+    (select Team_Abbreviation_Home, Season_ID, sum(case when WL_Home = 'W' then 1 else 0 end) as homeWins,
+            sum(case when WL_Home = 'W' then 0 else 1 end) as homeLosses
+    from Game where Season_ID = ${season}
+    group by Team_Abbreviation_Home, Season_ID) as hw
+    join
+    (select Team_Abbreviation_Away, Season_ID as si, sum(case when WL_Home = 'W' then 0 else 1 end) as awayWins,
+            sum(case when WL_Home = 'W' then 1 else 0 end) as awayLosses
+    from Game where Season_ID = ${season}
+    group by Team_Abbreviation_Away, Season_ID) as aw
+    on hw.Team_Abbreviation_Home = aw.Team_Abbreviation_Away and hw.Season_ID = aw.si
+    where homeWins + awayWins < homeLosses + awayLosses
+    group by Team_Abbreviation_Home, hw.Season_ID) as badTeams join
+        Seasons_Stats
+        on badTeams.Team_Abbreviation_Home = Seasons_Stats.Tm and badTeams.Season_ID = Seasons_Stats.Year group by  Player, Season_ID) as allPlayers
+    where tmRank=1
+        limit ${offset}, ${pagesize};
+    `, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }}
+    );
+}
 
+// Route 12 (handler)
+async function contributes_most(req, res) {
+    // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
+    const page = req.query.page ? req.query.page : 1;
+    const pagesize = req.query.pagesize ? req.query.pagesize : 10;
+    var offset = pagesize * (page - 1);
+    connection.query(`
+    WITH newGame AS(
+        SELECT *, SUM(G1.Pts_Home) AS totalHomePTS,
+               SUM(G1.Pts_Away) AS totalAwayPTS,
+               (SUM(G1.Pts_Home) + SUM(G1.Pts_Away)) AS seasonTotalPTS
+        FROM Game G1
+        GROUP BY G1.Season_ID, G1.Team_Abbreviation_Home
+      )
+      SELECT G.Season_ID AS Season,
+           G.Team_Abbreviation_Home AS Abbreviation,
+            SS.Player AS Player, SS.PTS AS personalPTS,
+            ((SS.PTS / seasonTotalPTS) * 100) AS Contribution
+      FROM newGame G
+      JOIN Seasons_Stats AS SS
+      ON G.Season_ID = SS.Year
+      AND G.Team_Abbreviation_Home = SS.Tm
+      JOIN Team T on SS.Tm = T.Abbreviation
+      GROUP BY G.Season_ID, G.Team_Abbreviation_Home, SS.Player
+      ORDER BY G.Season_ID DESC,Contribution DESC
+      limit ${offset}, ${pagesize};
+      `, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }}
+    );
+}
+
+// Route 13 (handler)
+async function lucky(req, res) {
+//query parameter: Team(string)
+    const Team = req.query.Team ? req.query.Team : 'CLE';
+    connection.query(`
+    WITH game_city AS(SELECT Team_Abbreviation_Home AS THE_TEAM,WL_HOME AS WL,T.City AS CITY
+        FROM Game JOIN Team T on Game.Team_Abbreviation_Home = T.Abbreviation
+        WHERE Team_Abbreviation_Home = '${Team}'
+        UNION ALL
+        SELECT Team_Abbreviation_AWAY AS THE_TEAM,(CASE WHEN WL_Home = 'W' Then 'L' ELSE 'W' END)AS WL,T.City AS CITY
+        FROM Game JOIN Team T on Game.Team_Abbreviation_Home = T.Abbreviation
+        WHERE Team_Abbreviation_AWAY = '${Team}'),
+      win AS (SELECT The_team, SUM(CASE WHEN WL = 'W' THEN 1 ELSE 0 END)/count(*) AS win_rate,city
+      FROM game_city
+      GROUP BY city),
+      player_sum AS (SELECT Tm,Player,SUM(PTS) AS sum_pts
+      FROM Seasons_Stats
+      WHERE Tm = '${Team}'
+      GROUP BY Player)
+      
+      SELECT The_Team,win.city AS lucky_city,CASE WHEN win.city = Team.CITY THEN 'YES' ELSE 'NO' END AS 'IS_HOME_CITY',
+           player_sum.Player AS lucky_player,CASE WHEN Players.birth_city = win.city THEN 'YES' ELSE 'NO' END AS 'Born_in_lucky_CITY'
+      FROM win INNER JOIN Team ON The_team = Team.Abbreviation
+      INNER JOIN player_sum ON The_team = Tm
+      INNER JOIN Players ON player_sum.Player = Players.Player
+      WHERE win.win_rate IN (SELECT MAX(win_rate) FROM win)
+      AND player_sum.sum_pts IN (SELECT MAX(sum_pts) FROM player_sum)
+ `, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }}
+    );
+}
 
 module.exports = {
     game,
@@ -532,5 +641,7 @@ module.exports = {
     get_team,
     player_avg,
     first_all_nba,
-    only_got_numbers
+    only_got_numbers,
+    lucky,
+    contributes_most
 }
