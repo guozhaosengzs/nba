@@ -22,17 +22,17 @@ app.get('/search/games', routes.search_games)
 app.get('/players', routes.player)
 app.get('/search/players', routes.search_player)
 
-//page team: route 7-8, 12-14
+//page team: route 7-11
 app.get('/search/team_info', routes.search_team_info)
 app.get('/search/team_win', routes.search_team_win)
 app.get('/search/team_loses', routes.search_team_loses)
 app.get('/search/team_player', routes.search_team_player)
 app.get('/team', routes.get_team)
 
-//page home: route 9
+//page home: route 12
 app.get('/player_avg', routes.player_avg)
 
-//page facts: route 10，11，15，16
+//page facts: route 13-16
 app.get('/first_all_nba', routes.first_all_nba)
 app.get('/only_got_numbers', routes.only_got_numbers)
 app.get('/lucky', routes.lucky)
