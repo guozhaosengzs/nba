@@ -32,6 +32,8 @@ app.get('/player_avg', routes.player_avg)
 //page facts: route 10-13
 app.get('/first_all_nba', routes.first_all_nba)
 app.get('/only_got_numbers', routes.only_got_numbers)
+app.get('/lucky', routes.lucky)
+app.get('/contributes_most', routes.contributes_most)
 
 app.listen(config.server_port, () => {
     console.log(`Server running at http://${config.server_host}:${config.server_port}/`);
