@@ -22,8 +22,11 @@ app.get('/search/games', routes.search_games)
 app.get('/players', routes.player)
 app.get('/search/players', routes.search_player)
 
-//page team: route 7-8
-app.get('/search/team', routes.search_team)
+//page team: route 7-8, 12-14
+app.get('/search/team_info', routes.search_team_info)
+app.get('/search/team_win', routes.search_team_win)
+app.get('/search/team_loses', routes.search_team_loses)
+app.get('/search/team_player', routes.search_team_player)
 app.get('/team', routes.get_team)
 
 //page home: route 9
