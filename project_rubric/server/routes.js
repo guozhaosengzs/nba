@@ -591,42 +591,8 @@ async function only_got_numbers(req, res) {
     }
     );
 }
+
 // Route 15 (handler)
-async function contributes_most(req, res) {
-    // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
-    const page = req.query.page ? req.query.page : 1;
-    const pagesize = req.query.pagesize ? req.query.pagesize : 10;
-    var offset = pagesize * (page - 1);
-    connection.query(`
-    WITH newGame AS(
-        SELECT *, SUM(G1.Pts_Home) AS totalHomePTS,
-               SUM(G1.Pts_Away) AS totalAwayPTS,
-               (SUM(G1.Pts_Home) + SUM(G1.Pts_Away)) AS seasonTotalPTS
-        FROM Game G1
-        GROUP BY G1.Season_ID, G1.Team_Abbreviation_Home
-      )
-      SELECT G.Season_ID AS Season,
-           G.Team_Abbreviation_Home AS Abbreviation,
-            SS.Player AS Player, SS.PTS AS personalPTS,
-            ((SS.PTS / seasonTotalPTS) * 100) AS Contribution
-      FROM newGame G
-      JOIN Seasons_Stats AS SS
-      ON G.Season_ID = SS.Year
-      AND G.Team_Abbreviation_Home = SS.Tm
-      JOIN Team T on SS.Tm = T.Abbreviation
-      GROUP BY G.Season_ID, G.Team_Abbreviation_Home, SS.Player
-      ORDER BY G.Season_ID DESC,Contribution DESC
-      limit ${offset}, ${pagesize};
-      `, function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }}
-    );
-}
-// Route 16 (handler)
 async function lucky(req, res) {
     //query parameter: Team(string)
         const Team = req.query.Team ? req.query.Team : 'CLE';
@@ -663,6 +629,42 @@ async function lucky(req, res) {
         );
     }
 
+// Route 16 (handler)
+async function contributes_most(req, res) {
+    // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
+    const page = req.query.page ? req.query.page : 1;
+    const pagesize = req.query.pagesize ? req.query.pagesize : 10;
+    var offset = pagesize * (page - 1);
+    connection.query(`
+    WITH newGame AS(
+        SELECT *, SUM(G1.Pts_Home) AS totalHomePTS,
+               SUM(G1.Pts_Away) AS totalAwayPTS,
+               (SUM(G1.Pts_Home) + SUM(G1.Pts_Away)) AS seasonTotalPTS
+        FROM Game G1
+        GROUP BY G1.Season_ID, G1.Team_Abbreviation_Home
+      )
+      SELECT G.Season_ID AS Season,
+           G.Team_Abbreviation_Home AS Abbreviation,
+            SS.Player AS Player, SS.PTS AS personalPTS,
+            ((SS.PTS / seasonTotalPTS) * 100) AS Contribution
+      FROM newGame G
+      JOIN Seasons_Stats AS SS
+      ON G.Season_ID = SS.Year
+      AND G.Team_Abbreviation_Home = SS.Tm
+      JOIN Team T on SS.Tm = T.Abbreviation
+      GROUP BY G.Season_ID, G.Team_Abbreviation_Home, SS.Player
+      ORDER BY G.Season_ID DESC,Contribution DESC
+      limit ${offset}, ${pagesize};
+      `, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }}
+    );
+}
+
 module.exports = {
     game,
     game_team_info,
@@ -678,6 +680,6 @@ module.exports = {
     player_avg,
     first_all_nba,
     only_got_numbers,
-    contributes_most,
-    lucky
+    lucky,
+    contributes_most
 }
