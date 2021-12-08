@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {
 	BrowserRouter as Router,
 	Route,
-	Switch
+	Routes 
 } from 'react-router-dom';
 
 import Home from './pages/Home';
@@ -17,12 +17,14 @@ import 'rsuite/dist/rsuite.min.css';
 ReactDOM.render(
 	<div>
 		<Router>
-			<Switch>
-				<Route exact
+			<Routes>
+				<Route path="/" element={<Home />} />
+
+				{/* <Route exact
 					path="/"
 					render={() => (
 						<Home />
-					)} />
+					)} /> */}
 				{/* <Route exact
 					path="/players"
 					render={() => (
@@ -38,7 +40,7 @@ ReactDOM.render(
 					render={() => (
 						<Facts />
 					)} /> */}
-			</Switch>
+			</Routes>
 		</Router>
 	</div>,
 	document.getElementById('root')

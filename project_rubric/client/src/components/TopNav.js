@@ -6,11 +6,11 @@ class TopNav extends React.Component {
     render() {
         return (
             <Navbar appearance="inverse">
-                <NavbarBrand href="/">
+                <Navbar.Brand href="/">
                     NBA Database
-                </NavbarBrand>
+                </Navbar.Brand>
                 <Nav>
-                    <Nav.Item icon={<Home />} active href="/">
+                    <Nav.Item active href="/">
                         Home
                     </Nav.Item>
                     <Nav.Item active href="/players">
