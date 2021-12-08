@@ -6,35 +6,40 @@ import {
 	Switch
 } from 'react-router-dom';
 
-import Home from './pages/HomePage';
-// import Players from './pages/PlayersPage';
-// import Matches from './pages/MatchesPage';
-// import Facts from './pages/facts';
+import Home from './pages/Home';
+// import Players from './pages/Players';
+// import Games from './pages/Games';
+// import Facts from './pages/Facts';
 
-import '~rsuite/dist/rsuite.min.css';
+import 'rsuite/dist/rsuite.min.css';
 
 
 ReactDOM.render(
-  <div>
-    <Router>
-      <Switch>
-        <Route exact
-							path="/"
-							render={() => (
-								<HomePage />
-							)}/>
-        {/* <Route exact
-							path="/players"
-							render={() => (
-								<PlayersPage />
-							)}/>
-        <Route exact
-							path="/matches"
-							render={() => (
-								<MatchesPage />
-							)}/> */}
-      </Switch>
-    </Router>
-  </div>,
-  document.getElementById('root')
+	<div>
+		<Router>
+			<Switch>
+				<Route exact
+					path="/"
+					render={() => (
+						<Home />
+					)} />
+				{/* <Route exact
+					path="/players"
+					render={() => (
+						<Players />
+					)} />
+				<Route exact
+					path="/games"
+					render={() => (
+						<Games />
+					)} />
+				<Route exact
+					path="/facts"
+					render={() => (
+						<Facts />
+					)} /> */}
+			</Switch>
+		</Router>
+	</div>,
+	document.getElementById('root')
 );
