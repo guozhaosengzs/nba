@@ -32,7 +32,6 @@ class Home extends React.Component {
         })
 
         getAllPlayersAvg().then(res => {
-            console.log(res.results)
             this.setState({ playersResults: res.results })
         })
     }
@@ -50,7 +49,11 @@ class Home extends React.Component {
                     <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
                         <h3>Player Stats (Average per Season)</h3>
 
-                        <Table data={this.state.playersResults} loading={false}>
+                        <Table
+                            bordered
+                            cellBordered
+                            data={this.state.playersResults} loading={false}
+                        >
                             <Column width={100} align="center" fixed>
                                 <HeaderCell>Name</HeaderCell>
                                 <Cell dataKey="Player" />
@@ -105,46 +108,60 @@ class Home extends React.Component {
                             };
                         }} data={this.state.gamesResults} > */}
                         <Table
-                        bordered
-                        cellBordered
-                        height={420}
-                        headerHeight={80}
-                        data={this.state.gamesResults}
-                        onRowClick={data => { this.goToGame(data.Game_ID) }}
+                            bordered
+                            cellBordered
+                            height={420}
+                            headerHeight={80}
+                            data={this.state.gamesResults}
+                            onRowClick={data => { this.goToGame(data.Game_ID) }}
                         >
-                        <Column width={150} align="center" >
-                        <HeaderCell>Game Date</HeaderCell>
-                        <Cell dataKey="Game_Date" />
-                        </Column>
+                            <Column width={150} align="center" >
+                                <HeaderCell>Game Date</HeaderCell>
+                                <Cell dataKey="Game_Date" />
+                            </Column>
 
-                        <ColumnGroup header="HOME" align="center">
+                            <ColumnGroup header="HOME" align="center">
 
-                        <Column width={130} flexGrow={1}>
-                        <HeaderCell>Points</HeaderCell>
-                        <Cell dataKey="Pts_Home" />
-                        </Column>
+                                <Column width={130} flexGrow={1}>
+                                    <HeaderCell>Points</HeaderCell>
+                                    <Cell dataKey="Pts_Home" />
+                                </Column>
 
-                        <Column width={130} flexGrow={1}>
-                        <HeaderCell>Name</HeaderCell>
-                        <Cell dataKey="Home_Abbr" />
-                        </Column>
+                                <Column width={130} flexGrow={1}>
+                                    <HeaderCell>Name</HeaderCell>
+                                    <Cell dataKey="Home_Abbr" />
+                                </Column>
 
-                        </ColumnGroup>
+                            </ColumnGroup>
 
-                        <ColumnGroup header="AWAY" align="center">
+                            <ColumnGroup header="AWAY" align="center">
 
-                        <Column width={130} flexGrow={1}>
-                        <HeaderCell>Name</HeaderCell>
-                        <Cell dataKey="Away_abbr" />
-                        </Column>
+                                <Column width={130} flexGrow={1}>
+                                    <HeaderCell>Name</HeaderCell>
+                                    <Cell dataKey="Away_abbr" />
+                                </Column>
 
-                        <Column width={130} flexGrow={1}>
-                        <HeaderCell>Points</HeaderCell>
-                        <Cell dataKey="Pts_Away" />
-                        </Column>
+                                <Column width={130} flexGrow={1}>
+                                    <HeaderCell>Points</HeaderCell>
+                                    <Cell dataKey="Pts_Away" />
+                                </Column>
 
-                        </ColumnGroup>
+                            </ColumnGroup>
                         </Table>
+                        <div style={{ padding: 10 }}>
+                            <Pagination
+                                prev
+                                next
+                                first
+                                last
+                                ellipsis
+                                boundaryLinks
+                                maxButtons={5}
+                                size="xs"
+                                layout={['total', '-', 'limit', '|', 'pager', 'skip']}
+                                limit={10}
+                            />
+                        </div>
                     </div>
                 </div>
             </CustomProvider>
