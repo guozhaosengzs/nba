@@ -162,7 +162,7 @@ async function search_games(req, res) {
     //Game_ID, Game_Date; Abbreviation, Nickname, Points in game seasonal wins up to now, seasonal losses up to now, for both teams
     //Seasonal Leader player name and the position, PER , Pts, TSP(ts_percentage) of the leader for both teams
 
-    const Date_From = req.query.Date_From ? req.query.Date_From : '1950-11-01'
+    const Date_From = req.query.Date_From ? req.query.Date_From : '2018-04-01'
     const Date_To = req.query.Date_To ? req.query.Date_To : '2018-04-11'
     const Home = req.query.Home ? req.query.Home : ''
     const Away = req.query.Away ? req.query.Away : ''
