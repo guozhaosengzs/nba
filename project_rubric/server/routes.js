@@ -1,19 +1,17 @@
-const config = require('./config.json')
-const mysql = require('mysql');
-const e = require('express');
+const config = require("./config.json");
+const mysql = require("mysql");
+const e = require("express");
 
 // TODO: fill in your connection details here
 const connection = mysql.createConnection({
-    host: config.rds_host,
-    user: config.rds_user,
-    password: config.rds_password,
-    port: config.rds_port,
-    database: config.rds_db,
-    multipleStatements: true
+  host: config.rds_host,
+  user: config.rds_user,
+  password: config.rds_password,
+  port: config.rds_port,
+  database: config.rds_db,
+  multipleStatements: true
 });
 connection.connect();
-
-
 
 // ********************************************
 //            Game Page
@@ -21,16 +19,15 @@ connection.connect();
 
 // Route 1 (handler)
 async function game(req, res) {
-    //Return an array with required game information of a specific game, specified by Game_ID, including
-    //Game_ID, including Game_ID, Game_Date; Nickname,Points in game, ftm in game, fgm in game ,seasonal wins up to now, seasonal losses up to now for both teams
-    if (isNaN(req.query.Game_ID)) {
-        res.writeHead(500, { 'Error': 'Please pass parameter Game_ID' });
-        res.end();
-    }
-    else {
-        const Game_ID = req.query.Game_ID;
-        connection.query(
-            `WITH Game_Info AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Ftm_Home,Ftm_Away,Fgm_Home,Fgm_Away,Team_Abbreviation_Home AS HT ,Team_Abbreviation_Away AS AT
+  //Return an array with required game information of a specific game, specified by Game_ID, including
+  //Game_ID, including Game_ID, Game_Date; Nickname,Points in game, ftm in game, fgm in game ,seasonal wins up to now, seasonal losses up to now for both teams
+  if (isNaN(req.query.Game_ID)) {
+    res.writeHead(500, { Error: "Please pass parameter Game_ID" });
+    res.end();
+  } else {
+    const Game_ID = req.query.Game_ID;
+    connection.query(
+      `WITH Game_Info AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Ftm_Home,Ftm_Away,Fgm_Home,Fgm_Away,Team_Abbreviation_Home AS HT ,Team_Abbreviation_Away AS AT
                 FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
                           Join Team T2 on Game.Team_Abbreviation_Away = T2.Abbreviation
                 WHERE Game_ID = ${Game_ID}),
@@ -53,31 +50,31 @@ async function game(req, res) {
                 FROM Game g JOIN Game_Info gi on g.Team_Abbreviation_Away = gi.AT
                 Where g.Season_ID = gi.season_Id AND g.Game_Date <= gi.Game_Date) AS AT2)
                 Select Game_Id, Game_Date,Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Ftm_Home,Ftm_Away,Fgm_Home,Fgm_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses
-                FROM Game_Info Natural JOIN HT_win_loss Natural JOIN  AT_win_loss;         
-`, function (error, results, fields) {
-            if (error) {
-                console.log(error)
-                res.json({ error: error })
-            } else if (results) {
-                res.json({ results: results })
-            }
-        });
-    }
+                FROM Game_Info Natural JOIN HT_win_loss Natural JOIN  AT_win_loss;
+`,
+      function(error, results, fields) {
+        if (error) {
+          console.log(error);
+          res.json({ error: error });
+        } else if (results) {
+          res.json({ results: results });
+        }
+      }
+    );
+  }
 }
-
 
 //Route 2
 async function game_team_info(req, res) {
-    //Return an array with required information of Home team and Away team for a specific game specified by Game_ID, including : 
-    //Average stats in this season: pts, ast, fg, pf for both teams
-    if (isNaN(req.query.Game_ID)) {
-        res.writeHead(500, { 'Error': 'Please pass parameter Game_ID' });
-        res.end();
-    }
-    else {
-        const Game_ID = req.query.Game_ID;
-        connection.query(
-            `WITH Teams AS (SELECT Season_ID,Team_Abbreviation_Home AS HT ,Team_Abbreviation_Away AS AT
+  //Return an array with required information of Home team and Away team for a specific game specified by Game_ID, including :
+  //Average stats in this season: pts, ast, fg, pf for both teams
+  if (isNaN(req.query.Game_ID)) {
+    res.writeHead(500, { Error: "Please pass parameter Game_ID" });
+    res.end();
+  } else {
+    const Game_ID = req.query.Game_ID;
+    connection.query(
+      `WITH Teams AS (SELECT Season_ID,Team_Abbreviation_Home AS HT ,Team_Abbreviation_Away AS AT
                     FROM Game
                     WHERE Game_ID = ${Game_ID}),
                 count_games_HT AS(SELECT count(*) AS num_games_HT
@@ -93,29 +90,30 @@ async function game_team_info(req, res) {
                     FROM Seasons_Stats,count_games_AT
                     WHERE Year IN (SELECT Season_ID From Teams) and Tm = (SELECT AT from Teams))
                 SELECT Home_Season_Pts,Away_Season_Pts,Home_Season_FG,Away_Season_FG,Home_Season_Ast,Away_Season_Ast,Home_Season_PF,Away_Season_PF
-                FROM HT_stats,Ay_stats;`, function (error, results, fields) {
-            if (error) {
-                console.log(error)
-                res.json({ error: error })
-            } else if (results) {
-                res.json({ results: results })
-            }
-        });
-    }
+                FROM HT_stats,Ay_stats;`,
+      function(error, results, fields) {
+        if (error) {
+          console.log(error);
+          res.json({ error: error });
+        } else if (results) {
+          res.json({ results: results });
+        }
+      }
+    );
+  }
 }
 
 //Route 3
 async function game_player_info(req, res) {
-    //Return an array with required information of leading players in home and away team of a specific game, specified by Game_ID, including: 
-    //player with highest pts and the pts value, player with highest ast and the ast value, player with highest fg and the fg value, player with highest pf and the pf value  for both teams
-    if (isNaN(req.query.Game_ID)) {
-        res.writeHead(500, { 'Error': 'Please pass parameter Game_ID' });
-        res.end();
-    }
-    else {
-        const Game_ID = req.query.Game_ID;
-        connection.query(
-            `WITH Teams AS (SELECT Season_ID,Team_Abbreviation_Home AS HT ,Team_Abbreviation_Away AS AT
+  //Return an array with required information of leading players in home and away team of a specific game, specified by Game_ID, including:
+  //player with highest pts and the pts value, player with highest ast and the ast value, player with highest fg and the fg value, player with highest pf and the pf value  for both teams
+  if (isNaN(req.query.Game_ID)) {
+    res.writeHead(500, { Error: "Please pass parameter Game_ID" });
+    res.end();
+  } else {
+    const Game_ID = req.query.Game_ID;
+    connection.query(
+      `WITH Teams AS (SELECT Season_ID,Team_Abbreviation_Home AS HT ,Team_Abbreviation_Away AS AT
             FROM Game
             WHERE Game_ID = ${Game_ID}),
             HT_player_ranks AS(SELECT Player,AVG(PTS/G) AS player_pts,AVG(AST/G) AS player_ast,AVG(PF/G) AS player_pf,AVG(FG/G) AS player_fg,
@@ -142,40 +140,41 @@ async function game_player_info(req, res) {
             (SELECT Player AS Home_PF_king,Cast(player_pf AS DECIMAL(5,1))  AS Home_Highest_PF  FROM HT_player_ranks WHERE pf_rank = 1) ht3,
             (SELECT Player AS Away_PF_king,Cast(player_pf AS DECIMAL(5,1))  AS Away_Highest_PF  FROM AT_player_ranks WHERE pf_rank = 1) at3,
             (SELECT Player AS Home_FG_king,Cast(player_fg AS DECIMAL(5,1)) AS Home_Highest_FG FROM HT_player_ranks WHERE fg_rank = 1) ht4,
-            (SELECT Player AS Away_FG_king,Cast(player_fg AS DECIMAL(5,1)) AS Away_Highest_FG FROM AT_player_ranks WHERE fg_rank = 1) at4`
-            , function (error, results, fields) {
-                if (error) {
-                    console.log(error)
-                    res.json({ error: error })
-                } else if (results) {
-                    res.json({ results: results })
-                }
-            });
-
-    }
+            (SELECT Player AS Away_FG_king,Cast(player_fg AS DECIMAL(5,1)) AS Away_Highest_FG FROM AT_player_ranks WHERE fg_rank = 1) at4`,
+      function(error, results, fields) {
+        if (error) {
+          console.log(error);
+          res.json({ error: error });
+        } else if (results) {
+          res.json({ results: results });
+        }
+      }
+    );
+  }
 }
 
 // Route 4 (handler)
 async function search_games(req, res) {
-    //Return an array with required information of all games that match the constraints. If no match satisfies the constraints, return an empty array as ‘results’ without causing an error. 
-    //Results should include(for each game):
-    //Game_ID, Game_Date; Abbreviation, Nickname, Points in game seasonal wins up to now, seasonal losses up to now, for both teams
-    //Seasonal Leader player name and the position, PER , Pts, TSP(ts_percentage) of the leader for both teams
+  //Return an array with required information of all games that match the constraints. If no match satisfies the constraints, return an empty array as ‘results’ without causing an error.
+  //Results should include(for each game):
+  //Game_ID, Game_Date; Abbreviation, Nickname, Points in game seasonal wins up to now, seasonal losses up to now, for both teams
+  //Seasonal Leader player name and the position, PER , Pts, TSP(ts_percentage) of the leader for both teams
 
-    const Date_From = req.query.Date_From ? req.query.Date_From : '2018-04-01'
-    const Date_To = req.query.Date_To ? req.query.Date_To : '2018-04-11'
-    const Home = req.query.Home ? req.query.Home : ''
-    const Away = req.query.Away ? req.query.Away : ''
-    const City = req.query.City ? req.query.City : ''
+  const Date_From = req.query.Date_From ? req.query.Date_From : "2018-04-01";
+  const Date_To = req.query.Date_To ? req.query.Date_To : "2018-04-11";
+  const Home = req.query.Home ? req.query.Home : "";
+  const Away = req.query.Away ? req.query.Away : "";
+  const City = req.query.City ? req.query.City : "";
 
-    if (req.query.page && !isNaN(req.query.page)) {
-        // This is the case where page is defined.
-        // The SQL schema has the attribute OverallRating, but modify it to match spec! 
-        // TODO: query and return results here:
-        const pgsize = req.query.pagesize ? req.query.pagesize : 10
-        const offsetnum = pgsize * (req.query.page - 1)
+  if (req.query.page && !isNaN(req.query.page)) {
+    // This is the case where page is defined.
+    // The SQL schema has the attribute OverallRating, but modify it to match spec!
+    // TODO: query and return results here:
+    const pgsize = req.query.pagesize ? req.query.pagesize : 10;
+    const offsetnum = pgsize * (req.query.page - 1);
 
-        connection.query(`WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT
+    connection.query(
+      `WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT
             FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
                   Join Team T2 on Game.Team_Abbreviation_Away = T2.Abbreviation
             WHERE Game_Date BETWEEN '${Date_From}' AND '${Date_To}'
@@ -204,7 +203,7 @@ async function search_games(req, res) {
                 FROM Game g JOIN All_games gi on g.Team_Abbreviation_Away = gi.AT
                 Where g.Season_ID = gi.season_Id AND g.Game_Date <= gi.Game_Date
                 Group BY gi.Game_ID) AS AT2),
-    
+
             Home_Season_King AS (SELECT h.Game_ID AS GAME_ID,h.Player AS Home_Seasonal_Leader,h.pos AS Home_leader_Pos,h.PTS AS Home_leader_Pts,h.PER AS Home_leader_PER,h.TSP AS Home_leader_TSP
                 FROM
                 (SELECT gi.Game_ID AS GAME_ID,Player,pos,CAST(AVG(PTS/G) AS DECIMAL(5,1)) AS PTS,CAST(AVG(PER) AS DECIMAL(5,1)) AS PER,CAST(AVG(TS_Percentage) AS DECIMAL(5,2)) AS TSP,
@@ -223,18 +222,20 @@ async function search_games(req, res) {
                     WHERE a.pts_rank = 1)
             SELECT Game_ID,Game_Date,HT as Home_Abbr,AT AS Away_abbr, Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses,Home_Seasonal_Leader,Away_Seasonal_Leader,Home_Leader_Pos,Away_Leader_Pos,Home_leader_Pts,Away_leader_Pts,Home_leader_PER,Away_leader_PER,Home_leader_TSP,Away_leader_TSP
                     FROM All_games NATURAL JOIN HT_win_loss NATURAL JOIN AT_win_loss NATURAL JOIN Home_Season_King NATURAL JOIN Away_Season_King
-                    ORDER BY Game_Date DESC,HT_win_loss.Home_Team ASC,AT_win_loss.Away_Team ASC
-                    limit ${offsetnum}, ${pgsize};`, function (error, results, fields) {
-                        if (error) {
-                            console.log(error)
-                            res.json({ error: error })
-                        } else if (results) {
-                            res.json({ results: results })
-                        }
-        });
-    } else {
-        // we have implemented this for you to see how to return results by querying the database
-        connection.query(`WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT
+                    ORDER BY Game_Date DESC,HT_win_loss.Home_Team ASC,AT_win_loss.Away_Team ASC;`,
+      function(error, results, fields) {
+        if (error) {
+          console.log(error);
+          res.json({ error: error });
+        } else if (results) {
+          res.json({ results: results });
+        }
+      }
+    );
+  } else {
+    // we have implemented this for you to see how to return results by querying the database
+    connection.query(
+      `WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT
             FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
                   Join Team T2 on Game.Team_Abbreviation_Away = T2.Abbreviation
             WHERE Game_Date BETWEEN '${Date_From}' AND '${Date_To}'
@@ -263,7 +264,7 @@ async function search_games(req, res) {
                 FROM Game g JOIN All_games gi on g.Team_Abbreviation_Away = gi.AT
                 Where g.Season_ID = gi.season_Id AND g.Game_Date <= gi.Game_Date
                 Group BY gi.Game_ID) AS AT2),
-    
+
             Home_Season_King AS (SELECT h.Game_ID AS GAME_ID,h.Player AS Home_Seasonal_Leader,h.pos AS Home_leader_Pos,h.PTS AS Home_leader_Pts,h.PER AS Home_leader_PER,h.TSP AS Home_leader_TSP
                 FROM
                 (SELECT gi.Game_ID AS GAME_ID,Player,pos,CAST(AVG(PTS/G) AS DECIMAL(5,1)) AS PTS,CAST(AVG(PER) AS DECIMAL(5,1)) AS PER,CAST(AVG(TS_Percentage) AS DECIMAL(5,2)) AS TSP,
@@ -282,21 +283,18 @@ async function search_games(req, res) {
                     WHERE a.pts_rank = 1)
             SELECT Game_ID,Game_Date,HT as Home_Abbr,AT AS Away_abbr, Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses,Home_Seasonal_Leader,Away_Seasonal_Leader,Home_Leader_Pos,Away_Leader_Pos,Home_leader_Pts,Away_leader_Pts,Home_leader_PER,Away_leader_PER,Home_leader_TSP,Away_leader_TSP
                     FROM All_games NATURAL JOIN HT_win_loss NATURAL JOIN AT_win_loss NATURAL JOIN Home_Season_King NATURAL JOIN Away_Season_King
-                    ORDER BY Game_Date DESC,HT_win_loss.Home_Team ASC,AT_win_loss.Away_Team ASC`, function (error, results, fields) {
-
-                        if (error) {
-                            console.log(error)
-                            res.json({ error: error })
-                        } else if (results) {
-                            res.json({ results: results })
-                        }
-            
-        });
-    }
+                    ORDER BY Game_Date DESC,HT_win_loss.Home_Team ASC,AT_win_loss.Away_Team ASC`,
+      function(error, results, fields) {
+        if (error) {
+          console.log(error);
+          res.json({ error: error });
+        } else if (results) {
+          res.json({ results: results });
+        }
+      }
+    );
+  }
 }
-
-
-
 
 // ********************************************
 //            Player Page
@@ -304,91 +302,96 @@ async function search_games(req, res) {
 
 // Route 5 (handler)
 async function player(req, res) {
-    // returns a list of seasonal information for one specific player
-    // Query Parameter(s): player(string), page (int)*, pagesize (int)* (default: 10)
+  // returns a list of seasonal information for one specific player
+  // Query Parameter(s): player(string), page (int)*, pagesize (int)* (default: 10)
 
-    var player = req.query.player_name;
-    const page = req.query.page ? req.query.page : 1;
-    const pagesize = req.query.pagesize ? req.query.pagesize : 10;
-    var offset = pagesize * (page - 1);
-    connection.query(`
+  var player = req.query.player_name;
+  const page = req.query.page ? req.query.page : 1;
+  const pagesize = req.query.pagesize ? req.query.pagesize : 10;
+  var offset = pagesize * (page - 1);
+  connection.query(
+    `
     select Year as Season, Tm as Team, Height, Weight,
     Born as Birth_Year, Birth_City, Birth_State, College,
     Pos, (PTS/G) as PPG, (AST/G) as APG, (TRB/G) as RPG, PF, eFG_Percentage as EFG
     from Players natural join Seasons_Stats
     where Player like "${player}"
     order by Season desc limit ${offset}, ${pagesize};
-    `, function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
-    });
-
+    `,
+    function(error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
+    }
+  );
 }
 
 // Route 6 (handler)
 async function search_player(req, res) {
-    // Returns an array of attributes for all the players that match the search query, 
-    // sorted by the specified attribute of interest from highest to lowest, limit by 10.
-    // If All_Time is True, then the handler returns players’ stats aggregated over all seasons. 
-    // Otherwise, the handler returns players’ stats given one specific season.
-    // Query Parameter(s): All_Time (boolean), Season (int), Attribute (string), Name (string)*, Team (string)*, Position (string)*
-    const Attributes = ['Games', 'Points', 'Assists', 'Rebounds', 'FGs', 'PFs']
-    if (!(req.query.All_Time) || !(req.query.Season) || !(req.query.Attribute)) {
-        console.log(req.query.All_Time, req.query.Season, req.query.Attribute)
-        res.writeHead(500, { 'Error': 'Please pass required parameters' });
-        res.end();
+  // Returns an array of attributes for all the players that match the search query,
+  // sorted by the specified attribute of interest from highest to lowest, limit by 10.
+  // If All_Time is True, then the handler returns players’ stats aggregated over all seasons.
+  // Otherwise, the handler returns players’ stats given one specific season.
+  // Query Parameter(s): All_Time (boolean), Season (int), Attribute (string), Name (string)*, Team (string)*, Position (string)*
+  const Attributes = ["Games", "Points", "Assists", "Rebounds", "FGs", "PFs"];
+  if (!req.query.All_Time || !req.query.Season || !req.query.Attribute) {
+    console.log(req.query.All_Time, req.query.Season, req.query.Attribute);
+    res.writeHead(500, { Error: "Please pass required parameters" });
+    res.end();
+  } else {
+    const attribute = req.query.Attribute;
+    const name = req.query.Name ? "%" + req.query.Name + "%" : "%";
+    const team = req.query.Team ? "%" + req.query.Team + "%" : "%";
+    const position = req.query.Position ? "%" + req.query.Position + "%" : "%";
+    if (!Attributes.includes(attribute)) {
+      res.writeHead(500, { Error: "Please pass required parameters" });
+      res.end();
     } else {
-        const attribute = req.query.Attribute;
-        const name = req.query.Name ? '%' + req.query.Name + '%' : '%';
-        const team = req.query.Team ? '%' + req.query.Team + '%' : '%';
-        const position = req.query.Position ? '%' + req.query.Position + '%' : '%';
-        if (!Attributes.includes(attribute)) {
-            res.writeHead(500, { 'Error': 'Please pass required parameters' });
-            res.end();
-        } else {
-            if (req.query.All_Time == true) {
-                connection.query(`
-                select Player, Pos, sum(G) as Games, sum(PTS) as Points, 
+      if (req.query.All_Time == true) {
+        connection.query(
+          `
+                select Player, Pos, sum(G) as Games, sum(PTS) as Points,
                 sum(AST) as Assits, sum(TRB) as Rebounds, sum(PF) as PFs, sum(FG) as FGs
                 from Seasons_Stats
                 where Player like '${name}' and Tm like '${team}' and Pos like '${position}'
                 group by Player
                 order by ${attribute} DESC limit 10;`,
-                    function (error, results, fields) {
-                        if (error) {
-                            console.log(error)
-                            res.json({ error: error })
-                        } else if (results) {
-                            res.json({ results: results })
-                        }
-                    });
-            } else {
-                const season = req.query.Season;
-                connection.query(`
+          function(error, results, fields) {
+            if (error) {
+              console.log(error);
+              res.json({ error: error });
+            } else if (results) {
+              res.json({ results: results });
+            }
+          }
+        );
+      } else {
+        const season = req.query.Season;
+        connection.query(
+          `
                 select Player, Pos, sum(G) as Games, sum(PTS) as Points,
                 sum(AST) as Assits, sum(TRB) as Rebounds, sum(PF) as PFs, sum(FG) as FGs
                 from Seasons_Stats
                 where Player like '${name}' and Tm like '${team}' and Pos like '${position}' and Year = ${season}
                 group by Player
                 order by ${attribute} DESC limit 10
-                `, function (error, results, fields) {
-                    if (error) {
-                        console.log(error)
-                        res.json({ error: error })
-                    } else if (results) {
-                        res.json({ results: results })
-                    }
-                });
+                `,
+          function(error, results, fields) {
+            if (error) {
+              console.log(error);
+              res.json({ error: error });
+            } else if (results) {
+              res.json({ results: results });
             }
-        }
+          }
+        );
+      }
     }
-
+  }
 }
-
 
 // ********************************************
 //            Team Page
@@ -396,45 +399,45 @@ async function search_player(req, res) {
 
 // Route 7 (handler)
 async function search_team_info(req, res) {
-    // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with 
-    //      the average stats of its leading player for that season; 
-    //      the information of the game the team won most points in that season; 
-    //      the information of the game the team lost most points in that season
-    // Query Parameter(s): Team_ID(string)
-    if (isNaN(req.query.Team_ID)) {
-        res.writeHead(500, { 'Error': 'Please pass parameter Team_ID' });
-        res.end();
-    } else {
-
-        const team_id = req.query.Team_ID;
-        connection.query(
-            `SELECT * FROM Team WHERE ID = ${team_id};`,
-            function (error, results, fields) {
-                if (error) {
-                    console.log(error)
-                    res.json({ error: error })
-                } else if (results) {
-                    res.json({ results: results })
-                }
-            })
-    }
+  // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with
+  //      the average stats of its leading player for that season;
+  //      the information of the game the team won most points in that season;
+  //      the information of the game the team lost most points in that season
+  // Query Parameter(s): Team_ID(string)
+  if (isNaN(req.query.Team_ID)) {
+    res.writeHead(500, { Error: "Please pass parameter Team_ID" });
+    res.end();
+  } else {
+    const team_id = req.query.Team_ID;
+    connection.query(`SELECT * FROM Team WHERE ID = ${team_id};`, function(
+      error,
+      results,
+      fields
+    ) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
+    });
+  }
 }
 
 // Route 8 (handler)
 async function search_team_win(req, res) {
-    // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with 
-    //      the average stats of its leading player for that season; 
-    //      the information of the game the team won most points in that season; 
-    //      the information of the game the team lost most points in that season
-    // Query Parameter(s): Team_ID(string)
-    if (isNaN(req.query.Team_ID)) {
-        res.writeHead(500, { 'Error': 'Please pass parameter Team_ID' });
-        res.end();
-    } else {
-
-        const team_id = req.query.Team_ID;
-        connection.query(
-            `with all_games as (
+  // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with
+  //      the average stats of its leading player for that season;
+  //      the information of the game the team won most points in that season;
+  //      the information of the game the team lost most points in that season
+  // Query Parameter(s): Team_ID(string)
+  if (isNaN(req.query.Team_ID)) {
+    res.writeHead(500, { Error: "Please pass parameter Team_ID" });
+    res.end();
+  } else {
+    const team_id = req.query.Team_ID;
+    connection.query(
+      `with all_games as (
                     SELECT Season_ID, (PTS_AWAY - PTS_HOME) as winPts, Team_Abbreviation_Away as self, TEAM_ABBREVIATION_HOME as opponent, Pts_Home as opponentScore, Pts_Away as selfScore
                     from Game
                     where
@@ -445,33 +448,32 @@ async function search_team_win(req, res) {
                     where
                           TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id}))
                  select Season_ID as Season, self, opponent, selfScore, opponentScore, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY winPts DESC ) as rankList from all_games order by rankList ASC, Season_ID DESC  LIMIT 10;`,
-            function (error, results, fields) {
-                if (error) {
-                    console.log(error)
-                    res.json({ error: error })
-                } else if (results) {
-                    res.json({ results: results })
-                }
-            });
-    }
+      function(error, results, fields) {
+        if (error) {
+          console.log(error);
+          res.json({ error: error });
+        } else if (results) {
+          res.json({ results: results });
+        }
+      }
+    );
+  }
 }
-
 
 // Route 9 (handler)
 async function search_team_loses(req, res) {
-    // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with 
-    //      the average stats of its leading player for that season; 
-    //      the information of the game the team won most points in that season; 
-    //      the information of the game the team lost most points in that season
-    // Query Parameter(s): Team_ID(string)
-    if (isNaN(req.query.Team_ID)) {
-        res.writeHead(500, { 'Error': 'Please pass parameter Team_ID' });
-        res.end();
-    } else {
-
-        const team_id = req.query.Team_ID;
-        connection.query(
-            `with all_games as (
+  // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with
+  //      the average stats of its leading player for that season;
+  //      the information of the game the team won most points in that season;
+  //      the information of the game the team lost most points in that season
+  // Query Parameter(s): Team_ID(string)
+  if (isNaN(req.query.Team_ID)) {
+    res.writeHead(500, { Error: "Please pass parameter Team_ID" });
+    res.end();
+  } else {
+    const team_id = req.query.Team_ID;
+    connection.query(
+      `with all_games as (
                     SELECT Season_ID, (PTS_HOME - PTS_AWAY) as lossPts, Team_Abbreviation_Away as self, TEAM_ABBREVIATION_HOME as opponent, Pts_Home as opponentScore, Pts_Away as selfScore
                     from Game
                     where
@@ -482,33 +484,34 @@ async function search_team_loses(req, res) {
                     where
                           TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id}))
                  select Season_ID as Season, self, opponent, selfScore, opponentScore, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY lossPts DESC ) as rankList from all_games order by rankList ASC, Season_ID DESC  LIMIT 10;
-`, function (error, results, fields) {
-            if (error) {
-                console.log(error)
-                res.json({ error: error })
-            } else if (results) {
-                res.json({ results: results })
-            }
-        });
-    }
+`,
+      function(error, results, fields) {
+        if (error) {
+          console.log(error);
+          res.json({ error: error });
+        } else if (results) {
+          res.json({ results: results });
+        }
+      }
+    );
+  }
 }
 
 // Route 10 (handler)
 async function search_team_player(req, res) {
-    // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with 
-    //      the average stats of its leading player for that season; 
-    //      the information of the game the team won most points in that season; 
-    //      the information of the game the team lost most points in that season
-    // Query Parameter(s): Team_ID(string)
-    if (isNaN(req.query.Team_ID)) {
-        res.writeHead(500, { 'Error': 'Please pass parameter Team_ID' });
-        res.end();
-    } else {
-
-        const team_id = req.query.Team_ID;
-        connection.query(
-            `
-            with player_stats as (select Year as Season, Player, Tm, P.height, 
+  // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with
+  //      the average stats of its leading player for that season;
+  //      the information of the game the team won most points in that season;
+  //      the information of the game the team lost most points in that season
+  // Query Parameter(s): Team_ID(string)
+  if (isNaN(req.query.Team_ID)) {
+    res.writeHead(500, { Error: "Please pass parameter Team_ID" });
+    res.end();
+  } else {
+    const team_id = req.query.Team_ID;
+    connection.query(
+      `
+            with player_stats as (select Year as Season, Player, Tm, P.height,
                 P.weight, (Seasons_Stats.PTS/Seasons_Stats.G) as avgPoints, (Seasons_Stats.TRB/Seasons_Stats.G) as avgRebounds,
                 (Seasons_Stats.AST/Seasons_Stats.G) as avgAssits,
                 ROW_NUMBER() over (PARTITION BY Seasons_Stats.Year ORDER BY (Seasons_Stats.PTS/Seasons_Stats.G) DESC) AS ptslist
@@ -517,33 +520,34 @@ async function search_team_player(req, res) {
                 group by Year, Player
                 order by Year DESC, avgPoints)
                 select * from player_stats where ptslist = 1 limit 10;
-            `, function (error, results, fields) {
-            if (error) {
-                console.log(error)
-                res.json({ error: error })
-            } else if (results) {
-                res.json({ results: results })
-            }
-        });
-    }
+            `,
+      function(error, results, fields) {
+        if (error) {
+          console.log(error);
+          res.json({ error: error });
+        } else if (results) {
+          res.json({ results: results });
+        }
+      }
+    );
+  }
 }
-
-
-
 
 // Route 11 (handler)
 async function get_team(req, res) {
-    //Get Team_Id from team_name
-    const teamName = req.query.Team_Name ? '%' + req.query.Team_Name + '%' : '%';
-    connection.query(`select ID from Team where Full_Name like '${teamName}' limit 1`,
-        function (error, results, fields) {
-            if (error) {
-                console.log(error)
-                res.json({ error: error })
-            } else if (results) {
-                res.json({ results: results })
-            }
-        });
+  //Get Team_Id from team_name
+  const teamName = req.query.Team_Name ? "%" + req.query.Team_Name + "%" : "%";
+  connection.query(
+    `select ID from Team where Full_Name like '${teamName}' limit 1`,
+    function(error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
+    }
+  );
 }
 
 // ********************************************
@@ -552,34 +556,34 @@ async function get_team(req, res) {
 
 // Route 12 (handler)
 async function player_avg(req, res) {
-    // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
-    const page = req.query.page ? req.query.page : 1;
-    const pagesize = req.query.pagesize ? req.query.pagesize : 10;
-    var offset = pagesize * (page - 1);
-    connection.query(`
+  // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
+  const page = typeof req.query.page === "number" ? req.query.page : 1;
+  const pagesize =
+    typeof req.query.pagesize === "number" ? req.query.pagesize : 10;
+  var offset = pagesize * (page - 1);
+  connection.query(
+    `
     with player_yearly_stats as (select Player, Year as Season, Tm as Team, Height, Weight,
         Born as Birth_Year, Birth_City, Birth_State, College,
         Pos, (PTS/G) as PPG, (AST/G) as APG, (TRB/G) as RPG, PF, eFG_Percentage as EFG
         from Players natural join Seasons_Stats
-        group by player ,year) 
+        group by player ,year)
         select Player, Height, Weight, Birth_Year, Birth_City, Birth_State, College,
         Pos as Position, avg(PPG) as PointPerSeason, avg(APG) as AssistPerSeason, avg(PF) as PersonalFoulPerSeason, avg(EFG) as EFGPerSeason
-        from player_yearly_stats 
-        group by Player 
-        order by PointPerSeason desc
-        limit ${offset}, ${pagesize};
-    `, function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
+        from player_yearly_stats
+        group by Player
+        order by PointPerSeason desc;
+    `,
+    function(error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
     }
-    );
+  );
 }
-
-
 
 // ********************************************
 //            Mean Facts Page
@@ -587,9 +591,10 @@ async function player_avg(req, res) {
 
 // Route 13 (handler)
 async function first_all_nba(req, res) {
-    // Query Parameter(s): Season (int)
-    const season = req.query.Season ? req.query.Season : 2015;
-    connection.query(`
+  // Query Parameter(s): Season (int)
+  const season = req.query.Season ? req.query.Season : 2015;
+  connection.query(
+    `
     with gameStats as (select Season_ID, WL_Home, Team_Abbreviation_Home, Team_Abbreviation_Away, Game_ID from Game where Season_ID = ${season}),
   topTeams as (select * from
     (select Team_Abbreviation_Home, sum(case when WL_Home = 'W' then 1 else 0 end) as homeWins
@@ -606,25 +611,27 @@ async function first_all_nba(req, res) {
   where Tm in (select Team_Abbreviation_Away from topTeams)),
   topPlayers as (select Player, Pos, Tm,Height, Weight, pointsPerGame from playerStats where posRank=1)
 select Player, Pos, Tm, pointsPerGame, Height, Weight,(homeWins+awayWins) as totalWins from topPlayers join topTeams on topPlayers.Tm = topTeams.Team_Abbreviation_Away;
-    `, function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
+    `,
+    function(error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
     }
-    );
+  );
 }
 
 // Route 14 (handler)
 async function only_got_numbers(req, res) {
-    // Query Parameter(s): Season (int), page (int)*, pagesize (int)* (default: 10)
-    const page = req.query.page ? req.query.page : 1;
-    const pagesize = req.query.pagesize ? req.query.pagesize : 10;
-    var offset = pagesize * (page - 1);
-    const season = req.query.Season ? req.query.Season : 2015;
-    connection.query(`
+  // Query Parameter(s): Season (int), page (int)*, pagesize (int)* (default: 10)
+  const page = req.query.page ? req.query.page : 1;
+  const pagesize = req.query.pagesize ? req.query.pagesize : 10;
+  var offset = pagesize * (page - 1);
+  const season = req.query.Season ? req.query.Season : 2015;
+  connection.query(
+    `
     select Player, Pos, Tm, pointsPerGame, (AST/G) as assistsPerGame, (TRB/G) as reboundsPerGame, DWS, OWS, FG, FGA, FT, FTA, (homeWins + awayWins) as totalWins, (homeLosses + awayLosses) as totalLosses from
     (select *, (PTS/G) as pointsPerGame, row_number() over (partition by Tm, Season_ID order by (PTS/G) desc) as tmRank
     from
@@ -645,22 +652,24 @@ async function only_got_numbers(req, res) {
         on badTeams.Team_Abbreviation_Home = Seasons_Stats.Tm and badTeams.Season_ID = Seasons_Stats.Year group by  Player, Season_ID) as allPlayers
     where tmRank=1
         limit ${offset}, ${pagesize};
-    `, function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
+    `,
+    function(error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
     }
-    );
+  );
 }
 
 // Route 15 (handler)
 async function lucky(req, res) {
-    //query parameter: Team(string)
-        const Team = req.query.Team ? req.query.Team : 'CLE';
-        connection.query(`
+  //query parameter: Team(string)
+  const Team = req.query.Team ? req.query.Team : "CLE";
+  connection.query(
+    `
         WITH game_city AS(SELECT Team_Abbreviation_Home AS THE_TEAM,WL_HOME AS WL,T.City AS CITY
             FROM Game JOIN Team T on Game.Team_Abbreviation_Home = T.Abbreviation
             WHERE Team_Abbreviation_Home = '${Team}'
@@ -675,7 +684,7 @@ async function lucky(req, res) {
           FROM Seasons_Stats
           WHERE Tm = '${Team}'
           GROUP BY Player)
-          
+
           SELECT The_Team,win.city AS lucky_city,CASE WHEN win.city = Team.CITY THEN 'YES' ELSE 'NO' END AS 'IS_HOME_CITY',
                player_sum.Player AS lucky_player,CASE WHEN Players.birth_city = win.city THEN 'YES' ELSE 'NO' END AS 'Born_in_lucky_CITY'
           FROM win INNER JOIN Team ON The_team = Team.Abbreviation
@@ -683,23 +692,26 @@ async function lucky(req, res) {
           INNER JOIN Players ON player_sum.Player = Players.Player
           WHERE win.win_rate IN (SELECT MAX(win_rate) FROM win)
           AND player_sum.sum_pts IN (SELECT MAX(sum_pts) FROM player_sum)
-     `, function (error, results, fields) {
-            if (error) {
-                console.log(error)
-                res.json({ error: error })
-            } else if (results) {
-                res.json({ results: results })
-            }}
-        );
+     `,
+    function(error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
     }
+  );
+}
 
 // Route 16 (handler)
 async function contributes_most(req, res) {
-    // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
-    const page = req.query.page ? req.query.page : 1;
-    const pagesize = req.query.pagesize ? req.query.pagesize : 10;
-    var offset = pagesize * (page - 1);
-    connection.query(`
+  // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
+  const page = req.query.page ? req.query.page : 1;
+  const pagesize = req.query.pagesize ? req.query.pagesize : 10;
+  var offset = pagesize * (page - 1);
+  connection.query(
+    `
     WITH newGame AS(
         SELECT *, SUM(G1.Pts_Home) AS totalHomePTS,
                SUM(G1.Pts_Away) AS totalAwayPTS,
@@ -719,31 +731,33 @@ async function contributes_most(req, res) {
       GROUP BY G.Season_ID, G.Team_Abbreviation_Home, SS.Player
       ORDER BY G.Season_ID DESC,Contribution DESC
       limit ${offset}, ${pagesize};
-      `, function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }}
-    );
+      `,
+    function(error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
+    }
+  );
 }
 
 module.exports = {
-    game,
-    game_team_info,
-    game_player_info,
-    search_games,
-    player,
-    search_player,
-    search_team_info,
-    search_team_loses,
-    search_team_win,
-    search_team_player,
-    get_team,
-    player_avg,
-    first_all_nba,
-    only_got_numbers,
-    lucky,
-    contributes_most
-}
+  game,
+  game_team_info,
+  game_player_info,
+  search_games,
+  player,
+  search_player,
+  search_team_info,
+  search_team_loses,
+  search_team_win,
+  search_team_player,
+  get_team,
+  player_avg,
+  first_all_nba,
+  only_got_numbers,
+  lucky,
+  contributes_most
+};

@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 
 import Home from './pages/Home';
-// import Players from './pages/Players';
+import Players from './pages/Players';
 // import Games from './pages/Games';
 // import Facts from './pages/Facts';
 
