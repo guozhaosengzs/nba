@@ -167,11 +167,15 @@ async function search_games(req, res) {
     const Home = req.query.Home ? req.query.Home : ''
     const Away = req.query.Away ? req.query.Away : ''
     const City = req.query.City ? req.query.City : ''
-    const page = req.query.page ? req.query.page : 1;
-    const pgsize = req.query.pagesize ? req.query.pagesize : 10;
-    var offsetnum = pgsize * (page - 1);
-    connection.query(
-        `WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT
+
+    if (req.query.page && !isNaN(req.query.page)) {
+        // This is the case where page is defined.
+        // The SQL schema has the attribute OverallRating, but modify it to match spec! 
+        // TODO: query and return results here:
+        const pgsize = req.query.pagesize ? req.query.pagesize : 10
+        const offsetnum = pgsize * (req.query.page - 1)
+
+        connection.query(`WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT
             FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
                   Join Team T2 on Game.Team_Abbreviation_Away = T2.Abbreviation
             WHERE Game_Date BETWEEN '${Date_From}' AND '${Date_To}'
@@ -220,17 +224,77 @@ async function search_games(req, res) {
             SELECT Game_ID,Game_Date,HT as Home_Abbr,AT AS Away_abbr, Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses,Home_Seasonal_Leader,Away_Seasonal_Leader,Home_Leader_Pos,Away_Leader_Pos,Home_leader_Pts,Away_leader_Pts,Home_leader_PER,Away_leader_PER,Home_leader_TSP,Away_leader_TSP
                     FROM All_games NATURAL JOIN HT_win_loss NATURAL JOIN AT_win_loss NATURAL JOIN Home_Season_King NATURAL JOIN Away_Season_King
                     ORDER BY Game_Date DESC,HT_win_loss.Home_Team ASC,AT_win_loss.Away_Team ASC
-                    LIMIT ${offsetnum},${pgsize}
-    `, function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
-    });
+                    limit ${offsetnum}, ${pgsize};`, function (error, results, fields) {
+                        if (error) {
+                            console.log(error)
+                            res.json({ error: error })
+                        } else if (results) {
+                            res.json({ results: results })
+                        }
+        });
+    } else {
+        // we have implemented this for you to see how to return results by querying the database
+        connection.query(`WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT
+            FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
+                  Join Team T2 on Game.Team_Abbreviation_Away = T2.Abbreviation
+            WHERE Game_Date BETWEEN '${Date_From}' AND '${Date_To}'
+            AND Team_Abbreviation_Home LIKE '%${Home}%'
+            AND Team_Abbreviation_Away LIKE '%${Away}%'
+            AND T1.City LIKE '%${City}%'),
+            HT_win_loss AS(SELECT GAME_ID,HT1.HT AS Home_Team,HT1.HT_win_as_home+ HT2.HT_win_as_away AS Home_seasonal_wins, HT1.HT_lose_as_home + HT2.HT_lose_as_away AS Home_seasonal_losses
+                FROM
+               (SELECT gi.Game_ID AS GAME_ID,gi.HT AS HT, SUM(CASE WHEN WL_Home = 'W' Then 1 Else 0 End) AS HT_win_as_home, SUM(CASE WHEN WL_Home = 'L' Then 1 Else 0 End) AS HT_lose_as_home
+                FROM Game g JOIN All_games gi on g.Team_Abbreviation_Home = gi.HT
+                Where g.Season_ID = gi.season_Id AND g.Game_Date <= gi.Game_Date
+                GROUP BY gi.Game_ID) AS HT1
+                NATURAL JOIN
+                (SELECT gi.Game_ID AS GAME_ID,gi.HT AS HT, SUM(CASE WHEN WL_Home = 'L' Then 1 Else 0 End) AS HT_win_as_away, SUM(CASE WHEN WL_Home = 'W' Then 1 Else 0 End) AS HT_lose_as_away
+                FROM Game g JOIN All_games gi on g.Team_Abbreviation_Away = gi.HT
+                Where g.Season_ID = gi.season_Id AND g.Game_Date < gi.Game_Date
+                Group BY gi.Game_ID) AS HT2),
+            AT_win_loss AS(SELECT GAME_ID,AT1.AT AS Away_Team, AT1.AT_win_as_home+ AT2.AT_win_as_away AS Away_seasonal_wins, AT1.AT_lose_as_home + AT2.AT_lose_as_away AS Away_seasonal_losses
+                FROM
+                (SELECT gi.Game_ID AS GAME_ID, gi.AT AS AT, SUM(CASE WHEN WL_Home = 'W' Then 1 Else 0 End) AS AT_win_as_home, SUM(CASE WHEN WL_Home = 'L' Then 1 Else 0 End) AS AT_lose_as_home
+                FROM Game g JOIN All_games gi on g.Team_Abbreviation_Home = gi.AT
+                Where g.Season_ID = gi.season_Id AND g.Game_Date <= gi.Game_Date
+                GROUP BY gi.Game_ID) AS AT1
+                NATURAL JOIN
+                (SELECT gi.Game_ID AS GAME_ID,gi.AT AS AT, SUM(CASE WHEN WL_Home = 'L' Then 1 Else 0 End) AS AT_win_as_away, SUM(CASE WHEN WL_Home = 'W' Then 1 Else 0 End) AS AT_lose_as_away
+                FROM Game g JOIN All_games gi on g.Team_Abbreviation_Away = gi.AT
+                Where g.Season_ID = gi.season_Id AND g.Game_Date <= gi.Game_Date
+                Group BY gi.Game_ID) AS AT2),
+    
+            Home_Season_King AS (SELECT h.Game_ID AS GAME_ID,h.Player AS Home_Seasonal_Leader,h.pos AS Home_leader_Pos,h.PTS AS Home_leader_Pts,h.PER AS Home_leader_PER,h.TSP AS Home_leader_TSP
+                FROM
+                (SELECT gi.Game_ID AS GAME_ID,Player,pos,CAST(AVG(PTS/G) AS DECIMAL(5,1)) AS PTS,CAST(AVG(PER) AS DECIMAL(5,1)) AS PER,CAST(AVG(TS_Percentage) AS DECIMAL(5,2)) AS TSP,
+                row_number() over (PARTITION BY GAME_ID ORDER BY PTS/G DESC) AS pts_rank
+                FROM Seasons_Stats s JOIN All_games gi ON s.Tm = gi.HT
+                WHERE s.Year = gi.Season_ID
+                Group By Game_Id,Player) AS h
+                WHERE h.pts_rank = 1),
+            Away_Season_King AS (SELECT a.Game_ID AS GAME_ID,a.Player AS Away_Seasonal_Leader,a.pos AS Away_leader_Pos,a.PTS AS Away_leader_Pts,a.PER AS Away_leader_PER,a.TSP AS Away_leader_TSP
+                    FROM
+                    (SELECT gi.Game_ID AS GAME_ID,Player,pos,CAST(AVG(PTS/G) AS DECIMAL(5,1)) AS PTS,CAST(AVG(PER) AS DECIMAL(5,1)) AS PER,CAST(AVG(TS_Percentage) AS DECIMAL(5,2)) AS TSP,
+                    row_number() over (PARTITION BY GAME_ID ORDER BY PTS/G DESC) AS pts_rank
+                    FROM Seasons_Stats s JOIN All_games gi ON s.Tm = gi.AT
+                    WHERE s.Year = gi.Season_ID
+                    Group By Game_Id,Player) AS a
+                    WHERE a.pts_rank = 1)
+            SELECT Game_ID,Game_Date,HT as Home_Abbr,AT AS Away_abbr, Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses,Home_Seasonal_Leader,Away_Seasonal_Leader,Home_Leader_Pos,Away_Leader_Pos,Home_leader_Pts,Away_leader_Pts,Home_leader_PER,Away_leader_PER,Home_leader_TSP,Away_leader_TSP
+                    FROM All_games NATURAL JOIN HT_win_loss NATURAL JOIN AT_win_loss NATURAL JOIN Home_Season_King NATURAL JOIN Away_Season_King
+                    ORDER BY Game_Date DESC,HT_win_loss.Home_Team ASC,AT_win_loss.Away_Team ASC`, function (error, results, fields) {
 
+                        if (error) {
+                            console.log(error)
+                            res.json({ error: error })
+                        } else if (results) {
+                            res.json({ results: results })
+                        }
+            
+        });
+    }
 }
+
 
 
 
