@@ -14,7 +14,16 @@ const getAllPlayersAvg = async (page, pagesize) => {
     return res.json()
 }
 
+const getGame = async (Game_ID) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/game?id=${Game_ID}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
+
 export {
     getAllGames,
-    getAllPlayersAvg
+    getAllPlayersAvg,
+    getGame
 }
