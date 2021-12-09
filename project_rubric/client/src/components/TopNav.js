@@ -5,8 +5,8 @@ import { Navbar, Nav } from 'rsuite';
 class TopNav extends React.Component {
     render() {
         return (
-            <Navbar appearance="inverse">
-                <Navbar.Brand href="/">
+            <Navbar appearance="default">
+                <Navbar.Brand>
                     NBA Database
                 </Navbar.Brand>
                 <Nav>
