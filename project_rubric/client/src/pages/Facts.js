@@ -62,9 +62,11 @@ class Home extends React.Component {
         getTopPOSPlayer(value).then(res => {
             this.setState({ fact1Results: res.results });
         });
-        this.setState({ fact1SortType: null });
-        this.setState({ fact1SortColumn: null });
-        this.setState({ fact1Load: false });
+        this.setState({ fact1SortType: null, 
+            fact1SortColumn: null, 
+            fact1Page: 1,
+            fact1Load: false
+         });
     }
 
     handlefact2QueryChange(value) {
@@ -72,9 +74,11 @@ class Home extends React.Component {
         getTopPlayerNoWin(value).then(res => {
             this.setState({ fact2Results: res.results });
         });
-        this.setState({ fact2SortType: null });
-        this.setState({ fact2SortColumn: null });
-        this.setState({ fact2Load: false });
+        this.setState({ fact2SortType: null, 
+            fact2SortColumn: null, 
+            fact2Page: 1,
+            fact2Load: false
+         });
     }
 
     handlefact3QueryChange(string) {
@@ -82,9 +86,11 @@ class Home extends React.Component {
         getLucky(string).then(res => {
             this.setState({ fact3Results: res.results });
         });
-        this.setState({ fact3SortType: null });
-        this.setState({ fact3SortColumn: null });
-        this.setState({ fact3Load: false });
+        this.setState({ fact3SortType: null, 
+            fact3SortColumn: null, 
+            fact3Page: 1,
+            fact3Load: false
+         });
     }
 
     componentDidMount() {
@@ -518,6 +524,8 @@ class Home extends React.Component {
                             />
                         </div>
                     </div>
+                </div>
+                <div style={{ padding: 50 }}>
                 </div>
             </CustomProvider>
         );
