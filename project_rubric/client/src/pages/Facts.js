@@ -29,7 +29,21 @@ class Home extends React.Component {
             fact2Limit: 10,
             fact2Load: true,
             fact2SortType: null,
-            fact2SortColumn: null
+            fact2SortColumn: null,
+
+            fact3Results: [],
+            fact3Page: 1,
+            fact3Limit: 10,
+            fact3Load: true,
+            fact3SortType: null,
+            fact3SortColumn: null,
+
+            fact4Results: [],
+            fact4Page: 1,
+            fact4Limit: 10,
+            fact4Load: true,
+            fact4SortType: null,
+            fact4SortColumn: null
         };
 
         this.goToGame = this.goToGame.bind(this);
@@ -48,6 +62,16 @@ class Home extends React.Component {
         getTopPlayerNoWin().then(res => {
             this.setState({ fact2Results: res.results });
             this.setState({ fact2Load: false });
+        }); 
+
+        getLucky().then(res => {
+            this.setState({ fact3Results: res.results });
+            this.setState({ fact3Load: false });
+        });
+
+        getMostContributing().then(res => {
+            this.setState({ fact4Results: res.results });
+            this.setState({ fact4Load: false });
         });
     }
 
@@ -56,7 +80,7 @@ class Home extends React.Component {
             <CustomProvider theme={"dark"}>
                 <div>
                     <TopNav />
-                    <div style={{ width: "70vw", margin: "0 auto", marginTop: "5vh" }}>
+                    <div style={{ width: "80vw", margin: "0 auto", marginTop: "2vh" }}>
                         <h2>Fun Facts</h2>
                         <h5>
                             With the dataset on NBA, there are a lot of interesting topics to discover,
@@ -64,8 +88,10 @@ class Home extends React.Component {
                         </h5>
                     </div>
 
-                    <div style={{ width: "70vw", margin: "0 auto", marginTop: "5vh" }}>
+                    <div style={{ width: "80vw", margin: "0 auto", marginTop: "3vh" }}>
                         <h3>Best Position in Good Teams</h3>
+                        <br></br>
+                        {/* =====================TABLE 1=============================== */}
                         <h5>
                             Who are the top scoring players for each position from teams that has more than 50 wins in the season?
                         </h5>
@@ -73,7 +99,7 @@ class Home extends React.Component {
                         <Table
                             bordered
                             cellBordered
-                            height={460}
+                            autoHeight={true}
                             headerHeight={40}
                             data={this.state.fact1Results.filter(
                                 (_, i) =>
@@ -105,29 +131,34 @@ class Home extends React.Component {
                                 <Cell dataKey="Player" />
                             </Column>
 
-                            <Column width={100} flexGrow={1} sortable>
-                                <HeaderCell>POS</HeaderCell>
-                                <Cell dataKey="Position" />
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>Team</HeaderCell>
+                                <Cell dataKey="Tm" />
                             </Column>
 
-                            <Column width={100} flexGrow={1} sortable>
-                                <HeaderCell>PTS</HeaderCell>
-                                <Cell dataKey="PointPerSeason" />
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>Position</HeaderCell>
+                                <Cell dataKey="Pos" />
                             </Column>
 
-                            <Column width={100} flexGrow={1} sortable>
-                                <HeaderCell>AST</HeaderCell>
-                                <Cell dataKey="AssistPerSeason" />
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>PTS / game</HeaderCell>
+                                <Cell dataKey="pointsPerGame" />
                             </Column>
 
-                            <Column width={100} flexGrow={1} sortable>
-                                <HeaderCell>PF</HeaderCell>
-                                <Cell dataKey="PersonalFoulPerSeason" />
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>Season Wins</HeaderCell>
+                                <Cell dataKey="totalWins" />
                             </Column>
 
-                            <Column width={100} flexGrow={1} sortable>
-                                <HeaderCell>EFG</HeaderCell>
-                                <Cell dataKey="EFGPerSeason" />
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell> Player Height</HeaderCell>
+                                <Cell dataKey="Height" />
+                            </Column>
+
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell> Player Weight</HeaderCell>
+                                <Cell dataKey="Weight" />
                             </Column>
                         </Table>
 
@@ -155,14 +186,19 @@ class Home extends React.Component {
                         </div>
                     </div>
 
-                    <div style={{ width: "70vw", margin: "0 auto", marginTop: "5vh" }}>
-                        <h3>Games</h3>
-
+                    <div style={{ width: "80vw", margin: "0 auto", marginTop: "3vh" }}>
+                        <h3>Top Players in Not-So-Good Teams</h3>
+                        <br></br>
+                        {/* =====================TABLE 2=============================== */}
+                        <h5>
+                            Who are the top player in teams that has more losses than wins in the season?
+                        </h5>
+                        <br></br>
                         <Table
                             bordered
                             cellBordered
-                            height={420}
-                            headerHeight={80}
+                            autoHeight={true}
+                            headerHeight={40}
                             data={this.state.fact2Results.filter(
                                 (_, i) =>
                                     i > this.state.fact2Limit * (this.state.fact2Page - 1) &&
@@ -187,39 +223,48 @@ class Home extends React.Component {
                                     this.setState({ fact2Load: false });
                                 }, 500);
                             }}
-                            onRowClick={data => {
-                                this.goToGame(data.Game_ID);
-                            }}
                         >
-                            <Column width={150} align="center" verticalAlign="middle" sortable>
-                                <HeaderCell>Game Date</HeaderCell>
-                                <Cell dataKey="Game_Date" />
+                            <Column width={100} align="center" fixed flexGrow={1} sortable>
+                                <HeaderCell>Name</HeaderCell>
+                                <Cell dataKey="Player" />
                             </Column>
 
-                            <ColumnGroup header="HOME" align="center">
-                                <Column width={130} flexGrow={1} sortable>
-                                    <HeaderCell>Points</HeaderCell>
-                                    <Cell dataKey="Pts_Home" />
-                                </Column>
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>Team</HeaderCell>
+                                <Cell dataKey="Tm" />
+                            </Column>
 
-                                <Column width={130} flexGrow={1} sortable>
-                                    <HeaderCell>Name</HeaderCell>
-                                    <Cell dataKey="Home_Abbr" />
-                                </Column>
-                            </ColumnGroup>
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>Position</HeaderCell>
+                                <Cell dataKey="Pos" />
+                            </Column>
 
-                            <ColumnGroup header="AWAY" align="center">
-                                <Column width={130} flexGrow={1} sortable>
-                                    <HeaderCell>Name</HeaderCell>
-                                    <Cell dataKey="Away_abbr" />
-                                </Column>
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>PTS / game/</HeaderCell>
+                                <Cell dataKey="pointsPerGame" />
+                            </Column>
 
-                                <Column width={130} flexGrow={1} sortable>
-                                    <HeaderCell>Points</HeaderCell>
-                                    <Cell dataKey="Pts_Away" />
-                                </Column>
-                            </ColumnGroup>
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>AST / game</HeaderCell>
+                                <Cell dataKey="assistsPerGame" />
+                            </Column>
+
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>TRB / game</HeaderCell>
+                                <Cell dataKey="reboundsPerGame" />
+                            </Column>
+
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell> Total Wins</HeaderCell>
+                                <Cell dataKey="totalWins" />
+                            </Column>
+
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell> Total Losses</HeaderCell>
+                                <Cell dataKey="totalLosses" />
+                            </Column>
                         </Table>
+
                         <div style={{ padding: 10 }}>
                             <Pagination
                                 prev

@@ -628,10 +628,9 @@ select Player, Pos, Tm, pointsPerGame, Height, Weight,(homeWins+awayWins) as tot
 async function only_got_numbers(req, res) {
   // Query Parameter(s): Season (int), page (int)*, pagesize (int)* (default: 10)
   const page = typeof req.query.page === "number" ? req.query.page : 1;
-  const pagesize =
-    typeof req.query.pagesize === "number" ? req.query.pagesize : 10;
+  const pagesize = typeof req.query.pagesize === "number" ? req.query.pagesize : 10;
   var offset = pagesize * (page - 1);
-  const season = req.query.Season ? req.query.Season : 2015;
+  const season = typeof req.query.Season === "number" ? req.query.Season : 2015;
   connection.query(
     `
     select Player, Pos, Tm, pointsPerGame, (AST/G) as assistsPerGame, (TRB/G) as reboundsPerGame, DWS, OWS, FG, FGA, FT, FTA, (homeWins + awayWins) as totalWins, (homeLosses + awayLosses) as totalLosses from
@@ -709,8 +708,8 @@ async function lucky(req, res) {
 // Route 16 (handler)
 async function contributes_most(req, res) {
   // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
-  const page = req.query.page ? req.query.page : 1;
-  const pagesize = req.query.pagesize ? req.query.pagesize : 10;
+  const page = typeof req.query.page === "number" ? req.query.page : 1;
+  const pagesize = typeof req.query.pagesize === "number" ? req.query.pagesize : 10;
   var offset = pagesize * (page - 1);
   connection.query(
     `

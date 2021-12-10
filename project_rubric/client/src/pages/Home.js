@@ -100,7 +100,7 @@ class Home extends React.Component {
               </Column>
 
               <Column width={100} flexGrow={1} sortable>
-                <HeaderCell>POS</HeaderCell>
+                <HeaderCell>Position</HeaderCell>
                 <Cell dataKey="Position" />
               </Column>
 
