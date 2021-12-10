@@ -54,7 +54,7 @@ class Home extends React.Component {
         <div>
           <TopNav />
           <div style={{ width: "70vw", margin: "0 auto", marginTop: "5vh" }}>
-            <h2>Welcome to the NBA Database!</h2>
+            <h2>Welcome to the NBA Database</h2>
             <h4>
               Here you can look for information about players, teams, and
               matches throughout the history of NBA - good luck exploring!{" "}
@@ -151,7 +151,7 @@ class Home extends React.Component {
           <div style={{ width: "70vw", margin: "0 auto", marginTop: "5vh" }}>
             <h3>Games</h3>
             <br></br>
-            <Table 
+            <Table
               bordered
               cellBordered
               height={420}
@@ -236,6 +236,8 @@ class Home extends React.Component {
               />
             </div>
           </div>
+        </div>
+        <div style={{ padding: 50 }}>
         </div>
       </CustomProvider>
     );

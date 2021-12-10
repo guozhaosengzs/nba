@@ -435,7 +435,7 @@ class Home extends React.Component {
                         </div>
                     </div>
                     <div style={{ width: "80vw", margin: "0 auto", marginTop: "3vh" }}>
-                        <h3>It's All 'bout Contribution</h3>
+                        <h3>It's All 'Bout Contribution</h3>
                         <br></br>
                         {/* =====================TABLE 4=============================== */}
                         <h5>
