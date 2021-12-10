@@ -71,8 +71,8 @@ class Home extends React.Component {
               headerHeight={40}
               data={this.state.playersResults.filter(
                 (_, i) =>
-                  i > this.state.playerLimit * (this.state.playerPage - 1) &&
-                  i <= this.state.playerLimit * this.state.playerPage
+                  i >= this.state.playerLimit * (this.state.playerPage - 1) &&
+                  i < this.state.playerLimit * this.state.playerPage
               )}
               loading={this.state.playerLoad}
               sortColumn={this.state.playerSortColumn}
@@ -158,8 +158,8 @@ class Home extends React.Component {
               headerHeight={80}
               data={this.state.gamesResults.filter(
                 (_, i) =>
-                  i > this.state.gameLimit * (this.state.gamePage - 1) &&
-                  i <= this.state.gameLimit * this.state.gamePage
+                  i >= this.state.gameLimit * (this.state.gamePage - 1) &&
+                  i < this.state.gameLimit * this.state.gamePage
               )}
               loading={this.state.gameLoad}
               sortColumn={this.state.gameSortColumn}

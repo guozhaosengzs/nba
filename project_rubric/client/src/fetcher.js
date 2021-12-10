@@ -22,9 +22,11 @@ const getGame = async (Game_ID) => {
 }
 
 const getTopPOSPlayer = async (Season) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/first_all_nba`, {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/first_all_nba?Season=${Season}`, {
         method: 'GET',
     })
+    console.log(Season);
+
     return res.json()
 }
 
@@ -35,18 +37,20 @@ const getTopPlayerNoWin = async (Season, page, pagesize) => {
     return res.json()
 }
 
-const getLucky = async (Team_abbr) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/lucky?Team=${Team_abbr}`, {
+const getLucky = async (team) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/lucky?Team=${team}`, {
         method: 'GET',
     })
+    console.log(res)
+
     return res.json()
 }
-
 
 const getMostContributing = async (page, pagesize) => {
     var res = await fetch(`http://${config.server_host}:${config.server_port}/contributes_most?page=${page}&pagesize=${pagesize}`, {
         method: 'GET',
     })
+
     return res.json()
 }
 

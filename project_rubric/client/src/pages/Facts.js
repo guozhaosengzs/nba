@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Pagination, CustomProvider } from "rsuite";
-import { Table, Column, ColumnGroup, HeaderCell, Cell } from "rsuite-table";
+import { Table, Column, HeaderCell, Cell } from "rsuite-table";
 
 import TopNav from "../components/TopNav";
 import ColumnSort from "../components/ColumnSort";
@@ -63,7 +63,7 @@ class Home extends React.Component {
             this.setState({ fact2Results: res.results });
             this.setState({ fact2Load: false });
         }); 
-
+ 
         getLucky().then(res => {
             this.setState({ fact3Results: res.results });
             this.setState({ fact3Load: false });
@@ -89,7 +89,7 @@ class Home extends React.Component {
                     </div>
 
                     <div style={{ width: "80vw", margin: "0 auto", marginTop: "3vh" }}>
-                        <h3>Best Position in Good Teams</h3>
+                        <h3>Best Positional Players in Top Teams</h3>
                         <br></br>
                         {/* =====================TABLE 1=============================== */}
                         <h5>
@@ -103,14 +103,15 @@ class Home extends React.Component {
                             headerHeight={40}
                             data={this.state.fact1Results.filter(
                                 (_, i) =>
-                                    i > this.state.fact1Limit * (this.state.fact1Page - 1) &&
-                                    i <= this.state.fact1Limit * this.state.fact1Page
+                                    i >= this.state.fact1Limit * (this.state.fact1Page - 1) &&
+                                    i < this.state.fact1Limit * this.state.fact1Page
                             )}
                             loading={this.state.fact1Load}
                             sortColumn={this.state.fact1SortColumn}
                             sortType={this.state.fact1SortType}
                             onSortColumn={(sortColumn, sortType) => {
                                 this.setState({ fact1Load: true });
+                                this.setState({ fact1Page: 1 });
 
                                 this.state.fact1Results.sort((a, b) => {
                                     let x = a[sortColumn];
@@ -126,7 +127,7 @@ class Home extends React.Component {
                                 }, 500);
                             }}
                         >
-                            <Column width={100} align="center" fixed flexGrow={1} sortable>
+                            <Column width={100}  fixed flexGrow={1} sortable>
                                 <HeaderCell>Name</HeaderCell>
                                 <Cell dataKey="Player" />
                             </Column>
@@ -201,14 +202,15 @@ class Home extends React.Component {
                             headerHeight={40}
                             data={this.state.fact2Results.filter(
                                 (_, i) =>
-                                    i > this.state.fact2Limit * (this.state.fact2Page - 1) &&
-                                    i <= this.state.fact2Limit * this.state.fact2Page
+                                    i >= this.state.fact2Limit * (this.state.fact2Page - 1) &&
+                                    i < this.state.fact2Limit * this.state.fact2Page
                             )}
                             loading={this.state.fact2Load}
                             sortColumn={this.state.fact2SortColumn}
                             sortType={this.state.fact2SortType}
                             onSortColumn={(sortColumn, sortType) => {
                                 this.setState({ fact2Load: true });
+                                this.setState({ fact2Page: 1 });
 
                                 this.state.fact2Results.sort((a, b) => {
                                     let x = a[sortColumn];
@@ -224,7 +226,7 @@ class Home extends React.Component {
                                 }, 500);
                             }}
                         >
-                            <Column width={100} align="center" fixed flexGrow={1} sortable>
+                            <Column width={100}  fixed flexGrow={1} sortable>
                                 <HeaderCell>Name</HeaderCell>
                                 <Cell dataKey="Player" />
                             </Column>
@@ -284,6 +286,186 @@ class Home extends React.Component {
                                 onChangeLimit={dataKey => {
                                     this.setState({ fact2Page: 1 });
                                     this.setState({ fact2Limit: dataKey });
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    <div style={{ width: "80vw", margin: "0 auto", marginTop: "3vh" }}>
+                        <h3>Lucky or Home Advantage</h3>
+                        <br></br>
+                        {/* =====================TABLE 3=============================== */}
+                        <h5>
+                            Where did the team achieve most victory? Is it at home?<br></br>
+                            Is the top player in the team born in this city?
+                        </h5>
+                        <br></br>
+                        <Table
+                            bordered
+                            cellBordered
+                            autoHeight={true}
+                            headerHeight={40}
+                            data={this.state.fact3Results.filter(
+                                (_, i) =>
+                                    i >= this.state.fact3Limit * (this.state.fact3Page - 1) &&
+                                    i < this.state.fact3Limit * this.state.fact3Page
+                            )}
+                            loading={this.state.fact3Load}
+                            sortColumn={this.state.fact3SortColumn}
+                            sortType={this.state.fact3SortType}
+                            onSortColumn={(sortColumn, sortType) => {
+                                this.setState({ fact3Load: true });
+                                this.setState({ fact3Page: 1 });
+
+                                this.state.fact3Results.sort((a, b) => {
+                                    let x = a[sortColumn];
+                                    let y = b[sortColumn];
+
+                                    return ColumnSort(x, y, sortType);
+                                });
+
+                                setTimeout(() => {
+                                    this.setState({ fact3SortType: sortType });
+                                    this.setState({ fact3SortColumn: sortColumn });
+                                    this.setState({ fact3Load: false });
+                                }, 500);
+                            }}
+                        >
+                            <Column fixed flexGrow={1} sortable>
+                                <HeaderCell>Team</HeaderCell>
+                                <Cell dataKey="The_Team" />
+                            </Column>
+
+                            <Column width={150} flexGrow={1} sortable>
+                                <HeaderCell>City with Most Win</HeaderCell>
+                                <Cell dataKey="lucky_city" />
+                            </Column>
+
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell> ...Home City?</HeaderCell>
+                                <Cell dataKey="IS_HOME_CITY" />
+                            </Column>
+
+                            <Column width={150} flexGrow={1} sortable>
+                                <HeaderCell>Player with Most PTS</HeaderCell>
+                                <Cell dataKey="lucky_player" />
+                            </Column>
+
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>... Born in This City?</HeaderCell>
+                                <Cell dataKey="Born_in_lucky_CITY" />
+                            </Column>
+                        </Table>
+
+                        <div style={{ padding: 10 }}>
+                            <Pagination
+                                prev
+                                next
+                                first
+                                last
+                                ellipsis
+                                boundaryLinks
+                                maxButtons={5}
+                                size="xs"
+                                layout={["total", "-", "limit", "|", "pager", "skip"]}
+                                limit={this.state.fact3Limit}
+                                limitOptions={[10, 25, 50]}
+                                total={this.state.fact3Results.length}
+                                activePage={this.state.fact3Page}
+                                onChangePage={p => this.setState({ fact3Page: p })}
+                                onChangeLimit={dataKey => {
+                                    this.setState({ fact3Page: 1 });
+                                    this.setState({ fact3Limit: dataKey });
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div style={{ width: "80vw", margin: "0 auto", marginTop: "3vh" }}>
+                        <h3>It's All 'bout Contribution</h3>
+                        <br></br>
+                        {/* =====================TABLE 4=============================== */}
+                        <h5>
+                            Sometimes points can define a "top" player, but now let's check out the
+                            player who contributes the highest percentage of points to their team 
+                            in each season.
+                        </h5>
+                        <br></br>
+                        <Table
+                            bordered
+                            cellBordered
+                            autoHeight={true}
+                            headerHeight={40}
+                            data={this.state.fact4Results.filter(
+                                (_, i) =>
+                                    i >= this.state.fact4Limit * (this.state.fact4Page - 1) &&
+                                    i < this.state.fact4Limit * this.state.fact4Page
+                            )}
+                            loading={this.state.fact4Load}
+                            sortColumn={this.state.fact4SortColumn}
+                            sortType={this.state.fact4SortType}
+                            onSortColumn={(sortColumn, sortType) => {
+                                this.setState({ fact4Load: true });
+                                this.setState({ fact4Page: 1 });
+
+                                this.state.fact4Results.sort((a, b) => {
+                                    let x = a[sortColumn];
+                                    let y = b[sortColumn];
+
+                                    return ColumnSort(x, y, sortType);
+                                });
+
+                                setTimeout(() => {
+                                    this.setState({ fact4SortType: sortType });
+                                    this.setState({ fact4SortColumn: sortColumn });
+                                    this.setState({ fact4Load: false });
+                                }, 500);
+                            }}
+                        >
+                            <Column fixed flexGrow={1} sortable>
+                                <HeaderCell>Season</HeaderCell>
+                                <Cell dataKey="Season" />
+                            </Column>
+
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>Team</HeaderCell>
+                                <Cell dataKey="Abbreviation" />
+                            </Column>
+
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell> Player Name</HeaderCell>
+                                <Cell dataKey="Player" />
+                            </Column>
+
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>Personal PTS</HeaderCell>
+                                <Cell dataKey="personalPTS" />
+                            </Column>
+
+                            <Column flexGrow={1} sortable>
+                                <HeaderCell>Contribution (percentage)</HeaderCell>
+                                <Cell dataKey="Contribution" />
+                            </Column>
+                        </Table>
+
+                        <div style={{ padding: 10 }}>
+                            <Pagination
+                                prev
+                                next
+                                first
+                                last
+                                ellipsis
+                                boundaryLinks
+                                maxButtons={5}
+                                size="xs"
+                                layout={["total", "-", "limit", "|", "pager", "skip"]}
+                                limit={this.state.fact4Limit}
+                                limitOptions={[10, 25, 50]}
+                                total={this.state.fact4Results.length}
+                                activePage={this.state.fact4Page}
+                                onChangePage={p => this.setState({ fact4Page: p })}
+                                onChangeLimit={dataKey => {
+                                    this.setState({ fact4Page: 1 });
+                                    this.setState({ fact4Limit: dataKey });
                                 }}
                             />
                         </div>

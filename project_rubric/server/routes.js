@@ -52,7 +52,7 @@ async function game(req, res) {
                 Select Game_Id, Game_Date,Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Ftm_Home,Ftm_Away,Fgm_Home,Fgm_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses
                 FROM Game_Info Natural JOIN HT_win_loss Natural JOIN  AT_win_loss;
 `,
-      function(error, results, fields) {
+      function (error, results, fields) {
         if (error) {
           console.log(error);
           res.json({ error: error });
@@ -91,7 +91,7 @@ async function game_team_info(req, res) {
                     WHERE Year IN (SELECT Season_ID From Teams) and Tm = (SELECT AT from Teams))
                 SELECT Home_Season_Pts,Away_Season_Pts,Home_Season_FG,Away_Season_FG,Home_Season_Ast,Away_Season_Ast,Home_Season_PF,Away_Season_PF
                 FROM HT_stats,Ay_stats;`,
-      function(error, results, fields) {
+      function (error, results, fields) {
         if (error) {
           console.log(error);
           res.json({ error: error });
@@ -141,7 +141,7 @@ async function game_player_info(req, res) {
             (SELECT Player AS Away_PF_king,Cast(player_pf AS DECIMAL(5,1))  AS Away_Highest_PF  FROM AT_player_ranks WHERE pf_rank = 1) at3,
             (SELECT Player AS Home_FG_king,Cast(player_fg AS DECIMAL(5,1)) AS Home_Highest_FG FROM HT_player_ranks WHERE fg_rank = 1) ht4,
             (SELECT Player AS Away_FG_king,Cast(player_fg AS DECIMAL(5,1)) AS Away_Highest_FG FROM AT_player_ranks WHERE fg_rank = 1) at4`,
-      function(error, results, fields) {
+      function (error, results, fields) {
         if (error) {
           console.log(error);
           res.json({ error: error });
@@ -223,7 +223,7 @@ async function search_games(req, res) {
             SELECT Game_ID,Game_Date,HT as Home_Abbr,AT AS Away_abbr, Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses,Home_Seasonal_Leader,Away_Seasonal_Leader,Home_Leader_Pos,Away_Leader_Pos,Home_leader_Pts,Away_leader_Pts,Home_leader_PER,Away_leader_PER,Home_leader_TSP,Away_leader_TSP
                     FROM All_games NATURAL JOIN HT_win_loss NATURAL JOIN AT_win_loss NATURAL JOIN Home_Season_King NATURAL JOIN Away_Season_King
                     ORDER BY Game_Date DESC,HT_win_loss.Home_Team ASC,AT_win_loss.Away_Team ASC;`,
-      function(error, results, fields) {
+      function (error, results, fields) {
         if (error) {
           console.log(error);
           res.json({ error: error });
@@ -284,7 +284,7 @@ async function search_games(req, res) {
             SELECT Game_ID,Game_Date,HT as Home_Abbr,AT AS Away_abbr, Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses,Home_Seasonal_Leader,Away_Seasonal_Leader,Home_Leader_Pos,Away_Leader_Pos,Home_leader_Pts,Away_leader_Pts,Home_leader_PER,Away_leader_PER,Home_leader_TSP,Away_leader_TSP
                     FROM All_games NATURAL JOIN HT_win_loss NATURAL JOIN AT_win_loss NATURAL JOIN Home_Season_King NATURAL JOIN Away_Season_King
                     ORDER BY Game_Date DESC,HT_win_loss.Home_Team ASC,AT_win_loss.Away_Team ASC`,
-      function(error, results, fields) {
+      function (error, results, fields) {
         if (error) {
           console.log(error);
           res.json({ error: error });
@@ -318,7 +318,7 @@ async function player(req, res) {
     where Player like "${player}"
     order by Season desc limit ${offset}, ${pagesize};
     `,
-    function(error, results, fields) {
+    function (error, results, fields) {
       if (error) {
         console.log(error);
         res.json({ error: error });
@@ -359,7 +359,7 @@ async function search_player(req, res) {
                 where Player like '${name}' and Tm like '${team}' and Pos like '${position}'
                 group by Player
                 order by ${attribute} DESC limit 10;`,
-          function(error, results, fields) {
+          function (error, results, fields) {
             if (error) {
               console.log(error);
               res.json({ error: error });
@@ -379,7 +379,7 @@ async function search_player(req, res) {
                 group by Player
                 order by ${attribute} DESC limit 10
                 `,
-          function(error, results, fields) {
+          function (error, results, fields) {
             if (error) {
               console.log(error);
               res.json({ error: error });
@@ -409,7 +409,7 @@ async function search_team_info(req, res) {
     res.end();
   } else {
     const team_id = req.query.Team_ID;
-    connection.query(`SELECT * FROM Team WHERE ID = ${team_id};`, function(
+    connection.query(`SELECT * FROM Team WHERE ID = ${team_id};`, function (
       error,
       results,
       fields
@@ -448,7 +448,7 @@ async function search_team_win(req, res) {
                     where
                           TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id}))
                  select Season_ID as Season, self, opponent, selfScore, opponentScore, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY winPts DESC ) as rankList from all_games order by rankList ASC, Season_ID DESC  LIMIT 10;`,
-      function(error, results, fields) {
+      function (error, results, fields) {
         if (error) {
           console.log(error);
           res.json({ error: error });
@@ -485,7 +485,7 @@ async function search_team_loses(req, res) {
                           TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id}))
                  select Season_ID as Season, self, opponent, selfScore, opponentScore, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY lossPts DESC ) as rankList from all_games order by rankList ASC, Season_ID DESC  LIMIT 10;
 `,
-      function(error, results, fields) {
+      function (error, results, fields) {
         if (error) {
           console.log(error);
           res.json({ error: error });
@@ -521,7 +521,7 @@ async function search_team_player(req, res) {
                 order by Year DESC, avgPoints)
                 select * from player_stats where ptslist = 1 limit 10;
             `,
-      function(error, results, fields) {
+      function (error, results, fields) {
         if (error) {
           console.log(error);
           res.json({ error: error });
@@ -539,7 +539,7 @@ async function get_team(req, res) {
   const teamName = req.query.Team_Name ? "%" + req.query.Team_Name + "%" : "%";
   connection.query(
     `select ID from Team where Full_Name like '${teamName}' limit 1`,
-    function(error, results, fields) {
+    function (error, results, fields) {
       if (error) {
         console.log(error);
         res.json({ error: error });
@@ -557,9 +557,8 @@ async function get_team(req, res) {
 // Route 12 (handler)
 async function player_avg(req, res) {
   // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
-  const page = typeof req.query.page === "number" ? req.query.page : 1;
-  const pagesize =
-    typeof req.query.pagesize === "number" ? req.query.pagesize : 10;
+  const page = req.query.page && !isNaN(req.query.page) ? req.query.page : 1;
+  const pagesize = req.query.pagesize && !isNaN(req.query.pagesize) ? req.query.pagesize : 10;
   var offset = pagesize * (page - 1);
   connection.query(
     `
@@ -574,7 +573,7 @@ async function player_avg(req, res) {
         group by Player
         order by PointPerSeason desc;
     `,
-    function(error, results, fields) {
+    function (error, results, fields) {
       if (error) {
         console.log(error);
         res.json({ error: error });
@@ -592,11 +591,12 @@ async function player_avg(req, res) {
 // Route 13 (handler)
 async function first_all_nba(req, res) {
   // Query Parameter(s): Season (int)
-  const season = typeof req.query.Season === "number" ? req.query.Season : 2015;
+  // const season = typeof req.query.Season === "number" ? req.query.Season : 2015;
+  const season = req.query.Season && !isNaN(req.query.Season) ? req.query.Season : 2015;
 
   connection.query(
     `
-    with gameStats as (select Season_ID, WL_Home, Team_Abbreviation_Home, Team_Abbreviation_Away, Game_ID from Game where Season_ID = ${season}),
+    With gameStats as (select Season_ID, WL_Home, Team_Abbreviation_Home, Team_Abbreviation_Away, Game_ID from Game where Season_ID = ${season}),
   topTeams as (select * from
     (select Team_Abbreviation_Home, sum(case when WL_Home = 'W' then 1 else 0 end) as homeWins
     from gameStats
@@ -612,8 +612,8 @@ async function first_all_nba(req, res) {
   where Tm in (select Team_Abbreviation_Away from topTeams)),
   topPlayers as (select Player, Pos, Tm,Height, Weight, pointsPerGame from playerStats where posRank=1)
 select Player, Pos, Tm, pointsPerGame, Height, Weight,(homeWins+awayWins) as totalWins from topPlayers join topTeams on topPlayers.Tm = topTeams.Team_Abbreviation_Away;
-    `,
-    function(error, results, fields) {
+  `,
+    function (error, results, fields) {
       if (error) {
         console.log(error);
         res.json({ error: error });
@@ -627,10 +627,11 @@ select Player, Pos, Tm, pointsPerGame, Height, Weight,(homeWins+awayWins) as tot
 // Route 14 (handler)
 async function only_got_numbers(req, res) {
   // Query Parameter(s): Season (int), page (int)*, pagesize (int)* (default: 10)
-  const page = typeof req.query.page === "number" ? req.query.page : 1;
-  const pagesize = typeof req.query.pagesize === "number" ? req.query.pagesize : 10;
-  var offset = pagesize * (page - 1);
-  const season = typeof req.query.Season === "number" ? req.query.Season : 2015;
+  // const page = req.query.page && !isNaN(req.query.page) ? req.query.page : 1;
+  // const pagesize = req.query.pagesize && !isNaN(req.query.pagesize) ? req.query.pagesize : 10;
+  // var offset = pagesize * (page - 1);
+  const season = req.query.Season && !isNaN(req.query.Season) ? req.query.Season : 2015;
+  // const season = req.query.Season ? req.query.Season : 2015;
   connection.query(
     `
     select Player, Pos, Tm, pointsPerGame, (AST/G) as assistsPerGame, (TRB/G) as reboundsPerGame, DWS, OWS, FG, FGA, FT, FTA, (homeWins + awayWins) as totalWins, (homeLosses + awayLosses) as totalLosses from
@@ -651,10 +652,8 @@ async function only_got_numbers(req, res) {
     group by Team_Abbreviation_Home, hw.Season_ID) as badTeams join
         Seasons_Stats
         on badTeams.Team_Abbreviation_Home = Seasons_Stats.Tm and badTeams.Season_ID = Seasons_Stats.Year group by  Player, Season_ID) as allPlayers
-    where tmRank=1
-        limit ${offset}, ${pagesize};
-    `,
-    function(error, results, fields) {
+    where tmRank=1`,
+    function (error, results, fields) {
       if (error) {
         console.log(error);
         res.json({ error: error });
@@ -668,22 +667,24 @@ async function only_got_numbers(req, res) {
 // Route 15 (handler)
 async function lucky(req, res) {
   //query parameter: Team(string)
-  const Team = req.query.Team ? req.query.Team : "CLE";
+  // const Team = req.query.Team ? req.query.Team  : 'CLE';
+  const Team = req.query.Team ? '%' + req.query.Team + '%' : '%%';
+
   connection.query(
     `
         WITH game_city AS(SELECT Team_Abbreviation_Home AS THE_TEAM,WL_HOME AS WL,T.City AS CITY
             FROM Game JOIN Team T on Game.Team_Abbreviation_Home = T.Abbreviation
-            WHERE Team_Abbreviation_Home = '${Team}'
+            WHERE Team_Abbreviation_Home LIKE '${Team}'
             UNION ALL
             SELECT Team_Abbreviation_AWAY AS THE_TEAM,(CASE WHEN WL_Home = 'W' Then 'L' ELSE 'W' END)AS WL,T.City AS CITY
             FROM Game JOIN Team T on Game.Team_Abbreviation_Home = T.Abbreviation
-            WHERE Team_Abbreviation_AWAY = '${Team}'),
+            WHERE Team_Abbreviation_AWAY LIKE '${Team}'),
           win AS (SELECT The_team, SUM(CASE WHEN WL = 'W' THEN 1 ELSE 0 END)/count(*) AS win_rate,city
           FROM game_city
           GROUP BY city),
           player_sum AS (SELECT Tm,Player,SUM(PTS) AS sum_pts
           FROM Seasons_Stats
-          WHERE Tm = '${Team}'
+          WHERE Tm LIKE '${Team}'
           GROUP BY Player)
 
           SELECT The_Team,win.city AS lucky_city,CASE WHEN win.city = Team.CITY THEN 'YES' ELSE 'NO' END AS 'IS_HOME_CITY',
@@ -694,7 +695,7 @@ async function lucky(req, res) {
           WHERE win.win_rate IN (SELECT MAX(win_rate) FROM win)
           AND player_sum.sum_pts IN (SELECT MAX(sum_pts) FROM player_sum)
      `,
-    function(error, results, fields) {
+    function (error, results, fields) {
       if (error) {
         console.log(error);
         res.json({ error: error });
@@ -708,8 +709,8 @@ async function lucky(req, res) {
 // Route 16 (handler)
 async function contributes_most(req, res) {
   // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
-  const page = typeof req.query.page === "number" ? req.query.page : 1;
-  const pagesize = typeof req.query.pagesize === "number" ? req.query.pagesize : 10;
+  const page = req.query.page && !isNaN(req.query.page) ? req.query.page : 1;
+  const pagesize = req.query.pagesize && !isNaN(req.query.pagesize) ? req.query.pagesize : 10;
   var offset = pagesize * (page - 1);
   connection.query(
     `
@@ -730,10 +731,9 @@ async function contributes_most(req, res) {
       AND G.Team_Abbreviation_Home = SS.Tm
       JOIN Team T on SS.Tm = T.Abbreviation
       GROUP BY G.Season_ID, G.Team_Abbreviation_Home, SS.Player
-      ORDER BY G.Season_ID DESC,Contribution DESC
-      limit ${offset}, ${pagesize};
+      ORDER BY G.Season_ID DESC,Contribution DESC;
       `,
-    function(error, results, fields) {
+    function (error, results, fields) {
       if (error) {
         console.log(error);
         res.json({ error: error });
