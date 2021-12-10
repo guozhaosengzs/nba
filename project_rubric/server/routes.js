@@ -160,8 +160,8 @@ async function search_games(req, res) {
   //Game_ID, Game_Date; Abbreviation, Nickname, Points in game seasonal wins up to now, seasonal losses up to now, for both teams
   //Seasonal Leader player name and the position, PER , Pts, TSP(ts_percentage) of the leader for both teams
 
-  const Date_From = req.query.Date_From ? req.query.Date_From : "2018-04-01";
-  const Date_To = req.query.Date_To ? req.query.Date_To : "2018-04-11";
+  const Date_From = req.query.Date_From ? req.query.Date_From : "2017-04-01";
+  const Date_To = req.query.Date_To ? req.query.Date_To : "2018-01-1";
   const Home = req.query.Home ? req.query.Home : "";
   const Away = req.query.Away ? req.query.Away : "";
   const City = req.query.City ? req.query.City : "";
@@ -586,13 +586,14 @@ async function player_avg(req, res) {
 }
 
 // ********************************************
-//            Mean Facts Page
+//            Facts Page
 // ********************************************
 
 // Route 13 (handler)
 async function first_all_nba(req, res) {
   // Query Parameter(s): Season (int)
-  const season = req.query.Season ? req.query.Season : 2015;
+  const season = typeof req.query.Season === "number" ? req.query.Season : 2015;
+
   connection.query(
     `
     with gameStats as (select Season_ID, WL_Home, Team_Abbreviation_Home, Team_Abbreviation_Away, Game_ID from Game where Season_ID = ${season}),
@@ -626,8 +627,9 @@ select Player, Pos, Tm, pointsPerGame, Height, Weight,(homeWins+awayWins) as tot
 // Route 14 (handler)
 async function only_got_numbers(req, res) {
   // Query Parameter(s): Season (int), page (int)*, pagesize (int)* (default: 10)
-  const page = req.query.page ? req.query.page : 1;
-  const pagesize = req.query.pagesize ? req.query.pagesize : 10;
+  const page = typeof req.query.page === "number" ? req.query.page : 1;
+  const pagesize =
+    typeof req.query.pagesize === "number" ? req.query.pagesize : 10;
   var offset = pagesize * (page - 1);
   const season = req.query.Season ? req.query.Season : 2015;
   connection.query(

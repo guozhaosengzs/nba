@@ -1,4 +1,4 @@
-function columnSort(x, y, sortType) {
+function ColumnSort(x, y, sortType) {
   let x1 = typeof x === "string" ? x.charCodeAt() : x;
   let y1 = typeof y === "string" ? y.charCodeAt() : y;
 
@@ -24,4 +24,4 @@ function columnSort(x, y, sortType) {
   }
 }
 
-export default columnSort;
+export default ColumnSort;

@@ -21,9 +21,42 @@ const getGame = async (Game_ID) => {
     return res.json()
 }
 
+const getTopPOSPlayer = async (Season) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/first_all_nba`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
+const getTopPlayerNoWin = async (Season, page, pagesize) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/only_got_numbers?Season=${Season}&page=${page}&pagesize=${pagesize}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
+const getLucky = async (Team_abbr) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/lucky?Team=${Team_abbr}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
+
+const getMostContributing = async (page, pagesize) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/contributes_most?page=${page}&pagesize=${pagesize}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
 
 export {
     getAllGames,
     getAllPlayersAvg,
-    getGame
+    getGame,
+    getTopPOSPlayer,
+    getTopPlayerNoWin,
+    getLucky,
+    getMostContributing
 }

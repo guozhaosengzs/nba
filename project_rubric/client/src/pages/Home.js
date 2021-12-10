@@ -4,7 +4,7 @@ import { Pagination, CustomProvider } from "rsuite";
 import { Table, Column, ColumnGroup, HeaderCell, Cell } from "rsuite-table";
 
 import TopNav from "../components/TopNav";
-import columnSort from "../components/columnSort";
+import ColumnSort from "../components/ColumnSort";
 import { getAllPlayersAvg, getAllGames } from "../fetcher";
 
 class Home extends React.Component {
@@ -63,7 +63,7 @@ class Home extends React.Component {
 
           <div style={{ width: "70vw", margin: "0 auto", marginTop: "5vh" }}>
             <h3>Player Stats (Average per Season)</h3>
-
+            <br></br>
             <Table
               bordered
               cellBordered
@@ -84,7 +84,7 @@ class Home extends React.Component {
                   let x = a[sortColumn];
                   let y = b[sortColumn];
 
-                  return columnSort(x, y, sortType);
+                  return ColumnSort(x, y, sortType);
                 });
 
                 setTimeout(() => {
@@ -124,7 +124,6 @@ class Home extends React.Component {
                 <Cell dataKey="EFGPerSeason" />
               </Column>
             </Table>
-
             <div style={{ padding: 10 }}>
               <Pagination
                 prev
@@ -151,8 +150,8 @@ class Home extends React.Component {
 
           <div style={{ width: "70vw", margin: "0 auto", marginTop: "5vh" }}>
             <h3>Games</h3>
-
-            <Table
+            <br></br>
+            <Table 
               bordered
               cellBordered
               height={420}
@@ -172,7 +171,7 @@ class Home extends React.Component {
                   let x = a[sortColumn];
                   let y = b[sortColumn];
 
-                  return columnSort(x, y, sortType);
+                  return ColumnSort(x, y, sortType);
                 });
 
                 setTimeout(() => {
