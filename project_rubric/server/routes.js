@@ -668,33 +668,35 @@ async function only_got_numbers(req, res) {
 async function lucky(req, res) {
   //query parameter: Team(string)
   // const Team = req.query.Team ? req.query.Team  : 'CLE';
-  const Team = req.query.Team ? '%' + req.query.Team + '%' : '%%';
+  // const Team = !(req.query.Team == null) ? '%' + req.query.Team + '%' : '%CLE%';
+  const T = (req.query.Team === "undefined") ? '%CLE%' : '%' + req.query.Team + '%';
+  console.log(T)
 
   connection.query(
     `
-        WITH game_city AS(SELECT Team_Abbreviation_Home AS THE_TEAM,WL_HOME AS WL,T.City AS CITY
-            FROM Game JOIN Team T on Game.Team_Abbreviation_Home = T.Abbreviation
-            WHERE Team_Abbreviation_Home LIKE '${Team}'
-            UNION ALL
-            SELECT Team_Abbreviation_AWAY AS THE_TEAM,(CASE WHEN WL_Home = 'W' Then 'L' ELSE 'W' END)AS WL,T.City AS CITY
-            FROM Game JOIN Team T on Game.Team_Abbreviation_Home = T.Abbreviation
-            WHERE Team_Abbreviation_AWAY LIKE '${Team}'),
-          win AS (SELECT The_team, SUM(CASE WHEN WL = 'W' THEN 1 ELSE 0 END)/count(*) AS win_rate,city
-          FROM game_city
-          GROUP BY city),
-          player_sum AS (SELECT Tm,Player,SUM(PTS) AS sum_pts
-          FROM Seasons_Stats
-          WHERE Tm LIKE '${Team}'
-          GROUP BY Player)
+      WITH game_city AS(SELECT Team_Abbreviation_Home AS THE_TEAM,WL_HOME AS WL,T.City AS CITY
+          FROM Game JOIN Team T on Game.Team_Abbreviation_Home = T.Abbreviation
+          WHERE Team_Abbreviation_Home LIKE '${T}'
+          UNION ALL
+          SELECT Team_Abbreviation_AWAY AS THE_TEAM,(CASE WHEN WL_Home = 'W' Then 'L' ELSE 'W' END)AS WL,T.City AS CITY
+          FROM Game JOIN Team T on Game.Team_Abbreviation_Home = T.Abbreviation
+          WHERE Team_Abbreviation_AWAY LIKE '${T}'),
+        win AS (SELECT The_team, SUM(CASE WHEN WL = 'W' THEN 1 ELSE 0 END)/count(*) AS win_rate,city
+        FROM game_city
+        GROUP BY city),
+        player_sum AS (SELECT Tm,Player,SUM(PTS) AS sum_pts
+        FROM Seasons_Stats
+        WHERE Tm LIKE '${T}'
+        GROUP BY Player)
 
-          SELECT The_Team,win.city AS lucky_city,CASE WHEN win.city = Team.CITY THEN 'YES' ELSE 'NO' END AS 'IS_HOME_CITY',
-               player_sum.Player AS lucky_player,CASE WHEN Players.birth_city = win.city THEN 'YES' ELSE 'NO' END AS 'Born_in_lucky_CITY'
-          FROM win INNER JOIN Team ON The_team = Team.Abbreviation
-          INNER JOIN player_sum ON The_team = Tm
-          INNER JOIN Players ON player_sum.Player = Players.Player
-          WHERE win.win_rate IN (SELECT MAX(win_rate) FROM win)
-          AND player_sum.sum_pts IN (SELECT MAX(sum_pts) FROM player_sum)
-     `,
+        SELECT The_Team,win.city AS lucky_city,CASE WHEN win.city = Team.CITY THEN 'YES' ELSE 'NO' END AS 'IS_HOME_CITY',
+              player_sum.Player AS lucky_player,CASE WHEN Players.birth_city = win.city THEN 'YES' ELSE 'NO' END AS 'Born_in_lucky_CITY'
+        FROM win INNER JOIN Team ON The_team = Team.Abbreviation
+        INNER JOIN player_sum ON The_team = Tm
+        INNER JOIN Players ON player_sum.Player = Players.Player
+        WHERE win.win_rate IN (SELECT MAX(win_rate) FROM win)
+        AND player_sum.sum_pts IN (SELECT MAX(sum_pts) FROM player_sum)
+    `,
     function (error, results, fields) {
       if (error) {
         console.log(error);

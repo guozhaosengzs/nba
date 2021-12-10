@@ -305,80 +305,34 @@ class Home extends React.Component {
                             cellBordered
                             autoHeight={true}
                             headerHeight={40}
-                            data={this.state.fact3Results.filter(
-                                (_, i) =>
-                                    i >= this.state.fact3Limit * (this.state.fact3Page - 1) &&
-                                    i < this.state.fact3Limit * this.state.fact3Page
-                            )}
+                            data={this.state.fact3Results}
                             loading={this.state.fact3Load}
-                            sortColumn={this.state.fact3SortColumn}
-                            sortType={this.state.fact3SortType}
-                            onSortColumn={(sortColumn, sortType) => {
-                                this.setState({ fact3Load: true });
-                                this.setState({ fact3Page: 1 });
-
-                                this.state.fact3Results.sort((a, b) => {
-                                    let x = a[sortColumn];
-                                    let y = b[sortColumn];
-
-                                    return ColumnSort(x, y, sortType);
-                                });
-
-                                setTimeout(() => {
-                                    this.setState({ fact3SortType: sortType });
-                                    this.setState({ fact3SortColumn: sortColumn });
-                                    this.setState({ fact3Load: false });
-                                }, 500);
-                            }}
                         >
-                            <Column fixed flexGrow={1} sortable>
+                            <Column fixed flexGrow={1} >
                                 <HeaderCell>Team</HeaderCell>
                                 <Cell dataKey="The_Team" />
                             </Column>
 
-                            <Column width={150} flexGrow={1} sortable>
+                            <Column width={150} flexGrow={1} >
                                 <HeaderCell>City with Most Win</HeaderCell>
                                 <Cell dataKey="lucky_city" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} >
                                 <HeaderCell> ...Home City?</HeaderCell>
                                 <Cell dataKey="IS_HOME_CITY" />
                             </Column>
 
-                            <Column width={150} flexGrow={1} sortable>
+                            <Column width={150} flexGrow={1} >
                                 <HeaderCell>Player with Most PTS</HeaderCell>
                                 <Cell dataKey="lucky_player" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} >
                                 <HeaderCell>... Born in This City?</HeaderCell>
                                 <Cell dataKey="Born_in_lucky_CITY" />
                             </Column>
                         </Table>
-
-                        <div style={{ padding: 10 }}>
-                            <Pagination
-                                prev
-                                next
-                                first
-                                last
-                                ellipsis
-                                boundaryLinks
-                                maxButtons={5}
-                                size="xs"
-                                layout={["total", "-", "limit", "|", "pager", "skip"]}
-                                limit={this.state.fact3Limit}
-                                limitOptions={[10, 25, 50]}
-                                total={this.state.fact3Results.length}
-                                activePage={this.state.fact3Page}
-                                onChangePage={p => this.setState({ fact3Page: p })}
-                                onChangeLimit={dataKey => {
-                                    this.setState({ fact3Page: 1 });
-                                    this.setState({ fact3Limit: dataKey });
-                                }}
-                            />
-                        </div>
                     </div>
                     <div style={{ width: "80vw", margin: "0 auto", marginTop: "3vh" }}>
                         <h3>It's All 'bout Contribution</h3>
