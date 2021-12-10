@@ -40,7 +40,6 @@ const getLucky = async (Team) => {
     var res = await fetch(`http://${config.server_host}:${config.server_port}/lucky?Team=${Team}`, {
         method: 'GET',
     })
-    console.log(typeof Team)
 
     return res.json()
 }

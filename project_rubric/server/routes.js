@@ -670,8 +670,6 @@ async function lucky(req, res) {
   // const Team = req.query.Team ? req.query.Team  : 'CLE';
   // const Team = !(req.query.Team == null) ? '%' + req.query.Team + '%' : '%CLE%';
   const T = (req.query.Team === "undefined") ? '%CLE%' : '%' + req.query.Team + '%';
-  console.log(T)
-
   connection.query(
     `
       WITH game_city AS(SELECT Team_Abbreviation_Home AS THE_TEAM,WL_HOME AS WL,T.City AS CITY
@@ -711,9 +709,7 @@ async function lucky(req, res) {
 // Route 16 (handler)
 async function contributes_most(req, res) {
   // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
-  const page = req.query.page && !isNaN(req.query.page) ? req.query.page : 1;
-  const pagesize = req.query.pagesize && !isNaN(req.query.pagesize) ? req.query.pagesize : 10;
-  var offset = pagesize * (page - 1);
+  // var offset = pagesize * (page - 1);
   connection.query(
     `
     WITH newGame AS(

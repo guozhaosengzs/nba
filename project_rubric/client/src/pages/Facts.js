@@ -1,7 +1,8 @@
 import React from "react";
 
-import { Pagination, CustomProvider } from "rsuite";
+import { Pagination, CustomProvider, Input, InputNumber, InputGroup } from "rsuite";
 import { Table, Column, HeaderCell, Cell } from "rsuite-table";
+import SearchIcon from '@rsuite/icons/Search';
 
 import TopNav from "../components/TopNav";
 import ColumnSort from "../components/ColumnSort";
@@ -19,7 +20,7 @@ class Home extends React.Component {
         this.state = {
             fact1Results: [],
             fact1Page: 1,
-            fact1Limit: 10,
+            fact1Limit: 5,
             fact1Load: true,
             fact1SortType: null,
             fact1SortColumn: null,
@@ -33,7 +34,7 @@ class Home extends React.Component {
 
             fact3Results: [],
             fact3Page: 1,
-            fact3Limit: 10,
+            fact3Limit: 1,
             fact3Load: true,
             fact3SortType: null,
             fact3SortColumn: null,
@@ -43,14 +44,47 @@ class Home extends React.Component {
             fact4Limit: 10,
             fact4Load: true,
             fact4SortType: null,
-            fact4SortColumn: null
+            fact4SortColumn: null,
         };
 
+        this.handlefact1QueryChange = this.handlefact1QueryChange.bind(this)
+        this.handlefact2QueryChange = this.handlefact2QueryChange.bind(this)
+        this.handlefact3QueryChange = this.handlefact3QueryChange.bind(this)
         this.goToGame = this.goToGame.bind(this);
     }
 
     goToGame(Game_ID) {
         window.location = `/game?id=${Game_ID}`;
+    }
+
+    handlefact1QueryChange(value) {
+        this.setState({ fact1Load: true });
+        getTopPOSPlayer(value).then(res => {
+            this.setState({ fact1Results: res.results });
+        });
+        this.setState({ fact1SortType: null });
+        this.setState({ fact1SortColumn: null });
+        this.setState({ fact1Load: false });
+    }
+
+    handlefact2QueryChange(value) {
+        this.setState({ fact2Load: true });
+        getTopPlayerNoWin(value).then(res => {
+            this.setState({ fact2Results: res.results });
+        });
+        this.setState({ fact2SortType: null });
+        this.setState({ fact2SortColumn: null });
+        this.setState({ fact2Load: false });
+    }
+
+    handlefact3QueryChange(string) {
+        this.setState({ fact3Load: true });
+        getLucky(string).then(res => {
+            this.setState({ fact3Results: res.results });
+        });
+        this.setState({ fact3SortType: null });
+        this.setState({ fact3SortColumn: null });
+        this.setState({ fact3Load: false });
     }
 
     componentDidMount() {
@@ -62,8 +96,8 @@ class Home extends React.Component {
         getTopPlayerNoWin().then(res => {
             this.setState({ fact2Results: res.results });
             this.setState({ fact2Load: false });
-        }); 
- 
+        });
+
         getLucky().then(res => {
             this.setState({ fact3Results: res.results });
             this.setState({ fact3Load: false });
@@ -96,9 +130,21 @@ class Home extends React.Component {
                             Who are the top scoring players for each position from teams that has more than 50 wins in the season?
                         </h5>
                         <br></br>
+                        Season (1995 - 2017)
+                        <div style={{ width: 100, padding: 5 }}>
+                            <InputNumber
+                                defaultValue={2015}
+                                max={2017}
+                                min={1995}
+                                onChange={(value, _) => {
+                                    this.handlefact1QueryChange(value);
+                                }}
+                            />
+                        </div>
+                        <br></br>
                         <Table
-                            bordered
-                            cellBordered
+                            bordered={true}
+                            cellBordered={true}
                             autoHeight={true}
                             headerHeight={40}
                             data={this.state.fact1Results.filter(
@@ -127,7 +173,7 @@ class Home extends React.Component {
                                 }, 500);
                             }}
                         >
-                            <Column width={100}  fixed flexGrow={1} sortable>
+                            <Column width={100} fixed flexGrow={1} sortable>
                                 <HeaderCell>Name</HeaderCell>
                                 <Cell dataKey="Player" />
                             </Column>
@@ -175,7 +221,7 @@ class Home extends React.Component {
                                 size="xs"
                                 layout={["total", "-", "limit", "|", "pager", "skip"]}
                                 limit={this.state.fact1Limit}
-                                limitOptions={[10, 25, 50]}
+                                limitOptions={[this.state.fact1Limit]}
                                 total={this.state.fact1Results.length}
                                 activePage={this.state.fact1Page}
                                 onChangePage={p => this.setState({ fact1Page: p })}
@@ -194,6 +240,18 @@ class Home extends React.Component {
                         <h5>
                             Who are the top player in teams that has more losses than wins in the season?
                         </h5>
+                        <br></br>
+                        Season (1995 - 2017)
+                        <div style={{ width: 100, padding: 5 }}>
+                            <InputNumber
+                                defaultValue={2015}
+                                max={2017}
+                                min={1995}
+                                onChange={(value, _) => {
+                                    this.handlefact2QueryChange(value);
+                                }}
+                            />
+                        </div>
                         <br></br>
                         <Table
                             bordered
@@ -226,7 +284,7 @@ class Home extends React.Component {
                                 }, 500);
                             }}
                         >
-                            <Column width={100}  fixed flexGrow={1} sortable>
+                            <Column width={100} fixed flexGrow={1} sortable>
                                 <HeaderCell>Name</HeaderCell>
                                 <Cell dataKey="Player" />
                             </Column>
@@ -300,6 +358,20 @@ class Home extends React.Component {
                             Is the top player in the team born in this city?
                         </h5>
                         <br></br>
+                        Team Abbreviation
+                        <div style={{ width: 130, padding: 5 }}>
+                            <InputGroup>
+                                <Input placeholder="CLE" 
+                                    onChange={(string, _) => {
+                                        this.handlefact3QueryChange(string);
+                                    }}
+                                />
+                                <InputGroup.Addon>
+                                    <SearchIcon />
+                                </InputGroup.Addon>
+                            </InputGroup>
+                        </div>
+                        <br></br>
                         <Table
                             bordered
                             cellBordered
@@ -333,6 +405,28 @@ class Home extends React.Component {
                                 <Cell dataKey="Born_in_lucky_CITY" />
                             </Column>
                         </Table>
+                        <div style={{ padding: 10 }}>
+                            <Pagination
+                                prev
+                                next
+                                first
+                                last
+                                ellipsis
+                                boundaryLinks
+                                maxButtons={5}
+                                size="xs"
+                                layout={["total", "-", "limit", "|", "pager", "skip"]}
+                                limit={this.state.fact3Limit}
+                                limitOptions={[this.state.fact3Limit]}
+                                total={this.state.fact3Results.length}
+                                activePage={this.state.fact3Page}
+                                onChangePage={p => this.setState({ fact3Page: p })}
+                                onChangeLimit={dataKey => {
+                                    this.setState({ fact3Page: 1 });
+                                    this.setState({ fact3Limit: dataKey });
+                                }}
+                            />
+                        </div>
                     </div>
                     <div style={{ width: "80vw", margin: "0 auto", marginTop: "3vh" }}>
                         <h3>It's All 'bout Contribution</h3>
@@ -340,7 +434,7 @@ class Home extends React.Component {
                         {/* =====================TABLE 4=============================== */}
                         <h5>
                             Sometimes points can define a "top" player, but now let's check out the
-                            player who contributes the highest percentage of points to their team 
+                            player who contributes the highest percentage of points to their team
                             in each season.
                         </h5>
                         <br></br>
@@ -409,7 +503,7 @@ class Home extends React.Component {
                                 last
                                 ellipsis
                                 boundaryLinks
-                                maxButtons={5}
+                                maxButtons={10}
                                 size="xs"
                                 layout={["total", "-", "limit", "|", "pager", "skip"]}
                                 limit={this.state.fact4Limit}
