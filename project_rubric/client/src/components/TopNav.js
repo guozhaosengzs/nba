@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Navbar, Nav } from 'rsuite';
-import { IoIosHome, IoMdPerson, IoMdBasketball, IoIosHappy, IoIosInformationCircle } from "react-icons/io";
+import { IoIosHome, IoMdPerson, IoMdBasketball, IoMdGlasses, IoIosInformationCircle, IoMdPeople } from "react-icons/io";
 
 class TopNav extends React.Component {
     render() {
@@ -17,10 +17,13 @@ class TopNav extends React.Component {
                     <Nav.Item active icon={<IoMdPerson />} href="/players">
                         Players
                     </Nav.Item>
+                    <Nav.Item active icon={<IoMdPeople />} href="/teams">
+                        Teams
+                    </Nav.Item>
                     <Nav.Item active icon={<IoMdBasketball />} href="/games">
                         Games
                     </Nav.Item>
-                    <Nav.Item active icon={<IoIosHappy />} href="/facts">
+                    <Nav.Item active icon={<IoMdGlasses />} href="/facts">
                         Fun Facts
                     </Nav.Item>
                 </Nav>

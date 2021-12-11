@@ -149,7 +149,7 @@ class Home extends React.Component {
           </div>
 
           <div style={{ width: "70vw", margin: "0 auto", marginTop: "5vh" }}>
-            <h3>Games</h3>
+            <h3>Games (2017 Season)</h3>
             <br></br>
             <Table
               bordered

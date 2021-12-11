@@ -8,6 +8,7 @@ import {
 
 import Home from './pages/Home';
 // import Players from './pages/Players';
+// import Teams from './pages/Teams';
 // import Games from './pages/Games';
 import Facts from './pages/Facts';
 
