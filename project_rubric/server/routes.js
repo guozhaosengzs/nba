@@ -160,11 +160,12 @@ async function search_games(req, res) {
   //Game_ID, Game_Date; Abbreviation, Nickname, Points in game seasonal wins up to now, seasonal losses up to now, for both teams
   //Seasonal Leader player name and the position, PER , Pts, TSP(ts_percentage) of the leader for both teams
 
-  const Date_From = req.query.Date_From ? req.query.Date_From : "2017-04-01";
-  const Date_To = req.query.Date_To ? req.query.Date_To : "2018-01-1";
-  const Home = req.query.Home ? req.query.Home : "";
-  const Away = req.query.Away ? req.query.Away : "";
-  const City = req.query.City ? req.query.City : "";
+  const season = req.query.Date_From && !isNaN(req.query.Date_From) ? req.query.Date_From : 2015;
+  const Date_From = (req.query.Team === "undefined") ? "2017-04-01" : req.query.Team;
+  const Date_To = (req.query.Date_To === "undefined") ? "2019-01-1" : req.query.Date_To;
+  const Home = (req.query.Home === "undefined") ? "" : req.query.Home;
+  const Away = (req.query.Away === "undefined") ? "" : req.query.Away;
+  const City = (req.query.City === "undefined") ? "" : req.query.City;
 
   if (req.query.page && !isNaN(req.query.page)) {
     // This is the case where page is defined.
