@@ -52,7 +52,6 @@ const getMostContributing = async (page, pagesize) => {
     return res.json()
 }
 
-
 export {
     getAllGames,
     getAllPlayersAvg,
