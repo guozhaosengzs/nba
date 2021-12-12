@@ -391,9 +391,9 @@ class Games extends React.Component {
                                 <Col lg={8} style={{ textAlign: "center" }}>
                                     <div>
                                         <img
-                                            src={"images/" + this.state.showGameResult.Nickname_Home + ".svg"}
+                                            src={"images/" + this.state.showGameResult.Nickname_Home + ".png"}
                                             alt={this.state.showGameResult.Nickname_Home + "Logo"}
-                                            height={150} />
+                                            height={200} />
                                     </div>
                                     <h3>
                                         {this.state.showGameResult.Nickname_Home}
@@ -405,7 +405,7 @@ class Games extends React.Component {
                                 <Col lg={8} style={{ textAlign: "center" }}>
                                     <div>
                                         <img
-                                            src={"images/" + this.state.showGameResult.Nickname_Away + ".svg"}
+                                            src={"images/" + this.state.showGameResult.Nickname_Away + ".png"}
                                             alt={this.state.showGameResult.Nickname_Away + "Logo"}
                                             height={150} />
                                     </div>
