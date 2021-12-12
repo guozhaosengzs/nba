@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FlexboxGrid, Pagination, CustomProvider, Input } from "rsuite";
+import { FlexboxGrid, Pagination, CustomProvider, InputGroup, Input, DateRangePicker } from "rsuite";
 import { Table, ColumnGroup, Column, HeaderCell, Cell } from "rsuite-table";
 
 import SearchIcon from '@rsuite/icons/Search';
@@ -8,7 +8,7 @@ import SearchIcon from '@rsuite/icons/Search';
 import TopNav from "../components/TopNav";
 import ColumnSort from "../components/ColumnSort";
 
-import { getAllGames, getGame } from "../fetcher";
+import { getAllGames, getSearchedGames, getGame } from "../fetcher";
 
 class Games extends React.Component {
     constructor(props) {
@@ -19,7 +19,7 @@ class Games extends React.Component {
             gameLoad: true,
 
             gamePage: 1,
-            gameLimit: 10,
+            gameLimit: 15,
 
             gameSortType: null,
             gameSortColumn: null,
@@ -27,7 +27,7 @@ class Games extends React.Component {
             showGameBool: false,
             showGameResult: null,
 
-            teams : ['ATL',
+            teams: ['ATL',
                 'BOS',
                 'CLE',
                 'NOP',
@@ -57,25 +57,25 @@ class Games extends React.Component {
                 'WAS',
                 'DET',
                 'CHA',
-                ]
+            ],
+
+            homeQuery: "undefined",
+            awayQuery: "undefined",
+            cityQuery: "undefined",
+            dateFromQuery: "undefined",
+            dateToQuery: "undefined"
+
         };
 
-        this.handleDateQueryChange = this.handleDateQueryChange.bind(this)
+        this.handleQuerySearch = this.handleQuerySearch.bind(this)
 
         this.showGame = this.showGame.bind(this)
     }
 
-    handleDateQueryChange(value) {
-        // this.setState({ gameLoad: true });
-        // getTopPOSPlayer(value).then(res => {
-        //     this.setState({ gameResults: res.results });
-        // });
-        // this.setState({
-        //     gameSortType: null,
-        //     gameSortColumn: null,
-        //     gamePage: 1,
-        //     gameLoad: false
-        // });
+    handleQuerySearch() {
+        getSearchedGames(this.state.homeQuery, this.state.awayQuery, this.state.cityQuery, this.state.dateFromQuery, this.state.dateToQuery).then(res => {
+            this.setState({ gameResults: res.results });
+        });
     }
 
     showGame(Game_ID) {
@@ -84,7 +84,6 @@ class Games extends React.Component {
                 showGameResult: res.results,
                 showGameBool: true
             });
-            console.log(this.state.showGameBool)
         });
     }
 
@@ -109,35 +108,113 @@ class Games extends React.Component {
                         </h5>
                     </div>
                     <div style={{ width: "70vw", margin: "0 auto", marginTop: "3vh" }}>
-                        {/* Season (1995 - 2017)
-                        <div style={{ width: 100, padding: 5 }}>
-                            <InputNumber
-                                defaultValue={2015}
-                                max={2017}
-                                min={1995}
-                                onChange={(value, _) => {
-                                    this.handlegameQueryChange(value);
-                                }}
-                            />
-                        </div>
-                        <br></br> */}
                         <br></br>
-                        <FlexboxGrid>
-                            <FlexboxGrid.Item colspan={6}>
-
+                        <FlexboxGrid justify="end">
+                            <FlexboxGrid.Item colspan={5}>
+                                <div style={{ width: '10vw', padding: 5, align: 'right' }}>
+                                    Home Team Abbreviation
+                                    <InputGroup>
+                                        <Input placeholder=""
+                                            onChange={(string, _) => {
+                                                this.setState({ gameLoad: true });
+                                                this.setState({ homeQuery: string }, this.handleQuerySearch);
+                                                setTimeout(() => {
+                                                    this.setState({
+                                                        gameSortType: null,
+                                                        gameSortColumn: null,
+                                                        gameLoad: false,
+                                                        gamePage: 1
+                                                    });
+                                                }, 300);
+                                            }}
+                                        />
+                                        <InputGroup.Addon>
+                                            <SearchIcon />
+                                        </InputGroup.Addon>
+                                    </InputGroup>
+                                </div>
                             </FlexboxGrid.Item>
 
-                            <FlexboxGrid.Item colspan={6}>
-
+                            <FlexboxGrid.Item colspan={5}>
+                                <div style={{ width: '10vw', padding: 5, align: 'right' }}>
+                                    Away Team Abbreviation
+                                    <InputGroup>
+                                        <Input placeholder=""
+                                            onChange={(string, _) => {
+                                                this.setState({ gameLoad: true });
+                                                this.setState({ awayQuery: string }, this.handleQuerySearch);
+                                                setTimeout(() => {
+                                                    this.setState({
+                                                        gameSortType: null,
+                                                        gameSortColumn: null,
+                                                        gameLoad: false,
+                                                        gamePage: 1
+                                                    });
+                                                }, 300);
+                                            }}
+                                        />
+                                        <InputGroup.Addon>
+                                            <SearchIcon />
+                                        </InputGroup.Addon>
+                                    </InputGroup>
+                                </div>
                             </FlexboxGrid.Item>
 
-                            <FlexboxGrid.Item colspan={6}>
+                            <FlexboxGrid.Item colspan={5}>
+                                <div style={{  width: '10vw', padding: 5, align: 'right' }}>
+                                    Date Range
+                                    <DateRangePicker
+                                        onOk={(dates) => {
+                                            this.setState({ gameLoad: true });
+                                            this.setState({ 
+                                                dateFromQuery: dates[0].toISOString().split('T')[0],
+                                                dateToQuery: dates[1].toISOString().split('T')[0]
+                                            }, this.handleQuerySearch);
 
+                                            console.log(typeof this.state.dateFromQuery);
+
+                                            setTimeout(() => {
+                                                this.setState({
+                                                    gameSortType: null,
+                                                    gameSortColumn: null,
+                                                    gameLoad: false,
+                                                    gamePage: 1
+                                                });
+                                            }, 300);
+                                        }}
+                                    
+                                    />
+                                </div>
                             </FlexboxGrid.Item>
 
-                            <FlexboxGrid.Item colspan={6}>
+                            <FlexboxGrid.Item colspan={3}>
+                                <div style={{ width: '10vw', padding: 5, align: 'left' }}>
 
+                                    City
+                                    <InputGroup>
+                                        <Input placeholder=""
+                                            onChange={(string, _) => {
+                                                this.setState({ gameLoad: true });
+                                                this.setState({ cityQuery: string }, this.handleQuerySearch);
+                                                setTimeout(() => {
+                                                    this.setState({
+                                                        gameSortType: null,
+                                                        gameSortColumn: null,
+                                                        gameLoad: false,
+                                                        gamePage: 1
+                                                    });
+                                                }, 300);
+                                            }}
+                                        />
+                                        <InputGroup.Addon>
+                                            <SearchIcon />
+                                        </InputGroup.Addon>
+                                    </InputGroup>
+                                </div>
                             </FlexboxGrid.Item>
+                            <FlexboxGrid.Item colspan={1}>
+                            </FlexboxGrid.Item>
+
                         </FlexboxGrid>
                         <br></br>
                         <Table
@@ -175,7 +252,7 @@ class Games extends React.Component {
                                         gameSortColumn: sortColumn,
                                         gameLoad: false
                                     });
-                                }, 500);
+                                }, 400);
                             }}
 
                             onRowClick={data => {
@@ -249,7 +326,7 @@ class Games extends React.Component {
                                 size="xs"
                                 layout={["total", "-", "limit", "|", "pager", "skip"]}
                                 limit={this.state.gameLimit}
-                                limitOptions={[10, 25, 50]}
+                                limitOptions={[15, 30, 60]}
                                 total={this.state.gameResults.length}
                                 activePage={this.state.gamePage}
                                 onChangePage={p => this.setState({ gamePage: p })}

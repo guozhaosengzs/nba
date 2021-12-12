@@ -7,6 +7,13 @@ const getAllGames = async () => {
     return res.json()
 }
 
+const getSearchedGames = async (ht, at, city, dateF, dateT) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/search/games/?Date_From=${dateF}&Date_To=${dateT}&Home=${ht}&Away=${at}&City=${city}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
 const getAllPlayersAvg = async (page, pagesize) => {
     var res = await fetch(`http://${config.server_host}:${config.server_port}/player_avg?page=${page}&pagesize=${pagesize}`, {
         method: 'GET',
@@ -59,5 +66,6 @@ export {
     getTopPOSPlayer,
     getTopPlayerNoWin,
     getLucky,
-    getMostContributing
+    getMostContributing,
+    getSearchedGames
 }
