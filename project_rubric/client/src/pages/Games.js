@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Pagination, CustomProvider, Input } from "rsuite";
+import { FlexboxGrid, Pagination, CustomProvider, Input } from "rsuite";
 import { Table, ColumnGroup, Column, HeaderCell, Cell } from "rsuite-table";
 
 import SearchIcon from '@rsuite/icons/Search';
@@ -25,7 +25,39 @@ class Games extends React.Component {
             gameSortColumn: null,
 
             showGameBool: false,
-            showGameResult: null
+            showGameResult: null,
+
+            teams : ['ATL',
+                'BOS',
+                'CLE',
+                'NOP',
+                'CHI',
+                'DAL',
+                'DEN',
+                'GSW',
+                'HOU',
+                'LAL',
+                'MIA',
+                'LAC',
+                'MIL',
+                'MIN',
+                'BKN',
+                'NYK',
+                'ORL',
+                'IND',
+                'PHI',
+                'PHX',
+                'POR',
+                'SAC',
+                'SAS',
+                'OKC',
+                'TOR',
+                'UTA',
+                'MEM',
+                'WAS',
+                'DET',
+                'CHA',
+                ]
         };
 
         this.handleDateQueryChange = this.handleDateQueryChange.bind(this)
@@ -76,7 +108,6 @@ class Games extends React.Component {
                             In this page, you can games with more options, and the details will be displayed below.
                         </h5>
                     </div>
-
                     <div style={{ width: "70vw", margin: "0 auto", marginTop: "3vh" }}>
                         {/* Season (1995 - 2017)
                         <div style={{ width: 100, padding: 5 }}>
@@ -90,6 +121,25 @@ class Games extends React.Component {
                             />
                         </div>
                         <br></br> */}
+                        <br></br>
+                        <FlexboxGrid>
+                            <FlexboxGrid.Item colspan={6}>
+
+                            </FlexboxGrid.Item>
+
+                            <FlexboxGrid.Item colspan={6}>
+
+                            </FlexboxGrid.Item>
+
+                            <FlexboxGrid.Item colspan={6}>
+
+                            </FlexboxGrid.Item>
+
+                            <FlexboxGrid.Item colspan={6}>
+
+                            </FlexboxGrid.Item>
+                        </FlexboxGrid>
+                        <br></br>
                         <Table
                             bordered={true}
                             cellBordered={true}
@@ -132,6 +182,50 @@ class Games extends React.Component {
                                 this.showGame(data.Game_ID);
                             }}
                         >
+                            <ColumnGroup header="HOME" align="right">
+                                <Column flexGrow={1} sortable align="center">
+                                    <HeaderCell>Seasonal Wins</HeaderCell>
+                                    <Cell dataKey="Home_seasonal_wins" />
+                                </Column>
+
+                                <Column flexGrow={1} sortable align="center">
+                                    <HeaderCell>Seasonal Losses</HeaderCell>
+                                    <Cell dataKey="Home_seasonal_losses" />
+                                </Column>
+
+                                <Column flexGrow={1} sortable align="center">
+                                    <HeaderCell>Points</HeaderCell>
+                                    <Cell dataKey="Pts_Home" />
+                                </Column>
+
+                                <Column flexGrow={1} sortable align="center">
+                                    <HeaderCell>Name</HeaderCell>
+                                    <Cell dataKey="Home_Abbr" />
+                                </Column>
+                            </ColumnGroup>
+
+                            <ColumnGroup header="AWAY" align="left">
+                                <Column align="center" flexGrow={1} sortable>
+                                    <HeaderCell>Name</HeaderCell>
+                                    <Cell dataKey="Away_abbr" />
+                                </Column>
+
+                                <Column align="center" flexGrow={1} sortable>
+                                    <HeaderCell>Points</HeaderCell>
+                                    <Cell dataKey="Pts_Away" />
+                                </Column>
+
+                                <Column flexGrow={1} sortable align="center">
+                                    <HeaderCell>Seasonal Wins</HeaderCell>
+                                    <Cell dataKey="Away_seasonal_wins" />
+                                </Column>
+
+                                <Column flexGrow={1} sortable align="center">
+                                    <HeaderCell>Seasonal Losses</HeaderCell>
+                                    <Cell dataKey="Away_seasonal_losses" />
+                                </Column>
+                            </ColumnGroup>
+
                             <Column flexGrow={1} align="center" verticalAlign="middle" sortable>
                                 <HeaderCell>Game Date</HeaderCell>
                                 <Cell dataKey="Game_Date" />
@@ -139,32 +233,8 @@ class Games extends React.Component {
 
                             <Column flexGrow={1} align="center" verticalAlign="middle" sortable>
                                 <HeaderCell>Game Location</HeaderCell>
-                                <Cell dataKey="Game_Date" />
+                                <Cell dataKey="City" />
                             </Column>
-
-                            <ColumnGroup header="HOME" align="center">
-                                <Column flexGrow={1} sortable>
-                                    <HeaderCell>Points</HeaderCell>
-                                    <Cell dataKey="Pts_Home" />
-                                </Column>
-
-                                <Column flexGrow={1} sortable>
-                                    <HeaderCell>Name</HeaderCell>
-                                    <Cell dataKey="Home_Abbr" />
-                                </Column>
-                            </ColumnGroup>
-
-                            <ColumnGroup header="AWAY" align="center">
-                                <Column width={130} flexGrow={1} sortable>
-                                    <HeaderCell>Name</HeaderCell>
-                                    <Cell dataKey="Away_abbr" />
-                                </Column>
-
-                                <Column width={130} flexGrow={1} sortable>
-                                    <HeaderCell>Points</HeaderCell>
-                                    <Cell dataKey="Pts_Away" />
-                                </Column>
-                            </ColumnGroup>
                         </Table>
 
                         <div style={{ padding: 10 }}>

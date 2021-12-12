@@ -1,7 +1,7 @@
 import config from './config.json'
 
-const getAllGames = async (page, pagesize) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/search/games/?Date_From=undefined&Date_To=undefined&Home=undefined&Away=undefined&City=undefined&page=${page}&pagesize=${pagesize}`, {
+const getAllGames = async () => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/search/games/?Date_From=undefined&Date_To=undefined&Home=undefined&Away=undefined&City=undefined`, {
         method: 'GET',
     })
     return res.json()
