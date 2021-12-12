@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FlexboxGrid, Pagination, CustomProvider, InputGroup, Input, DateRangePicker } from "rsuite";
+import { Grid, Row, Col, FlexboxGrid, Pagination, CustomProvider, InputGroup, Input, DateRangePicker, Button } from "rsuite";
 import { Table, ColumnGroup, Column, HeaderCell, Cell } from "rsuite-table";
 
 import SearchIcon from '@rsuite/icons/Search';
@@ -8,7 +8,7 @@ import SearchIcon from '@rsuite/icons/Search';
 import TopNav from "../components/TopNav";
 import ColumnSort from "../components/ColumnSort";
 
-import { getAllGames, getSearchedGames, getGame } from "../fetcher";
+import { getAllGames, getSearchedGames, getGame, getGameTeamInfo, getGamePlayerInfo } from "../fetcher";
 
 class Games extends React.Component {
     constructor(props) {
@@ -26,6 +26,8 @@ class Games extends React.Component {
 
             showGameBool: false,
             showGameResult: null,
+            showTeamResult: null,
+            showPlayerResult: null,
 
             teams: ['ATL',
                 'BOS',
@@ -74,15 +76,30 @@ class Games extends React.Component {
 
     handleQuerySearch() {
         getSearchedGames(this.state.homeQuery, this.state.awayQuery, this.state.cityQuery, this.state.dateFromQuery, this.state.dateToQuery).then(res => {
-            this.setState({ gameResults: res.results,
-                gameLoad: false });
+            this.setState({
+                gameResults: res.results,
+                gameLoad: false
+            });
         });
     }
 
     showGame(Game_ID) {
         getGame(Game_ID).then(res => {
             this.setState({
-                showGameResult: res.results,
+                showGameResult: res.results[0],
+                showGameBool: true
+            });
+        });
+        getGameTeamInfo(Game_ID).then(res => {
+            this.setState({
+                showTeamResult: res.results[0],
+                showGameBool: true
+            });
+        });
+
+        getGamePlayerInfo(Game_ID).then(res => {
+            this.setState({
+                showPlayerResult: res.results[0],
                 showGameBool: true
             });
         });
@@ -109,7 +126,6 @@ class Games extends React.Component {
                         </h5>
                     </div>
                     <div style={{ width: "70vw", margin: "0 auto", marginTop: "3vh" }}>
-                        <br></br>
                         <FlexboxGrid justify="end">
                             <FlexboxGrid.Item colspan={5}>
                                 <div style={{ width: '10vw', padding: 5, align: 'right' }}>
@@ -123,7 +139,6 @@ class Games extends React.Component {
                                                     this.setState({
                                                         gameSortType: null,
                                                         gameSortColumn: null,
-                                                        // gameLoad: false,
                                                         gamePage: 1
                                                     });
                                                 }, 300);
@@ -148,7 +163,6 @@ class Games extends React.Component {
                                                     this.setState({
                                                         gameSortType: null,
                                                         gameSortColumn: null,
-                                                        gameLoad: false,
                                                         gamePage: 1
                                                     });
                                                 }, 300);
@@ -163,8 +177,10 @@ class Games extends React.Component {
 
                             <FlexboxGrid.Item colspan={5}>
                                 <div style={{ width: '15vw', padding: 5, align: 'right' }}>
-                                    Date Range
+                                    Date Range <br></br>
                                     <DateRangePicker
+                                        cleanable={true}
+                                        size="lg"
                                         placeholder="2017-01-01 ~ 2017-12-01"
                                         onOk={(dates) => {
                                             this.setState({ gameLoad: true });
@@ -178,7 +194,6 @@ class Games extends React.Component {
                                                 this.setState({
                                                     gameSortType: null,
                                                     gameSortColumn: null,
-                                                    gameLoad: false,
                                                     gamePage: 1
                                                 });
                                             }, 5000);
@@ -201,7 +216,6 @@ class Games extends React.Component {
                                                     this.setState({
                                                         gameSortType: null,
                                                         gameSortColumn: null,
-                                                        gameLoad: false,
                                                         gamePage: 1
                                                     });
                                                 }, 300);
@@ -342,18 +356,89 @@ class Games extends React.Component {
                     </div>
                 </div>
                 <div style={{ width: "70vw", margin: "0 auto", padding: 20 }}>
-                    {this.showGameBool &&
-                        <h2>
-                            if true show
-                        </h2>
+                    {(this.state.showGameBool &&
+                        (this.stateshowGameResult !== null) &&
+                        (this.stateshowTeamResult !== null) &&
+                        (this.stateshowPlayerResult !== null)) &&
+
+                        <Grid fluid>
+                            <Row>
+                                <h2 style={{ textAlignVertical: "center", textAlign: "center" }}>
+                                    Game Details
+                                </h2>
+                                <br></br>
+                                <h4 style={{ textAlignVertical: "center", textAlign: "center" }}>
+                                    {this.state.showGameResult.Game_Date}
+                                </h4>
+                                <div style={{ textAlign: "right" }} >
+                                    <Button
+                                        align="right"
+                                        appearance="ghost"
+                                        onClick={() => {
+                                            this.setState({
+                                                showGameBool: false,
+                                                showGameResult: null,
+                                                showTeamResult: null,
+                                                showPlayerResult: null,
+                                            });
+                                        }}>
+                                        Clear Details
+                                    </Button>
+                                </div>
+                            </Row>
+                            <br></br>
+                            <Row>
+                                <Col lg={8} style={{ textAlign: "center" }}>
+                                    <div>
+                                        <img
+                                            src={"images/" + this.state.showGameResult.Nickname_Home + ".svg"}
+                                            alt={this.state.showGameResult.Nickname_Home + "Logo"}
+                                            height={150} />
+                                    </div>
+                                    <h3>
+                                        {this.state.showGameResult.Nickname_Home}
+                                    </h3>
+                                </Col>
+                                <Col lg={8} style={{ textAlignVertical: "center",textAlign: "center", color: "red" }}>
+                                    <h3>VS</h3>
+                                </Col>
+                                <Col lg={8} style={{ textAlign: "center" }}>
+                                    <div>
+                                        <img
+                                            src={"images/" + this.state.showGameResult.Nickname_Away + ".svg"}
+                                            alt={this.state.showGameResult.Nickname_Away + "Logo"}
+                                            height={150} />
+                                    </div>
+                                    <h3>
+                                        {this.state.showGameResult.Nickname_Away}
+
+                                    </h3>
+                                </Col>
+
+
+                            </Row>
+
+                            <Row className="show-grid">
+                                <Col lg={4}>lg={4}</Col>
+                                <Col lg={4}>lg={4}</Col>
+                                <Col lg={4}>lg={4}</Col>
+                                <Col lg={4}>lg={4}</Col>
+                                <Col lg={4}>lg={4}</Col>
+                                <Col lg={4}>lg={4}</Col>
+                            </Row>
+
+                            <Row className="show-grid">
+                                <Col lg={8}>lg={8}</Col>
+                                <Col lg={8}>lg={8}</Col>
+                                <Col lg={8}>lg={8}</Col>
+                            </Row>
+
+                            <Row className="show-grid">
+                                <Col lg={12}>lg={12}</Col>
+                                <Col lg={12}>lg={12}</Col>
+                            </Row>
+                        </Grid>
                     }
-                    {/* {this.showGameBool ?
-                        <div style={{ width: "70vw", margin: "0 auto" }}>
-                            if true show
-
-                        </div>
-
-                        : ''} */}
                 </div>
 
                 <div style={{ padding: 50 }}>
