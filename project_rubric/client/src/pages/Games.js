@@ -2,6 +2,7 @@ import React from "react";
 
 import { PanelGroup, Panel, Grid, Row, Col, FlexboxGrid, Pagination, CustomProvider, InputGroup, Input, DateRangePicker, Button } from "rsuite";
 import { Table, ColumnGroup, Column, HeaderCell, Cell } from "rsuite-table";
+import { RadarChart, RadarLine, BarChart, Bars } from "@rsuite/charts";
 
 import SearchIcon from '@rsuite/icons/Search';
 
@@ -86,18 +87,18 @@ class Games extends React.Component {
     showGame(Game_ID) {
         getGame(Game_ID).then(res => {
             this.setState({
-                showGameResult: res.results[0],
+                showGameResult: res.results[0]
             });
         });
         getGameTeamInfo(Game_ID).then(res => {
             this.setState({
-                showTeamResult: res.results[0],
+                showTeamResult: res.results[0]
             });
         });
 
         getGamePlayerInfo(Game_ID).then(res => {
             this.setState({
-                showPlayerResult: res.results[0],
+                showPlayerResult: res.results[0]
             });
         });
         this.setState({
@@ -424,62 +425,132 @@ class Games extends React.Component {
                                         <br></br>
                                         <Row>
                                             <Col lg={8} style={{ textAlign: "center" }}>
-                                                <Table
-                                                    autoHeight={true}
-                                                    headerHeight={40}
-                                                    data={[this.state.showGameResult]}
-                                                >
-                                                    <Column flexGrow={1} align="center">
-                                                        <HeaderCell>Field Goals Made</HeaderCell>
-                                                        <Cell dataKey="Fgm_Home" />
-                                                    </Column>
-                                                    <Column flexGrow={1} align="center">
-                                                        <HeaderCell>Free Throws Made</HeaderCell>
-                                                        <Cell dataKey="Ftm_Home" />
-                                                    </Column>
-                                                    <Column flexGrow={1} align="center">
-                                                        <HeaderCell>Points</HeaderCell>
-                                                        <Cell dataKey="Pts_Home" />
-                                                    </Column>
+                                                <h5>
+                                                    <Table
+                                                        autoHeight={true}
+                                                        headerHeight={40}
+                                                        data={[this.state.showGameResult]}
+                                                    >
+                                                        <Column flexGrow={1} align="center">
+                                                            <HeaderCell>Field Goals Made</HeaderCell>
+                                                            <Cell dataKey="Fgm_Home" />
+                                                        </Column>
+                                                        <Column flexGrow={1} align="center">
+                                                            <HeaderCell>Free Throws Made</HeaderCell>
+                                                            <Cell dataKey="Ftm_Home" />
+                                                        </Column>
+                                                        <Column flexGrow={1} align="center">
+                                                            <HeaderCell>Points</HeaderCell>
+                                                            <Cell dataKey="Pts_Home" />
+                                                        </Column>
 
-                                                </Table>
-
+                                                    </Table>
+                                                </h5>
                                             </Col>
                                             <Col lg={8}>
 
                                             </Col>
                                             <Col lg={8} style={{ textAlign: "center" }}>
-                                                <Table
-                                                    autoHeight={true}
-                                                    headerHeight={40}
-                                                    data={[this.state.showGameResult]}
-                                                >
-                                                    <Column flexGrow={1} align="center">
-                                                        <HeaderCell>Points</HeaderCell>
-                                                        <Cell dataKey="Pts_Away" />
-                                                    </Column>
+                                                <h5>
+                                                    <Table
+                                                        autoHeight={true}
+                                                        headerHeight={40}
+                                                        data={[this.state.showGameResult]}
+                                                    >
+                                                        <Column flexGrow={1} align="center">
+                                                            <HeaderCell>Points</HeaderCell>
+                                                            <Cell dataKey="Pts_Away" />
+                                                        </Column>
 
-                                                    <Column flexGrow={1} align="center">
-                                                        <HeaderCell>Free Throws Made</HeaderCell>
-                                                        <Cell dataKey="Ftm_Away" />
-                                                    </Column>
-                                                    <Column flexGrow={1} align="center">
-                                                        <HeaderCell>Field Goals Made</HeaderCell>
-                                                        <Cell dataKey="Fgm_Away" />
-                                                    </Column>
+                                                        <Column flexGrow={1} align="center">
+                                                            <HeaderCell>Free Throws Made</HeaderCell>
+                                                            <Cell dataKey="Ftm_Away" />
+                                                        </Column>
+                                                        <Column flexGrow={1} align="center">
+                                                            <HeaderCell>Field Goals Made</HeaderCell>
+                                                            <Cell dataKey="Fgm_Away" />
+                                                        </Column>
 
-                                                </Table>
-
+                                                    </Table>
+                                                </h5>
                                             </Col>
                                         </Row>
                                     </Grid>
                                 </Panel>
 
-                                <Panel header="More Team Info">
-                                    2
+                                <Panel header="Team Stats in This Season So Far">
+                                    <FlexboxGrid align="bottom">
+                                        <FlexboxGrid.Item colspan={12}>
+                                            <h4 style={{ textAlign: "center" }}>
+                                                Average Points Per Game
+                                            </h4>
+                                            <BarChart name="Points Comparison"
+                                                data={[
+                                                    [this.state.showGameResult.Nickname_Home, this.state.showTeamResult.Home_Season_Pts], [this.state.showGameResult.Nickname_Away, this.state.showTeamResult.Away_Season_Pts]
+                                                ]}
+                                            >
+                                                <Bars color={["DarkOliveGreen", "DarkViolet"]} />
+                                            </BarChart>
+                                        </FlexboxGrid.Item>
+                                        <FlexboxGrid.Item colspan={12}>
+                                            <h4 style={{ textAlign: "center" }}>
+                                                Average Field Goals Per Game
+                                            </h4>
+                                            <BarChart name="Points Comparison"
+                                                data={[
+                                                    [this.state.showGameResult.Nickname_Home, this.state.showTeamResult.Home_Season_FG], [this.state.showGameResult.Nickname_Away, this.state.showTeamResult.Away_Season_FG]
+                                                ]}
+                                            >
+                                                <Bars color={["DarkOliveGreen", "DarkViolet"]} />
+                                            </BarChart>
+                                        </FlexboxGrid.Item>
+                                    </FlexboxGrid>
+
+                                    <FlexboxGrid align="bottom">
+                                        <FlexboxGrid.Item colspan={12}>
+                                            <h4 style={{ textAlign: "center" }}>
+                                                Average Assists Per Game
+                                            </h4>
+                                            <BarChart name="Points Comparison"
+                                                data={[
+                                                    [this.state.showGameResult.Nickname_Home, this.state.showTeamResult.Home_Season_Ast], [this.state.showGameResult.Nickname_Away, this.state.showTeamResult.Away_Season_Ast]
+                                                ]}
+                                            >
+                                                <Bars color={["DarkOliveGreen", "DarkViolet"]} />
+                                            </BarChart>
+                                        </FlexboxGrid.Item>
+                                        <FlexboxGrid.Item colspan={12}>
+                                            <h4 style={{ textAlign: "center" }}>
+                                                Average Personal Fouls Per Game
+                                            </h4>
+                                            <BarChart name="Points Comparison"
+                                                data={[
+                                                    [this.state.showGameResult.Nickname_Home, this.state.showTeamResult.Home_Season_PF], [this.state.showGameResult.Nickname_Away, this.state.showTeamResult.Away_Season_PF]
+                                                ]}
+                                            >
+                                                <Bars color={["DarkOliveGreen", "DarkViolet"]} />
+                                            </BarChart>
+                                        </FlexboxGrid.Item>
+                                    </FlexboxGrid>
+
+
                                 </Panel>
-                                <Panel header="Panel 3">
-                                    3
+                                <Panel header="Players Comparison">
+                                    <h3 style={{ textAlign: "center" }}>
+                                        Players' Highest Seasonal Average Stats Each Team
+                                    </h3>
+                                    <div style={{ width: "70vw", textAlign: "center" }}>
+                                        <RadarChart
+                                            data={[
+                                                ["PTS", 25, this.state.showPlayerResult.Home_Highest_PTS, this.state.showPlayerResult.Away_Highest_PTS],
+                                                ["AST", 25, this.state.showPlayerResult.Home_Highest_AST, this.state.showPlayerResult.Away_Highest_AST],
+                                                ["FG", 25, this.state.showPlayerResult.Home_Highest_PF, this.state.showPlayerResult.Away_Highest_PF],
+                                                ["PF", 25, this.state.showPlayerResult.Home_Highest_FG, this.state.showPlayerResult.Away_Highest_FG]
+                                            ]}                                        >
+                                            <RadarLine name={this.state.showGameResult.Nickname_Home} />
+                                            <RadarLine name={this.state.showGameResult.Nickname_Away} />
+                                        </RadarChart>
+                                    </div>
                                 </Panel>
                             </PanelGroup>
 
@@ -507,7 +578,7 @@ class Games extends React.Component {
 
                 <div style={{ padding: 50 }}>
                 </div>
-            </CustomProvider>
+            </CustomProvider >
         );
     }
 }
