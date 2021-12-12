@@ -156,7 +156,7 @@ async function game_player_info(req, res) {
 // Route 4 (handler)
 async function search_games(req, res) {
   //Return an array with required information of all games that match the constraints. If no match satisfies the constraints, return an empty array as ‘results’ without causing an error.
-  //Results should include(for each game):pagesize
+  //Results should include(for each game):
   //Game_ID, Game_Date; Abbreviation, Nickname, Points in game seasonal wins up to now, seasonal losses up to now, for both teams
   //Seasonal Leader player name and the position, PER , Pts, TSP(ts_percentage) of the leader for both teams
 
@@ -210,12 +210,10 @@ async function search_games(req, res) {
 // Route 5 (handler)
 async function player(req, res) {
   // returns a list of seasonal information for one specific player
-  // Query Parameter(s): player(string), page (int)*, pagesize (int)* (default: 10)
+  // Query Parameter(s): player(string),
 
   var player = req.query.player_name;
-  const page = req.query.page ? req.query.page : 1;
-  const pagesize = req.query.pagesize ? req.query.pagesize : 10;
-  var offset = pagesize * (page - 1);
+
   connection.query(
     `
     select Year as Season, Tm as Team, Height, Weight,
@@ -223,7 +221,7 @@ async function player(req, res) {
     Pos, (PTS/G) as PPG, (AST/G) as APG, (TRB/G) as RPG, PF, eFG_Percentage as EFG
     from Players natural join Seasons_Stats
     where Player like "${player}"
-    order by Season desc limit ${offset}, ${pagesize};
+    order by Season desc;
     `,
     function (error, results, fields) {
       if (error) {
@@ -463,10 +461,6 @@ async function get_team(req, res) {
 
 // Route 12 (handler)
 async function player_avg(req, res) {
-  // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
-  const page = req.query.page && !isNaN(req.query.page) ? req.query.page : 1;
-  const pagesize = req.query.pagesize && !isNaN(req.query.pagesize) ? req.query.pagesize : 10;
-  var offset = pagesize * (page - 1);
   connection.query(
     `
     with player_yearly_stats as (select Player, Year as Season, Tm as Team, Height, Weight,
@@ -533,10 +527,7 @@ select Player, Pos, Tm, pointsPerGame, Height, Weight,(homeWins+awayWins) as tot
 
 // Route 14 (handler)
 async function only_got_numbers(req, res) {
-  // Query Parameter(s): Season (int), page (int)*, pagesize (int)* (default: 10)
-  // const page = req.query.page && !isNaN(req.query.page) ? req.query.page : 1;
-  // const pagesize = req.query.pagesize && !isNaN(req.query.pagesize) ? req.query.pagesize : 10;
-  // var offset = pagesize * (page - 1);
+  // Query Parameter(s): Season (int), p
   const season = req.query.Season && !isNaN(req.query.Season) ? req.query.Season : 2015;
   // const season = req.query.Season ? req.query.Season : 2015;
   connection.query(
@@ -615,8 +606,6 @@ async function lucky(req, res) {
 
 // Route 16 (handler)
 async function contributes_most(req, res) {
-  // Query Parameter(s): page (int)*, pagesize (int)* (default: 10)
-  // var offset = pagesize * (page - 1);
   connection.query(
     `
     WITH newGame AS(
