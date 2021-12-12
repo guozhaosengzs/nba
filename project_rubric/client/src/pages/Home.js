@@ -180,9 +180,9 @@ class Home extends React.Component {
                   this.setState({ gameLoad: false });
                 }, 500);
               }}
-              onRowClick={data => {
-                this.goToGame(data.Game_ID);
-              }}
+              // onRowClick={data => {
+              //   this.goToGame(data.Game_ID);
+              // }}
             >
               <Column width={150} align="center" verticalAlign="middle" sortable>
                 <HeaderCell>Game Date</HeaderCell>

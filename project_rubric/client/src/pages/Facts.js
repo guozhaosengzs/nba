@@ -13,7 +13,7 @@ import {
     getMostContributing
 } from "../fetcher";
 
-class Home extends React.Component {
+class Facts extends React.Component {
     constructor(props) {
         super(props);
 
@@ -531,4 +531,4 @@ class Home extends React.Component {
         );
     }
 }
-export default Home;
+export default Facts;
