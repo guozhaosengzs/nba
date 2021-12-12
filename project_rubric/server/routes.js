@@ -156,23 +156,15 @@ async function game_player_info(req, res) {
 // Route 4 (handler)
 async function search_games(req, res) {
   //Return an array with required information of all games that match the constraints. If no match satisfies the constraints, return an empty array as ‘results’ without causing an error.
-<<<<<<< Updated upstream
   //Results should include(for each game):
-=======
->>>>>>> Stashed changes
   //Game_ID, Game_Date; Abbreviation, Nickname, Points in game seasonal wins up to now, seasonal losses up to now, for both teams
   //Seasonal Leader player name and the position, PER , Pts, TSP(ts_percentage) of the leader for both teams
 
   const Date_From = (req.query.Date_From === "undefined") ? "2017-01-01" : req.query.Date_From;
-  const Date_To = (req.query.Date_To === "undefined") ? "2017-12-31" : req.query.Date_To;
+  const Date_To = (req.query.Date_To === "undefined") ? "2017-12-01" : req.query.Date_To;
   const Home = (req.query.Home === "undefined") ? "" : req.query.Home;
   const Away = (req.query.Away === "undefined") ? "" : req.query.Away;
   const City = (req.query.City === "undefined") ? "" : req.query.City;
-
-  console.log(Date_From)
-  console.log(typeof Date_From)
-  console.log(Date_To)
-  console.log(typeof Date_To)
 
   connection.query(
     `WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.City AS City,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT

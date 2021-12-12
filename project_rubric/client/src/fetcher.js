@@ -11,6 +11,7 @@ const getSearchedGames = async (ht, at, city, dateF, dateT) => {
     var res = await fetch(`http://${config.server_host}:${config.server_port}/search/games/?Date_From=${dateF}&Date_To=${dateT}&Home=${ht}&Away=${at}&City=${city}`, {
         method: 'GET',
     })
+
     return res.json()
 }
 

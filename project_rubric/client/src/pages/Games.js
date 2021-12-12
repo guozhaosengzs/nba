@@ -74,7 +74,8 @@ class Games extends React.Component {
 
     handleQuerySearch() {
         getSearchedGames(this.state.homeQuery, this.state.awayQuery, this.state.cityQuery, this.state.dateFromQuery, this.state.dateToQuery).then(res => {
-            this.setState({ gameResults: res.results });
+            this.setState({ gameResults: res.results,
+                gameLoad: false });
         });
     }
 
@@ -122,7 +123,7 @@ class Games extends React.Component {
                                                     this.setState({
                                                         gameSortType: null,
                                                         gameSortColumn: null,
-                                                        gameLoad: false,
+                                                        // gameLoad: false,
                                                         gamePage: 1
                                                     });
                                                 }, 300);
@@ -161,17 +162,17 @@ class Games extends React.Component {
                             </FlexboxGrid.Item>
 
                             <FlexboxGrid.Item colspan={5}>
-                                <div style={{  width: '10vw', padding: 5, align: 'right' }}>
+                                <div style={{ width: '15vw', padding: 5, align: 'right' }}>
                                     Date Range
                                     <DateRangePicker
+                                        placeholder="2017-01-01 ~ 2017-12-01"
                                         onOk={(dates) => {
                                             this.setState({ gameLoad: true });
-                                            this.setState({ 
+                                            this.setState({
+                                                gameResults: [],
                                                 dateFromQuery: dates[0].toISOString().split('T')[0],
                                                 dateToQuery: dates[1].toISOString().split('T')[0]
                                             }, this.handleQuerySearch);
-
-                                            console.log(typeof this.state.dateFromQuery);
 
                                             setTimeout(() => {
                                                 this.setState({
@@ -180,9 +181,9 @@ class Games extends React.Component {
                                                     gameLoad: false,
                                                     gamePage: 1
                                                 });
-                                            }, 300);
+                                            }, 5000);
                                         }}
-                                    
+
                                     />
                                 </div>
                             </FlexboxGrid.Item>
