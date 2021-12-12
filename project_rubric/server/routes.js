@@ -156,7 +156,7 @@ async function game_player_info(req, res) {
 // Route 4 (handler)
 async function search_games(req, res) {
   //Return an array with required information of all games that match the constraints. If no match satisfies the constraints, return an empty array as ‘results’ without causing an error.
-  //Results should include(for each game):
+  //Results should include(for each game):pagesize
   //Game_ID, Game_Date; Abbreviation, Nickname, Points in game seasonal wins up to now, seasonal losses up to now, for both teams
   //Seasonal Leader player name and the position, PER , Pts, TSP(ts_percentage) of the leader for both teams
 
@@ -174,7 +174,7 @@ async function search_games(req, res) {
     const offsetnum = pgsize * (req.query.page - 1);
 
     connection.query(
-      `WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT
+      `WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.City AS City,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT
             FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
                   Join Team T2 on Game.Team_Abbreviation_Away = T2.Abbreviation
             WHERE Game_Date BETWEEN '${Date_From}' AND '${Date_To}'
@@ -197,7 +197,7 @@ async function search_games(req, res) {
                     WHERE s.Year = gi.Season_ID
                     Group By Game_Id,Player) AS a
                     WHERE a.pts_rank = 1)
-            SELECT Game_ID,Game_Date,HT as Home_Abbr,AT AS Away_abbr, Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses,Home_Seasonal_Leader,Away_Seasonal_Leader,Home_Leader_Pos,Away_Leader_Pos,Home_leader_Pts,Away_leader_Pts,Home_leader_PER,Away_leader_PER,Home_leader_TSP,Away_leader_TSP
+            SELECT Game_ID,Game_Date,City,HT as Home_Abbr,AT AS Away_abbr, Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses,Home_Seasonal_Leader,Away_Seasonal_Leader,Home_Leader_Pos,Away_Leader_Pos,Home_leader_Pts,Away_leader_Pts,Home_leader_PER,Away_leader_PER,Home_leader_TSP,Away_leader_TSP
                     FROM All_games NATURAL JOIN HT_win_loss NATURAL JOIN AT_win_loss NATURAL JOIN Home_Season_King NATURAL JOIN Away_Season_King
                     ORDER BY Game_Date DESC,HT_win_loss.Home_Team ASC,AT_win_loss.Away_Team ASC;`,
       function (error, results, fields) {
