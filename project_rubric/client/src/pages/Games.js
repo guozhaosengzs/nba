@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Grid, Row, Col, FlexboxGrid, Pagination, CustomProvider, InputGroup, Input, DateRangePicker, Button } from "rsuite";
+import { PanelGroup, Panel, Grid, Row, Col, FlexboxGrid, Pagination, CustomProvider, InputGroup, Input, DateRangePicker, Button } from "rsuite";
 import { Table, ColumnGroup, Column, HeaderCell, Cell } from "rsuite-table";
 
 import SearchIcon from '@rsuite/icons/Search';
@@ -87,22 +87,22 @@ class Games extends React.Component {
         getGame(Game_ID).then(res => {
             this.setState({
                 showGameResult: res.results[0],
-                showGameBool: true
             });
         });
         getGameTeamInfo(Game_ID).then(res => {
             this.setState({
                 showTeamResult: res.results[0],
-                showGameBool: true
             });
         });
 
         getGamePlayerInfo(Game_ID).then(res => {
             this.setState({
                 showPlayerResult: res.results[0],
-                showGameBool: true
             });
         });
+        this.setState({
+            showGameBool: true
+        })
     }
 
     componentDidMount() {
@@ -233,6 +233,7 @@ class Games extends React.Component {
                         </FlexboxGrid>
                         <br></br>
                         <Table
+                            hover={true}
                             bordered={true}
                             cellBordered={true}
                             autoHeight={true}
@@ -353,91 +354,154 @@ class Games extends React.Component {
                                 }}
                             />
                         </div>
+
                     </div>
                 </div>
+
                 <div style={{ width: "70vw", margin: "0 auto", padding: 20 }}>
                     {(this.state.showGameBool &&
-                        (this.stateshowGameResult !== null) &&
-                        (this.stateshowTeamResult !== null) &&
-                        (this.stateshowPlayerResult !== null)) &&
+                        (this.state.showGameResult !== null) &&
+                        (this.state.showTeamResult !== null) &&
+                        (this.state.showPlayerResult !== null)) &&
+                        <div>
+                            <PanelGroup accordion bordered>
+                                <Panel header="Basic Info" defaultExpanded>
+                                    <Grid fluid>
+                                        <Row>
+                                            <h2 style={{ textAlignVertical: "center", textAlign: "center" }}>
+                                                Game Details
+                                            </h2>
+                                            <br></br>
+                                            <h4 style={{ textAlignVertical: "center", textAlign: "center" }}>
+                                                {this.state.showGameResult.Game_Date}
+                                            </h4>
+                                        </Row>
+                                        <br></br>
+                                        <FlexboxGrid align="bottom">
+                                            <FlexboxGrid.Item colspan={8}>
+                                                <div style={{ textAlignVertical: "bottom", textAlign: "center", color: "DarkOrange" }}>
+                                                    <h3>HOME</h3>
+                                                </div>
+                                                <div style={{ textAlignVertical: "center", textAlign: "center" }}>
+                                                    <img
+                                                        src={"images/" + this.state.showGameResult.Nickname_Home + ".png"}
+                                                        alt={this.state.showGameResult.Nickname_Home + "Logo"}
+                                                        height={200} />
+                                                </div>
+                                                <h3 style={{ textAlignVertical: "center", textAlign: "center" }}>
+                                                    {this.state.showGameResult.Nickname_Home}
+                                                </h3>
+                                                <h5 style={{ textAlignVertical: "center", textAlign: "center", color: "DarkOrange" }}>
+                                                    This Season    {this.state.showGameResult.Home_seasonal_wins} : {this.state.showGameResult.Home_seasonal_losses}
+                                                </h5>
+                                            </FlexboxGrid.Item>
 
-                        <Grid fluid>
-                            <Row>
-                                <h2 style={{ textAlignVertical: "center", textAlign: "center" }}>
-                                    Game Details
-                                </h2>
-                                <br></br>
-                                <h4 style={{ textAlignVertical: "center", textAlign: "center" }}>
-                                    {this.state.showGameResult.Game_Date}
-                                </h4>
-                                <div style={{ textAlign: "right" }} >
-                                    <Button
-                                        align="right"
-                                        appearance="ghost"
-                                        onClick={() => {
-                                            this.setState({
-                                                showGameBool: false,
-                                                showGameResult: null,
-                                                showTeamResult: null,
-                                                showPlayerResult: null,
-                                            });
-                                        }}>
-                                        Clear Details
-                                    </Button>
-                                </div>
-                            </Row>
-                            <br></br>
-                            <Row>
-                                <Col lg={8} style={{ textAlign: "center" }}>
-                                    <div>
-                                        <img
-                                            src={"images/" + this.state.showGameResult.Nickname_Home + ".png"}
-                                            alt={this.state.showGameResult.Nickname_Home + "Logo"}
-                                            height={200} />
-                                    </div>
-                                    <h3>
-                                        {this.state.showGameResult.Nickname_Home}
-                                    </h3>
-                                </Col>
-                                <Col lg={8} style={{ textAlignVertical: "center",textAlign: "center", color: "red" }}>
-                                    <h3>VS</h3>
-                                </Col>
-                                <Col lg={8} style={{ textAlign: "center" }}>
-                                    <div>
-                                        <img
-                                            src={"images/" + this.state.showGameResult.Nickname_Away + ".png"}
-                                            alt={this.state.showGameResult.Nickname_Away + "Logo"}
-                                            height={150} />
-                                    </div>
-                                    <h3>
-                                        {this.state.showGameResult.Nickname_Away}
+                                            <FlexboxGrid.Item colspan={8}>
+                                                <div style={{ paddingBottom: 150, textAlignVertical: "top", textAlign: "center", color: "DarkRed" }}>
+                                                    <h2>VS</h2>
+                                                </div>
+                                            </FlexboxGrid.Item>
+                                            <FlexboxGrid.Item colspan={8}>
+                                                <div style={{ textAlignVertical: "bottom", textAlign: "center", color: "DarkOrange" }}>
+                                                    <h3>AWAY</h3>
+                                                    <br></br>
+                                                </div>
+                                                <div style={{ textAlignVertical: "center", textAlign: "center" }}>
+                                                    <img
+                                                        src={"images/" + this.state.showGameResult.Nickname_Away + ".png"}
+                                                        alt={this.state.showGameResult.Nickname_Away + "Logo"}
+                                                        height={200} />
+                                                </div>
+                                                <h3 style={{ textAlignVertical: "center", textAlign: "center" }}>
+                                                    {this.state.showGameResult.Nickname_Away}
 
-                                    </h3>
-                                </Col>
+                                                </h3>
+                                                <h5 style={{ textAlignVertical: "center", textAlign: "center", color: "DarkOrange" }}>
+                                                    This Season    {this.state.showGameResult.Away_seasonal_wins} : {this.state.showGameResult.Away_seasonal_losses}
+                                                </h5>
+                                            </FlexboxGrid.Item>
+                                        </FlexboxGrid>
+                                        <br></br>
+                                        <Row>
+                                            <Col lg={8} style={{ textAlign: "center" }}>
+                                                <Table
+                                                    autoHeight={true}
+                                                    headerHeight={40}
+                                                    data={[this.state.showGameResult]}
+                                                >
+                                                    <Column flexGrow={1} align="center">
+                                                        <HeaderCell>Field Goals Made</HeaderCell>
+                                                        <Cell dataKey="Fgm_Home" />
+                                                    </Column>
+                                                    <Column flexGrow={1} align="center">
+                                                        <HeaderCell>Free Throws Made</HeaderCell>
+                                                        <Cell dataKey="Ftm_Home" />
+                                                    </Column>
+                                                    <Column flexGrow={1} align="center">
+                                                        <HeaderCell>Points</HeaderCell>
+                                                        <Cell dataKey="Pts_Home" />
+                                                    </Column>
 
+                                                </Table>
 
-                            </Row>
+                                            </Col>
+                                            <Col lg={8}>
 
-                            <Row className="show-grid">
-                                <Col lg={4}>lg={4}</Col>
-                                <Col lg={4}>lg={4}</Col>
-                                <Col lg={4}>lg={4}</Col>
-                                <Col lg={4}>lg={4}</Col>
-                                <Col lg={4}>lg={4}</Col>
-                                <Col lg={4}>lg={4}</Col>
-                            </Row>
+                                            </Col>
+                                            <Col lg={8} style={{ textAlign: "center" }}>
+                                                <Table
+                                                    autoHeight={true}
+                                                    headerHeight={40}
+                                                    data={[this.state.showGameResult]}
+                                                >
+                                                    <Column flexGrow={1} align="center">
+                                                        <HeaderCell>Points</HeaderCell>
+                                                        <Cell dataKey="Pts_Away" />
+                                                    </Column>
 
-                            <Row className="show-grid">
-                                <Col lg={8}>lg={8}</Col>
-                                <Col lg={8}>lg={8}</Col>
-                                <Col lg={8}>lg={8}</Col>
-                            </Row>
+                                                    <Column flexGrow={1} align="center">
+                                                        <HeaderCell>Free Throws Made</HeaderCell>
+                                                        <Cell dataKey="Ftm_Away" />
+                                                    </Column>
+                                                    <Column flexGrow={1} align="center">
+                                                        <HeaderCell>Field Goals Made</HeaderCell>
+                                                        <Cell dataKey="Fgm_Away" />
+                                                    </Column>
 
-                            <Row className="show-grid">
-                                <Col lg={12}>lg={12}</Col>
-                                <Col lg={12}>lg={12}</Col>
-                            </Row>
-                        </Grid>
+                                                </Table>
+
+                                            </Col>
+                                        </Row>
+                                    </Grid>
+                                </Panel>
+
+                                <Panel header="More Team Info">
+                                    2
+                                </Panel>
+                                <Panel header="Panel 3">
+                                    3
+                                </Panel>
+                            </PanelGroup>
+
+                            <div style={{ textAlign: "right", padding: 20 }} >
+                                <Button
+                                    align="right"
+                                    appearance="ghost"
+
+                                    onClick={() => {
+                                        this.setState({
+                                            showGameBool: false,
+                                            showGameResult: null,
+                                            showTeamResult: null,
+                                            showPlayerResult: null,
+                                        });
+                                    }}>
+                                    Clear Details
+                                </Button>
+                            </div>
+
+                        </div>
+
                     }
                 </div>
 

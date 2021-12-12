@@ -149,6 +149,7 @@ class Facts extends React.Component {
                         </div>
                         <br></br>
                         <Table
+                            hover={true}
                             bordered={true}
                             cellBordered={true}
                             autoHeight={true}
@@ -260,6 +261,7 @@ class Facts extends React.Component {
                         </div>
                         <br></br>
                         <Table
+                            hover={true}
                             bordered
                             cellBordered
                             autoHeight={true}
@@ -379,6 +381,7 @@ class Facts extends React.Component {
                         </div>
                         <br></br>
                         <Table
+                            hover={true}
                             bordered
                             cellBordered
                             autoHeight={true}
@@ -445,6 +448,7 @@ class Facts extends React.Component {
                         </h5>
                         <br></br>
                         <Table
+                            hover={true}
                             bordered
                             cellBordered
                             autoHeight={true}
