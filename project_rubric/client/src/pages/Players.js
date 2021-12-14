@@ -34,9 +34,10 @@ class Players extends React.Component {
 
             playerLoad: true,
             playerPage: 1,
-            playerLimit: 15,
-            playerSortType: null,
-            playerSortColumn: null
+            playerName: "",
+            playerLimit: 5,
+            playerSortColumn: null,
+            playerSortType: null
         };
 
         this.handleQuerySearch = this.handleQuerySearch.bind(this)
@@ -120,7 +121,9 @@ class Players extends React.Component {
     showPlayer(name) {
         getPlayer(name).then(res => {
             this.setState({
-                playerResults: res.results
+                playerResults: res.results,
+                playerName: name,
+                playerLoad :false
             });
         });
         this.setState({
@@ -343,11 +346,144 @@ class Players extends React.Component {
                     </Grid>
                 </div>
                 {/* ================Divider for conditional details==============*/}
+
                 <div style={{ width: "81vw", margin: "0 auto", padding: 20 }}>
                     {(this.state.showPlayerInfo &&
                         (this.state.playerResults !== null)) &&
                         <div>
-                            {this.state.playerResults.length}
+                            <hr></hr>
+                            <div style={{ textAlign: "right", padding: 20 }} >
+                                <Button
+                                    align="right"
+                                    appearance="ghost"
+
+                                    onClick={() => {
+                                        this.setState({
+                                            showPlayerInfo: false,
+                                            playerResults: [],
+
+                                            playerLoad: true,
+                                            playerName: "",
+                                            playerPage: 1,
+                                            playerLimit: 5,
+                                            playerSortType: null,
+                                            playerSortColumn: null
+                                        });
+                                    }}>
+                                    Hide Player Details
+                                </Button>
+                            </div>
+
+                            <div style={{ textAlign: "center" }}>
+                                <h3>{this.state.playerName} </h3>
+
+                                <h5>
+                                    {/* Born in {this.state.playerResults.Birth_City}, */}
+                                </h5>
+
+                                <Table
+                                    wordWrap
+                                    hover={true}
+                                    bordered={true}
+                                    cellBordered={true}
+                                    autoHeight={true}
+
+                                    data={this.state.playerResults.filter(
+                                        (_, i) =>
+                                            i >= this.state.playerLimit * (this.state.playerPage - 1) &&
+                                            i < this.state.playerLimit * this.state.playerPage
+                                    )}
+
+                                    loading={this.state.playerLoad}
+
+                                    sortColumn={this.state.playerSortColumn}
+                                    sortType={this.state.playerSortType}
+                                    onSortColumn={(sortColumn, sortType) => {
+                                        this.setState({
+                                            playerLoad: true,
+                                            playerPage: 1
+                                        });
+
+                                        this.state.playerResults.sort((a, b) => {
+                                            let x = a[sortColumn];
+                                            let y = b[sortColumn];
+
+                                            return ColumnSort(x, y, sortType);
+                                        });
+
+                                        setTimeout(() => {
+                                            this.setState({
+                                                playerSortType: sortType,
+                                                playerSortColumn: sortColumn,
+                                                playerLoad: false
+                                            });
+                                        }, 200);
+                                    }}
+                                >
+                                    <Column flexGrow={1} sortable align="center">
+                                        <HeaderCell>Season</HeaderCell>
+                                        <Cell dataKey="Season" />
+                                    </Column>
+
+                                    <Column flexGrow={1} sortable align="center">
+                                        <HeaderCell>Team</HeaderCell>
+                                        <Cell dataKey="Team" />
+                                    </Column>
+
+                                    <Column flexGrow={1} sortable align="center">
+                                        <HeaderCell>Position</HeaderCell>
+                                        <Cell dataKey="Pos" />
+                                    </Column>
+
+                                    <Column flexGrow={1} sortable align="center">
+                                        <HeaderCell>PTS/G</HeaderCell>
+                                        <Cell dataKey="PPG" />
+                                    </Column>
+                                    <Column flexGrow={1} sortable align="center">
+                                        <HeaderCell>ATS/G</HeaderCell>
+                                        <Cell dataKey="APG" />
+                                    </Column>
+                                    <Column flexGrow={1} sortable align="center">
+                                        <HeaderCell>RB/G</HeaderCell>
+                                        <Cell dataKey="RPG" />
+                                    </Column>
+                                    <Column flexGrow={1} sortable align="center">
+                                        <HeaderCell>PF</HeaderCell>
+                                        <Cell dataKey="PF" />
+                                    </Column>
+                                    <Column flexGrow={1} sortable align="center">
+                                        <HeaderCell>PF</HeaderCell>
+                                        <Cell dataKey="EFG" />
+                                    </Column>
+                                </Table>
+
+                                <div style={{ padding: 10 }}>
+                                    <Pagination
+                                        prev
+                                        next
+                                        first
+                                        last
+                                        ellipsis
+                                        boundaryLinks
+                                        maxButtons={5}
+                                        size="xs"
+                                        layout={["total", "-", "limit", "|", "pager", "skip"]}
+                                        limit={this.state.playerLimit}
+                                        limitOptions={[15, 30, 60]}
+                                        total={this.state.playerResults.length}
+                                        activePage={this.state.playerPage}
+                                        onChangePage={p => this.setState({ playerPage: p })}
+                                        onChangeLimit={dataKey => {
+                                            this.setState({
+                                                playerPage: 1,
+                                                playerLimit: dataKey
+                                            });
+                                        }}
+                                    />
+                                </div>
+                            </div>
+
+
                         </div>
                     }
                 </div>
