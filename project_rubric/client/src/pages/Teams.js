@@ -639,7 +639,7 @@ class Teams extends React.Component {
                                     alt={this.state.showTeamInfo.Nickname + "Logo"}
                                     height={200} />
                                 <div>
-                                    {this.state.showTeamInfo.State}, {this.state.showTeamInfo.City}  &nbsp;&nbsp;&nbsp; Founded in <b>{this.state.showTeamInfo.Year_Founded}</b>
+                                    {this.state.showTeamInfo.City}, {this.state.showTeamInfo.State}  &nbsp;&nbsp;&nbsp; Founded in <b>{this.state.showTeamInfo.Year_Founded}</b>
                                 </div>
                             </div>
                             <br></br>

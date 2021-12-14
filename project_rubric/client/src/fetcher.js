@@ -106,6 +106,22 @@ const getTeamSeaonalPlayer = async (id) => {
     return res.json()
 }
 
+const getPlayerSearch = async (atime, season, attr, name, team, pos) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/search/players?All_Time=${atime}&Season=${season}&Attribute=${attr}&Name=${name}&Team=${team}&Position=${pos}`, {
+        method: 'GET',
+    })
+    
+    return res.json()
+}
+
+const getPlayer = async (name) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/players?player_name=${name}`, {
+        method: 'GET',
+    })
+
+    return res.json()
+}
+ 
 export {
     getAllGames,
     getAllPlayersAvg,
@@ -120,5 +136,7 @@ export {
     getTeamInfo,
     getTeamSeaonalBest,
     getTeamSeaonalWorst,
-    getTeamSeaonalPlayer
+    getTeamSeaonalPlayer,
+    getPlayerSearch,
+    getPlayer
 }
