@@ -458,18 +458,16 @@ async function get_team(req, res) {
 // Route 12 (handler)
 async function player_avg(req, res) {
   connection.query(
-    `
-    with player_yearly_stats as (select Player, Year as Season, Tm as Team, Height, Weight,
-        Born as Birth_Year, Birth_City, Birth_State, College,
-        Pos, (PTS/G) as PPG, (AST/G) as APG, (TRB/G) as RPG, PF, eFG_Percentage as EFG
-        from Players natural join Seasons_Stats
-        group by player ,year)
-        select Player, Height, Weight, Birth_Year, Birth_City, Birth_State, College,
-        Pos as Position, avg(PPG) as PointPerSeason, avg(APG) as AssistPerSeason, avg(PF) as PersonalFoulPerSeason, avg(EFG) as EFGPerSeason
-        from player_yearly_stats
-        group by Player
-        order by PointPerSeason desc;
-    `,
+    ` with player_yearly_stats as (select Player, Year as Season, Tm as Team, Height, Weight,
+      Born as Birth_Year, Birth_City, Birth_State, College,
+      Pos, (PTS/G)as PPG, (AST/G) as APG, (TRB/G) as RPG, PF, eFG_Percentage as EFG
+      from Players natural join Seasons_Stats
+      group by player ,year)
+      select Player, Height, Weight, Birth_Year, Birth_City, Birth_State, College,
+      Pos as Position, ROUND(avg(PPG),2) as PointPerSeason, ROUND(avg(APG),2)as AssistPerSeason, ROUND(avg(PF),2) as PersonalFoulPerSeason, ROUND(avg(EFG),2) as EFGPerSeason
+      from player_yearly_stats
+      group by Player
+      order by PointPerSeason desc;`,
     function (error, results, fields) {
       if (error) {
         console.log(error);
@@ -508,7 +506,7 @@ async function first_all_nba(req, res) {
   from (select * from Seasons_Stats where Year = ${season}) as seasonalStats natural join Players
   where Tm in (select Team_Abbreviation_Away from topTeams)),
   topPlayers as (select Player, Pos, Tm,Height, Weight, pointsPerGame from playerStats where posRank=1)
-select Player, Pos, Tm, pointsPerGame, Height, Weight,(homeWins+awayWins) as totalWins from topPlayers join topTeams on topPlayers.Tm = topTeams.Team_Abbreviation_Away;
+select Player, Pos, Tm, round(pointsPerGame,2) AS pointsPerGame, Height, Weight,(homeWins+awayWins) as totalWins from topPlayers join topTeams on topPlayers.Tm = topTeams.Team_Abbreviation_Away;
   `,
     function (error, results, fields) {
       if (error) {
@@ -528,7 +526,7 @@ async function only_got_numbers(req, res) {
   // const season = req.query.Season ? req.query.Season : 2015;
   connection.query(
     `
-    select Player, Pos, Tm, pointsPerGame, (AST/G) as assistsPerGame, (TRB/G) as reboundsPerGame, DWS, OWS, FG, FGA, FT, FTA, (homeWins + awayWins) as totalWins, (homeLosses + awayLosses) as totalLosses from
+    select Player, Pos, Tm, round(pointsPerGame,2) AS pointsPerGame, round((AST/G),2) as assistsPerGame, round((TRB/G),2) as reboundsPerGame, DWS, OWS, FG, FGA, FT, FTA, (homeWins + awayWins) as totalWins, (homeLosses + awayLosses) as totalLosses from
     (select *, (PTS/G) as pointsPerGame, row_number() over (partition by Tm, Season_ID order by (PTS/G) desc) as tmRank
     from
     (select *, max(homeLosses+homeWins+awayLosses+awayWins) as allGames from
@@ -614,7 +612,7 @@ async function contributes_most(req, res) {
       SELECT G.Season_ID AS Season,
            G.Team_Abbreviation_Home AS Abbreviation,
             SS.Player AS Player, SS.PTS AS personalPTS,
-            ((SS.PTS / seasonTotalPTS) * 100) AS Contribution
+            round(((SS.PTS / seasonTotalPTS) * 100),3) AS Contribution
       FROM newGame G
       JOIN Seasons_Stats AS SS
       ON G.Season_ID = SS.Year
