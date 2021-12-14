@@ -28,6 +28,11 @@ Result: data_cleaned
 
 Later changes in RDS: cleaned records in Game before season 1950 and after season 2017 to keep Game consistent with seasonal stats.
 
+### Web App
+The back-end and API of the application is built on Node.js and the RDS is hosted on AWS MySQL server.
+The front-end is based on React and compatible libraries such as [React Suite](https://rsuitejs.com/).
+
+
 ### Entity–relationship model
 ![erd](updated_erd.png)
 
