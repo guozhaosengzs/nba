@@ -393,7 +393,7 @@ class Games extends React.Component {
                                         </FlexboxGrid>
                                         <br></br>
                                         <Row>
-                                            <Col md={8} style={{ textAlign: "center" }}>
+                                            <Col sm={8} style={{ textAlign: "center" }}>
                                                 <h5>
                                                     <Table
                                                         wordWrap
@@ -417,10 +417,10 @@ class Games extends React.Component {
                                                     </Table>
                                                 </h5>
                                             </Col>
-                                            <Col md={8}>
+                                            <Col sm={8}>
 
                                             </Col>
-                                            <Col md={8} style={{ textAlign: "center" }}>
+                                            <Col sm={8} style={{ textAlign: "center" }}>
                                                 <h5>
                                                     <Table
                                                         wordWrap
