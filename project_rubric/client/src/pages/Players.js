@@ -227,7 +227,6 @@ class Players extends React.Component {
                         <br></br>
                         <div style={{ textAlign: "center" }}>
                             <Button
-                                color="violet" 
                                 appearance="ghost"
                                 onClick={() => this.setState({
                                         stQuery: ""
