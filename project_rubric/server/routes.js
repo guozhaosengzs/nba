@@ -213,7 +213,6 @@ async function player(req, res) {
   // Query Parameter(s): player(string),
 
   var player = req.query.player_name;
-  console.log(player)
   connection.query(
     `
     select Year as Season, Tm as Team, Height, Weight,

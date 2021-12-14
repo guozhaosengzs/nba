@@ -1,8 +1,9 @@
 import React from 'react';
-import { Toggle, InputNumber, List, PanelGroup, Panel, Grid, Row, Col, FlexboxGrid, Pagination, CustomProvider, InputGroup, Input, DateRangePicker, Button } from "rsuite";
-import { Table, ColumnGroup, Column, HeaderCell, Cell } from "rsuite-table";
+import { Toggle, InputNumber, Grid, Row, Col, FlexboxGrid, Pagination, CustomProvider, InputGroup, Input, Button } from "rsuite";
+import { Table, Column, HeaderCell, Cell } from "rsuite-table";
 import SearchIcon from '@rsuite/icons/Search';
 import { FaChessPawn, FaUserFriends } from "react-icons/fa";
+import SearchPeopleIcon from '@rsuite/icons/SearchPeople';
 
 import TopNav from '../components/TopNav';
 import ColumnSort from "../components/ColumnSort";
@@ -123,7 +124,7 @@ class Players extends React.Component {
             this.setState({
                 playerResults: res.results,
                 playerName: name,
-                playerLoad :false
+                playerLoad: false
             });
         });
         this.setState({
@@ -376,11 +377,40 @@ class Players extends React.Component {
 
                             <div style={{ textAlign: "center" }}>
                                 <h3>{this.state.playerName} </h3>
-
                                 <h5>
-                                    {/* Born in {this.state.playerResults.Birth_City}, */}
+                                    Here are is some information about him and his average performances in each season.
                                 </h5>
+                                <br></br>
+                                <Table
+                                    height={80}
+                                    data={this.state.playerResults}>
+                                    <Column flexGrow={1} align="center">
+                                        <HeaderCell>Born in City</HeaderCell>
+                                        <Cell dataKey="Birth_City" />
+                                    </Column>
+                                    <Column flexGrow={1} align="center">
+                                        <HeaderCell>Born in State</HeaderCell>
+                                        <Cell dataKey="Birth_State" />
+                                    </Column>
+                                    <Column flexGrow={1} align="center">
+                                        <HeaderCell>Born in</HeaderCell>
+                                        <Cell dataKey="Birth_Year" />
+                                    </Column>
+                                    <Column flexGrow={1} align="center">
+                                        <HeaderCell>Height</HeaderCell>
+                                        <Cell dataKey="Height" />
+                                    </Column>
+                                    <Column flexGrow={1} align="center">
+                                        <HeaderCell>Weight</HeaderCell>
+                                        <Cell dataKey="Weight" />
+                                    </Column>
+                                    <Column flexGrow={1} align="center">
+                                        <HeaderCell>Undergrad</HeaderCell>
+                                        <Cell dataKey="College" />
+                                    </Column>
+                                </Table>
 
+                                <br></br>
                                 <Table
                                     wordWrap
                                     hover={true}
@@ -452,7 +482,7 @@ class Players extends React.Component {
                                         <Cell dataKey="PF" />
                                     </Column>
                                     <Column flexGrow={1} sortable align="center">
-                                        <HeaderCell>PF</HeaderCell>
+                                        <HeaderCell>eFG %</HeaderCell>
                                         <Cell dataKey="EFG" />
                                     </Column>
                                 </Table>
@@ -469,7 +499,7 @@ class Players extends React.Component {
                                         size="xs"
                                         layout={["total", "-", "limit", "|", "pager", "skip"]}
                                         limit={this.state.playerLimit}
-                                        limitOptions={[15, 30, 60]}
+                                        limitOptions={[5, 10, 30]}
                                         total={this.state.playerResults.length}
                                         activePage={this.state.playerPage}
                                         onChangePage={p => this.setState({ playerPage: p })}
@@ -481,13 +511,21 @@ class Players extends React.Component {
                                         }}
                                     />
                                 </div>
+                                <br></br>
+                                <br></br>
+                                <Button
+                                    color="red"
+                                    appearance="primary"
+                                    onClick={() => {
+                                        window.open("https://google.com/search?q=" + this.state.playerName, '_blank');;
+                                    }}>
+                                    <SearchPeopleIcon />
+                                    What to search more about this player? Click here!
+                                </Button>
                             </div>
-
-
                         </div>
                     }
                 </div>
-
                 <div style={{ padding: 50 }}>
                 </div>
             </CustomProvider>
