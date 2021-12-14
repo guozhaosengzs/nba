@@ -28,11 +28,11 @@ async function game(req, res) {
     const Game_ID = req.query.Game_ID;
     connection.query(
       `WITH Game_Info AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Ftm_Home,Ftm_Away,Fgm_Home,Fgm_Away,Team_Abbreviation_Home AS HT ,Team_Abbreviation_Away AS AT
-FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
+        FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
                   Join Team T2 on Game.Team_Abbreviation_Away = T2.Abbreviation
- WHERE Game_ID = ${Game_ID})
-Select Game_Info.Game_Id, Game_Date,Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Ftm_Home,Ftm_Away,Fgm_Home,Fgm_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses
-FROM Game_Info JOIN HT_win_loss ON Game_Info.Game_ID = HT_win_loss.GAME_ID JOIN AT_win_loss ON Game_Info.Game_ID = AT_win_loss.GAME_ID;`,
+        WHERE Game_ID = ${Game_ID})
+Select Game_Info.Game_Id, Game_Date,Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Ftm_Home,Ftm_Away,Fgm_Home,Fgm_Away,IFNULL(Home_seasonal_wins,0) AS Home_seasonal_wins,IFNULL(Home_seasonal_losses,0) AS Home_seasonal_losses,IFNULL(Away_seasonal_wins,0) AS Away_seasonal_wins,IFNULL(Away_seasonal_losses,0) AS Away_seasonal_losses
+FROM Game_Info LEFT JOIN HT_win_loss ON Game_Info.Game_ID = HT_win_loss.GAME_ID LEFT JOIN AT_win_loss ON Game_Info.Game_ID = AT_win_loss.GAME_ID ;`,
       function (error, results, fields) {
         if (error) {
           console.log(error);
@@ -149,31 +149,31 @@ async function search_games(req, res) {
 
   connection.query(
     `WITH All_games AS (SELECT Game_ID,Season_ID,Game_Date,T1.City AS City,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Team_Abbreviation_Home AS HT,Team_Abbreviation_Away AS AT
-          FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
-                Join Team T2 on Game.Team_Abbreviation_Away = T2.Abbreviation
-          WHERE Game_Date BETWEEN '${Date_From}' AND '${Date_To}'
-          AND Team_Abbreviation_Home LIKE '%${Home}%'
-          AND Team_Abbreviation_Away LIKE '%${Away}%'
-          AND T1.City LIKE '%${City}%'),
-          Home_Season_King AS (SELECT h.Game_ID AS GAME_ID,h.Player AS Home_Seasonal_Leader,h.pos AS Home_leader_Pos,h.PTS AS Home_leader_Pts,h.PER AS Home_leader_PER,h.TSP AS Home_leader_TSP
+      FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
+            Join Team T2 on Game.Team_Abbreviation_Away = T2.Abbreviation
+      WHERE Game_Date BETWEEN '${Date_From}' AND '${Date_To}'
+      AND Team_Abbreviation_Home LIKE '%${Home}%'
+      AND Team_Abbreviation_Away LIKE '%${Away}%'
+      AND T1.City LIKE '%${City}%'),
+      Home_Season_King AS (SELECT h.Game_ID AS GAME_ID,h.Player AS Home_Seasonal_Leader,h.pos AS Home_leader_Pos,h.PTS AS Home_leader_Pts,h.PER AS Home_leader_PER,h.TSP AS Home_leader_TSP
+          FROM
+          (SELECT gi.Game_ID AS GAME_ID,Player,pos,CAST(AVG(PTS/G) AS DECIMAL(5,1)) AS PTS,CAST(AVG(PER) AS DECIMAL(5,1)) AS PER,CAST(AVG(TS_Percentage) AS DECIMAL(5,2)) AS TSP,
+          row_number() over (PARTITION BY GAME_ID ORDER BY PTS/G DESC) AS pts_rank
+          FROM Seasons_Stats s JOIN All_games gi ON s.Tm = gi.HT
+          WHERE s.Year = gi.Season_ID
+          Group By gi.Game_Id,Player) AS h
+          WHERE h.pts_rank = 1),
+      Away_Season_King AS (SELECT a.Game_ID AS GAME_ID,a.Player AS Away_Seasonal_Leader,a.pos AS Away_leader_Pos,a.PTS AS Away_leader_Pts,a.PER AS Away_leader_PER,a.TSP AS Away_leader_TSP
               FROM
               (SELECT gi.Game_ID AS GAME_ID,Player,pos,CAST(AVG(PTS/G) AS DECIMAL(5,1)) AS PTS,CAST(AVG(PER) AS DECIMAL(5,1)) AS PER,CAST(AVG(TS_Percentage) AS DECIMAL(5,2)) AS TSP,
               row_number() over (PARTITION BY GAME_ID ORDER BY PTS/G DESC) AS pts_rank
-              FROM Seasons_Stats s JOIN All_games gi ON s.Tm = gi.HT
+              FROM Seasons_Stats s JOIN All_games gi ON s.Tm = gi.AT
               WHERE s.Year = gi.Season_ID
-              Group By Game_Id,Player) AS h
-              WHERE h.pts_rank = 1),
-          Away_Season_King AS (SELECT a.Game_ID AS GAME_ID,a.Player AS Away_Seasonal_Leader,a.pos AS Away_leader_Pos,a.PTS AS Away_leader_Pts,a.PER AS Away_leader_PER,a.TSP AS Away_leader_TSP
-                  FROM
-                  (SELECT gi.Game_ID AS GAME_ID,Player,pos,CAST(AVG(PTS/G) AS DECIMAL(5,1)) AS PTS,CAST(AVG(PER) AS DECIMAL(5,1)) AS PER,CAST(AVG(TS_Percentage) AS DECIMAL(5,2)) AS TSP,
-                  row_number() over (PARTITION BY GAME_ID ORDER BY PTS/G DESC) AS pts_rank
-                  FROM Seasons_Stats s JOIN All_games gi ON s.Tm = gi.AT
-                  WHERE s.Year = gi.Season_ID
-                  Group By Game_Id,Player) AS a
-                  WHERE a.pts_rank = 1)
-          SELECT Game_ID,Game_Date,City,HT as Home_Abbr,AT AS Away_abbr, Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses,Home_Seasonal_Leader,Away_Seasonal_Leader,Home_Leader_Pos,Away_Leader_Pos,Home_leader_Pts,Away_leader_Pts,Home_leader_PER,Away_leader_PER,Home_leader_TSP,Away_leader_TSP
-                  FROM All_games NATURAL JOIN HT_win_loss NATURAL JOIN AT_win_loss NATURAL JOIN Home_Season_King NATURAL JOIN Away_Season_King
-                  ORDER BY Game_Date DESC,HT_win_loss.Home_Team ASC,AT_win_loss.Away_Team ASC;`,
+              Group By gi.Game_Id,Player) AS a
+              WHERE a.pts_rank = 1)
+      SELECT All_games.Game_ID,Game_Date,City,HT as Home_Abbr,AT AS Away_abbr, Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,IFNULL(Home_seasonal_wins,0) AS Home_seasonal_wins,IFNULL(Home_seasonal_losses,0) AS Home_seasonal_losses,IFNULL(Away_seasonal_wins,0) AS Away_seasonal_wins,IFNULL(Away_seasonal_losses,0) AS Away_seasonal_losses,Home_Seasonal_Leader,Away_Seasonal_Leader,Home_Leader_Pos,Away_Leader_Pos,Home_leader_Pts,Away_leader_Pts,Home_leader_PER,Away_leader_PER,Home_leader_TSP,Away_leader_TSP
+              FROM All_games LEFT JOIN HT_win_loss ON All_games.Game_ID= HT_win_loss.Game_ID LEFT JOIN AT_win_loss ON All_games.Game_ID = AT_win_loss.Game_ID LEFT JOIN Home_Season_King ON All_games.Game_ID = Home_Season_King.Game_ID LEFT JOIN Away_Season_King ON All_games.Game_ID = Away_Season_King.Game_ID
+              ORDER BY Game_Date DESC,HT_win_loss.Home_Team ASC,AT_win_loss.Away_Team ASC;`,
     function (error, results, fields) {
       if (error) {
         console.log(error);
