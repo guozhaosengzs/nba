@@ -32,8 +32,20 @@ Later changes in RDS: cleaned records in Game before season 1950 and after seaso
 The back-end and API of the application is built on Node.js and the RDS is hosted on AWS MySQL server.
 The front-end is based on React and compatible libraries such as [React Suite](https://rsuitejs.com/).
 
+### Run The App Locally
+Please follow the instructions below in order to run the web app locally.
 
-### Entity–relationship model
+#### 1 node.js setup
+Download and install node.js via this [link](https://nodejs.org/en/download/).
+Run the following line to make sure your versions are up-to-date
+```
+npm -v
+node - v
+```
+
+
+
+### Appendix. Entity–relationship model
 ![erd](updated_erd.png)
 
 
