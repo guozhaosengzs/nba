@@ -52,12 +52,12 @@ npm install --save react
 npm install --save react-dom
 ```
 
-* Note: from now on installing with npm might yeild different results based on your environment, so read the output carefully, and try prompted command if needed.
+* Note: from now on installing with npm might yeild different results based on your environment, so read the output carefully, and try prompted command if needed (**sometimes you would need to use *--froce* if regular install option fails**).
 
 #### 3. Install node modules in the folders
 Locate the working directory of the web app, should be something like  
 nba/ .... /project.
-Open two terminals and run the following command on different terminals.
+Open two terminals and run the following command on different terminals. (*npm i* and *npm install* are interchangeable)
 ```
 cd server
 npm install
@@ -65,7 +65,7 @@ npm install
 
 ```
 cd client
-npm install
+npm i
 ```
 
 #### 4. Download and Install dependencies/libraries
@@ -73,6 +73,7 @@ In either of the terminals, run the following commands to install packages for t
 ```
 npm i rsuite --save
 npm i echarts --save
+npm i react-usa-map --save
 npm i rsuite-table --save
 npm i react-icons --save
 npm i --save @rsuite/icons
