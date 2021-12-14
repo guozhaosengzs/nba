@@ -37,13 +37,62 @@ Please follow the instructions below in order to run the web app locally.
 
 #### 1 node.js setup
 Download and install node.js via this [link](https://nodejs.org/en/download/).
-Run the following line to make sure your versions are up-to-date
+Run the following line in your terminal to make sure your versions are up-to-date
 ```
 npm -v
 node - v
 ```
 
+#### 2 REACT setup
+In your terminal, install react and read-dom
+``` 
+npm install --save react
+```
+``` 
+npm install --save react-dom
+```
 
+* Note: from now on installing with npm might yeild different results based on your environment, so read the output carefully, and try prompted command if needed.
+
+#### 3 Install node modules in the folders
+Locate the working directory of the web app, should be something like  
+nba/ .... /project.
+Open two terminals and run the following command on different terminals.
+```
+cd server
+npm install
+```
+
+```
+cd client
+npm install
+```
+
+#### 4 Download and Install dependencies/libraries
+In either of the terminals, run the following commands to install packages for the webpages
+```
+npm i rsuite --save
+npm i echarts --save
+npm i rsuite-table --save
+npm i react-icons --save
+npm i --save @rsuite/icons
+npm i --save @rsuite/charts echarts
+```
+
+#### 5 See the Webpages
+Finally, it's time to run and test the web app.
+Make sure you start with the terminal that is on the /server directory, and run
+``` 
+npm start
+```
+Then, on the terminal with the /client directory, run the same
+``` 
+npm start
+```
+
+The website should then be automatically opened by the default browser.
+
+* Please contact zsguo@seas.upenn.edu should you ran into any problem following the steps above.
 
 ### Appendix. Entity–relationship model
 ![erd](updated_erd.png)
