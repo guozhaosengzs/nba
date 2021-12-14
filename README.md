@@ -28,4 +28,7 @@ Result: data_cleaned
 
 Later changes in RDS: cleaned records in Game before season 1950 and after season 2017 to keep Game consistent with seasonal stats.
 
+### Entity–relationship model
+![erd](https://github.com/guozhaosengzs/nba/main/updated_erd.png?raw=true)
+
 
