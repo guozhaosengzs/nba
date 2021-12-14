@@ -513,10 +513,10 @@ class Games extends React.Component {
                                     <div style={{ width: "70vw", textAlign: "center" }}>
                                         <RadarChart
                                             data={[
-                                                ["PTS", 25, this.state.showPlayerResult.Home_Highest_PTS, this.state.showPlayerResult.Away_Highest_PTS],
-                                                ["AST", 25, this.state.showPlayerResult.Home_Highest_AST, this.state.showPlayerResult.Away_Highest_AST],
-                                                ["FG", 25, this.state.showPlayerResult.Home_Highest_PF, this.state.showPlayerResult.Away_Highest_PF],
-                                                ["PF", 25, this.state.showPlayerResult.Home_Highest_FG, this.state.showPlayerResult.Away_Highest_FG]
+                                                ["PTS", (this.state.showPlayerResult.Home_Highest_PTS + this.state.showPlayerResult.Away_Highest_PTS) / 2 * 1.25, this.state.showPlayerResult.Home_Highest_PTS, this.state.showPlayerResult.Away_Highest_PTS],
+                                                ["AST", (this.state.showPlayerResult.Home_Highest_AST + this.state.showPlayerResult.Away_Highest_AST) / 2 * 1.25, this.state.showPlayerResult.Home_Highest_AST, this.state.showPlayerResult.Away_Highest_AST],
+                                                ["FG", (this.state.showPlayerResult.Home_Highest_PF + this.state.showPlayerResult.Away_Highest_PF) / 2 * 1.25, this.state.showPlayerResult.Home_Highest_PF, this.state.showPlayerResult.Away_Highest_PF],
+                                                ["PF", (this.state.showPlayerResult.Home_Highest_FG + this.state.showPlayerResult.Away_Highest_FG) / 2 * 1.25, this.state.showPlayerResult.Home_Highest_FG, this.state.showPlayerResult.Away_Highest_FG]
                                             ]}                                        >
                                             <RadarLine name={this.state.showGameResult.Nickname_Home} />
                                             <RadarLine name={this.state.showGameResult.Nickname_Away} />
