@@ -304,10 +304,7 @@ async function search_player(req, res) {
 
 // Route 7 (handler)
 async function search_team_info(req, res) {
-  // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with
-  //      the average stats of its leading player for that season;
-  //      the information of the game the team won most points in that season;
-  //      the information of the game the team lost most points in that season
+  // When specified with a team, returns a JSON array, the team basic information
   // Query Parameter(s): Team_ID(string)
   if (isNaN(req.query.Team_ID)) {
     res.writeHead(500, { Error: "Please pass parameter Team_ID" });
@@ -331,10 +328,8 @@ async function search_team_info(req, res) {
 
 // Route 8 (handler)
 async function search_team_win(req, res) {
-  // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with
-  //      the average stats of its leading player for that season;
+  // When specified with a team,
   //      the information of the game the team won most points in that season;
-  //      the information of the game the team lost most points in that season
   // Query Parameter(s): Team_ID(string)
   if (isNaN(req.query.Team_ID)) {
     res.writeHead(500, { Error: "Please pass parameter Team_ID" });
@@ -343,16 +338,21 @@ async function search_team_win(req, res) {
     const team_id = req.query.Team_ID;
     connection.query(
       `with all_games as (
-                    SELECT Season_ID, (PTS_AWAY - PTS_HOME) as winPts, Team_Abbreviation_Away as self, TEAM_ABBREVIATION_HOME as opponent, Pts_Home as opponentScore, Pts_Away as selfScore
-                    from Game
-                    where
-                          TEAM_ABBREVIATION_AWAY in (select Abbreviation from Team WHERE ID = ${team_id})
-                    UNION
-                    SELECT Season_ID, (PTS_HOME - PTS_AWAY) as winPts, TEAM_ABBREVIATION_HOME as self, TEAM_ABBREVIATION_AWAY as opponent, Pts_Away as opponentScore, Pts_Home as selfScore
-                    from Game
-                    where
-                          TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id}))
-                 select Season_ID as Season, self, opponent, selfScore, opponentScore, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY winPts DESC ) as rankList from all_games order by rankList ASC, Season_ID DESC  LIMIT 10;`,
+        SELECT Season_ID, (PTS_AWAY - PTS_HOME) as winPts, Team_Abbreviation_Away as self, TEAM_ABBREVIATION_HOME as opponent, Pts_Home as opponentScore, Pts_Away as selfScore
+        from Game
+        where
+              TEAM_ABBREVIATION_AWAY in (select Abbreviation from Team WHERE ID = ${team_id})
+        UNION
+        SELECT Season_ID, (PTS_HOME - PTS_AWAY) as winPts, TEAM_ABBREVIATION_HOME as self, TEAM_ABBREVIATION_AWAY as opponent, Pts_Away as opponentScore, Pts_Home as selfScore
+        from Game
+        where
+              TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id})),
+        rank_win as(select Season_ID as Season, self, opponent, selfScore, opponentScore, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY winPts DESC ) as rankList
+        from all_games)
+        select *
+        from rank_win
+        WHERE rankList = 1
+        order by Season DESC LIMIT 10;`,
       function (error, results, fields) {
         if (error) {
           console.log(error);
@@ -367,10 +367,8 @@ async function search_team_win(req, res) {
 
 // Route 9 (handler)
 async function search_team_loses(req, res) {
-  // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with
-  //      the average stats of its leading player for that season;
-  //      the information of the game the team won most points in that season;
-  //      the information of the game the team lost most points in that season
+  // When specified with a team,
+  // the information of the game the team lost most points in that season
   // Query Parameter(s): Team_ID(string)
   if (isNaN(req.query.Team_ID)) {
     res.writeHead(500, { Error: "Please pass parameter Team_ID" });
@@ -379,17 +377,18 @@ async function search_team_loses(req, res) {
     const team_id = req.query.Team_ID;
     connection.query(
       `with all_games as (
-                    SELECT Season_ID, (PTS_HOME - PTS_AWAY) as lossPts, Team_Abbreviation_Away as self, TEAM_ABBREVIATION_HOME as opponent, Pts_Home as opponentScore, Pts_Away as selfScore
-                    from Game
-                    where
-                          TEAM_ABBREVIATION_AWAY in (select Abbreviation from Team WHERE ID = ${team_id})
-                    UNION
-                    SELECT Season_ID, (PTS_AWAY - PTS_HOME) as lossPts, TEAM_ABBREVIATION_HOME as self, TEAM_ABBREVIATION_AWAY as opponent, Pts_Away as opponentScore, Pts_Home as selfScore
-                    from Game
-                    where
-                          TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id}))
-                 select Season_ID as Season, self, opponent, selfScore, opponentScore, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY lossPts DESC ) as rankList from all_games order by rankList ASC, Season_ID DESC  LIMIT 10;
-`,
+        SELECT Season_ID, (PTS_HOME - PTS_AWAY) as lossPts, Team_Abbreviation_Away as self, TEAM_ABBREVIATION_HOME as opponent, Pts_Home as opponentScore, Pts_Away as selfScore
+        from Game
+        where
+              TEAM_ABBREVIATION_AWAY in (select Abbreviation from Team WHERE ID = ${team_id})
+        UNION
+        SELECT Season_ID, (PTS_AWAY - PTS_HOME) as lossPts, TEAM_ABBREVIATION_HOME as self, TEAM_ABBREVIATION_AWAY as opponent, Pts_Away as opponentScore, Pts_Home as selfScore
+        from Game
+        where
+              TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id})),
+        rank_loss AS(select Season_ID as Season, self, opponent, selfScore, opponentScore,ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY lossPts DESC ) as rankList from all_games )
+        SELECT * FROM rank_loss WHERE ranklist = 1
+        order by  Season DESC LIMIT 10;`,
       function (error, results, fields) {
         if (error) {
           console.log(error);
@@ -404,10 +403,8 @@ async function search_team_loses(req, res) {
 
 // Route 10 (handler)
 async function search_team_player(req, res) {
-  // When specified with a team, returns a JSON array, each JSON object of which contains the team basic information, along with
+  // 
   //      the average stats of its leading player for that season;
-  //      the information of the game the team won most points in that season;
-  //      the information of the game the team lost most points in that season
   // Query Parameter(s): Team_ID(string)
   if (isNaN(req.query.Team_ID)) {
     res.writeHead(500, { Error: "Please pass parameter Team_ID" });
