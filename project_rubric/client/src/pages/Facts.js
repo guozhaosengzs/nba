@@ -180,37 +180,37 @@ class Facts extends React.Component {
                                 }, 500);
                             }}
                         >
-                            <Column width={100} fixed flexGrow={1} sortable>
+                            <Column width={100} fixed flexGrow={1} sortable align="center">
                                 <HeaderCell>Name</HeaderCell>
                                 <Cell dataKey="Player" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>Team</HeaderCell>
                                 <Cell dataKey="Tm" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>Position</HeaderCell>
                                 <Cell dataKey="Pos" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>PTS / game</HeaderCell>
                                 <Cell dataKey="pointsPerGame" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>Season Wins</HeaderCell>
                                 <Cell dataKey="totalWins" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell> Player Height</HeaderCell>
                                 <Cell dataKey="Height" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell> Player Weight</HeaderCell>
                                 <Cell dataKey="Weight" />
                             </Column>
@@ -292,42 +292,42 @@ class Facts extends React.Component {
                                 }, 500);
                             }}
                         >
-                            <Column width={100} fixed flexGrow={1} sortable>
+                            <Column width={100} fixed flexGrow={1} sortable align="center">
                                 <HeaderCell>Name</HeaderCell>
                                 <Cell dataKey="Player" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>Team</HeaderCell>
                                 <Cell dataKey="Tm" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>Position</HeaderCell>
                                 <Cell dataKey="Pos" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>PTS / game</HeaderCell>
                                 <Cell dataKey="pointsPerGame" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>AST / game</HeaderCell>
                                 <Cell dataKey="assistsPerGame" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>TRB / game</HeaderCell>
                                 <Cell dataKey="reboundsPerGame" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell> Total Wins</HeaderCell>
                                 <Cell dataKey="totalWins" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell> Total Losses</HeaderCell>
                                 <Cell dataKey="totalLosses" />
                             </Column>
@@ -389,27 +389,27 @@ class Facts extends React.Component {
                             data={this.state.fact3Results}
                             loading={this.state.fact3Load}
                         >
-                            <Column fixed flexGrow={1} >
+                            <Column fixed flexGrow={1}  align="center">
                                 <HeaderCell>Team</HeaderCell>
                                 <Cell dataKey="The_Team" />
                             </Column>
 
-                            <Column width={150} flexGrow={1} >
+                            <Column width={150} flexGrow={1}  align="center">
                                 <HeaderCell>City with Most Win</HeaderCell>
                                 <Cell dataKey="lucky_city" />
                             </Column>
 
-                            <Column flexGrow={1} >
+                            <Column flexGrow={1}  align="center">
                                 <HeaderCell> ...Home City?</HeaderCell>
                                 <Cell dataKey="IS_HOME_CITY" />
                             </Column>
 
-                            <Column width={150} flexGrow={1} >
+                            <Column width={150} flexGrow={1}  align="center">
                                 <HeaderCell>Player with Most PTS</HeaderCell>
                                 <Cell dataKey="lucky_player" />
                             </Column>
 
-                            <Column flexGrow={1} >
+                            <Column flexGrow={1}  align="center">
                                 <HeaderCell>... Born in This City?</HeaderCell>
                                 <Cell dataKey="Born_in_lucky_CITY" />
                             </Column>
@@ -479,27 +479,27 @@ class Facts extends React.Component {
                                 }, 500);
                             }}
                         >
-                            <Column fixed flexGrow={1} sortable>
+                            <Column fixed flexGrow={1} sortable align="center">
                                 <HeaderCell>Season</HeaderCell>
                                 <Cell dataKey="Season" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>Team</HeaderCell>
                                 <Cell dataKey="Abbreviation" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell> Player Name</HeaderCell>
                                 <Cell dataKey="Player" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>Personal PTS</HeaderCell>
                                 <Cell dataKey="personalPTS" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={1} sortable align="center">
                                 <HeaderCell>Contribution (percentage)</HeaderCell>
                                 <Cell dataKey="Contribution" />
                             </Column>
