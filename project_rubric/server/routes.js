@@ -249,17 +249,18 @@ async function search_player(req, res) {
     const name = req.query.Name ? "%" + req.query.Name + "%" : "%";
     const team = req.query.Team ? "%" + req.query.Team + "%" : "%";
     const position = req.query.Position ? "%" + req.query.Position + "%" : "%";
+    const state = req.query.State ? "%" + req.query.State + "%" : "%";
     if (!Attributes.includes(attribute)) {
       res.writeHead(500, { Error: "Please pass required parameters" });
       res.end();
     } else {
-      if (req.query.All_Time == "true") {
+      if (req.query.All_Time == "True") {
         connection.query(
           `
                 select Player, Pos, sum(G) as Games, sum(PTS) as Points,
                 sum(AST) as Assists, sum(TRB) as Rebounds, sum(PF) as PFs, sum(FG) as FGs
-                from Seasons_Stats
-                where Player like '${name}' and Tm like '${team}' and Pos like '${position}'
+                from Seasons_Stats natural join Players
+                where Player like '${name}' and Tm like '${team}' and Pos like '${position}' and Birth_State like '${state}'
                 group by Player
                 order by ${attribute} DESC limit 10;`,
           function (error, results, fields) {
@@ -277,8 +278,8 @@ async function search_player(req, res) {
           `
                 select Player, Pos, sum(G) as Games, sum(PTS) as Points,
                 sum(AST) as Assists, sum(TRB) as Rebounds, sum(PF) as PFs, sum(FG) as FGs
-                from Seasons_Stats
-                where Player like '${name}' and Tm like '${team}' and Pos like '${position}' and Year = ${season}
+                from Seasons_Stats natural join Players
+                where Player like '${name}' and Tm like '${team}' and Pos like '${position}' and Year = ${season} and Birth_State like '${state}'
                 group by Player
                 order by ${attribute} DESC limit 10
                 `,
