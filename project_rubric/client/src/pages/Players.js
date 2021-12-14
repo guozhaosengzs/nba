@@ -29,6 +29,7 @@ class Players extends React.Component {
             nameQuery: "",
             teamQuery: "",
             posQuery: "",
+            stQuery: "",
 
             showPlayerInfo: false,
             playerResults: [],
@@ -48,7 +49,7 @@ class Players extends React.Component {
         this.stateList = {
             'Arizona': 'AZ',
             'Alabama': 'AL',
-            'Alaska':'AK',
+            'Alaska': 'AK',
             'Arkansas': 'AR',
             'California': 'CA',
             'Colorado': 'CO',
@@ -95,7 +96,8 @@ class Players extends React.Component {
             'Washington': 'WA',
             'West Virginia': 'WV',
             'Wisconsin': 'WI',
-            'Wyoming': 'WY'}
+            'Wyoming': 'WY'
+        }
     }
 
     handleQuerySearch() {
@@ -105,7 +107,7 @@ class Players extends React.Component {
             "Games",
             this.state.nameQuery,
             this.state.teamQuery,
-            this.state.posQuery).then(res => {
+            this.state.posQuery, this.state.stQuery).then(res => {
                 this.setState({
                     searchTopGames: res.results
                 });
@@ -117,7 +119,7 @@ class Players extends React.Component {
             "Points",
             this.state.nameQuery,
             this.state.teamQuery,
-            this.state.posQuery).then(res => {
+            this.state.posQuery, this.state.stQuery).then(res => {
                 this.setState({
                     searchTopPTS: res.results
                 });
@@ -129,7 +131,7 @@ class Players extends React.Component {
             "Assists",
             this.state.nameQuery,
             this.state.teamQuery,
-            this.state.posQuery).then(res => {
+            this.state.posQuery, this.state.stQuery).then(res => {
                 this.setState({
                     searchTopAST: res.results
                 });
@@ -141,7 +143,7 @@ class Players extends React.Component {
             "Rebounds",
             this.state.nameQuery,
             this.state.teamQuery,
-            this.state.posQuery).then(res => {
+            this.state.posQuery, this.state.stQuery).then(res => {
                 this.setState({
                     searchTopRB: res.results
                 });
@@ -153,7 +155,7 @@ class Players extends React.Component {
             "FGs",
             this.state.nameQuery,
             this.state.teamQuery,
-            this.state.posQuery).then(res => {
+            this.state.posQuery, this.state.stQuery).then(res => {
                 this.setState({
                     searchTopFG: res.results
                 });
@@ -165,7 +167,7 @@ class Players extends React.Component {
             "PFs",
             this.state.nameQuery,
             this.state.teamQuery,
-            this.state.posQuery).then(res => {
+            this.state.posQuery, this.state.stQuery).then(res => {
                 this.setState({
                     searchTopPF: res.results
                 });
@@ -191,8 +193,8 @@ class Players extends React.Component {
 
     getStateTwoDigitCode = function (stateFullName) {
         return this.stateList[stateFullName];
-        }
-        
+    }
+
 
     render() {
         return (
