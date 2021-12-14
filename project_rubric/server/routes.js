@@ -28,30 +28,11 @@ async function game(req, res) {
     const Game_ID = req.query.Game_ID;
     connection.query(
       `WITH Game_Info AS (SELECT Game_ID,Season_ID,Game_Date,T1.Nickname AS Nickname_Home, T2.Nickname AS Nickname_Away,Pts_Home,Pts_Away,Ftm_Home,Ftm_Away,Fgm_Home,Fgm_Away,Team_Abbreviation_Home AS HT ,Team_Abbreviation_Away AS AT
-                FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
-                          Join Team T2 on Game.Team_Abbreviation_Away = T2.Abbreviation
-                WHERE Game_ID = ${Game_ID}),
-                HT_win_loss AS(SELECT GAME_ID,HT1.HT AS Home_Team,HT1.HT_win_as_home+ HT2.HT_win_as_away AS Home_seasonal_wins, HT1.HT_lose_as_home + HT2.HT_lose_as_away AS Home_seasonal_losses
-                FROM
-                (SELECT gi.Game_ID AS GAME_ID, g.Team_Abbreviation_Home AS HT, SUM(CASE WHEN WL_Home = 'W' Then 1 Else 0 End) AS HT_win_as_home, SUM(CASE WHEN WL_Home = 'L' Then 1 Else 0 End) AS HT_lose_as_home
-                FROM Game g JOIN Game_Info gi on g.Team_Abbreviation_Home = gi.HT
-                Where g.Season_ID = gi.season_Id AND g.Game_Date <= gi.Game_Date) AS HT1
-                NATURAL JOIN
-                (SELECT gi.Game_ID AS GAME_ID,g.Team_Abbreviation_Away AS HT, SUM(CASE WHEN WL_Home = 'L' Then 1 Else 0 End) AS HT_win_as_away, SUM(CASE WHEN WL_Home = 'W' Then 1 Else 0 End) AS HT_lose_as_away
-                FROM Game g JOIN Game_Info gi on g.Team_Abbreviation_Away = gi.HT
-                Where g.Season_ID = gi.season_Id AND g.Game_Date <= gi.Game_Date) AS HT2),
-                AT_win_loss AS(SELECT GAME_ID,AT1.AT AS Away_Team, AT1.AT_win_as_home+ AT2.AT_win_as_away AS Away_seasonal_wins, AT1.AT_lose_as_home + AT2.AT_lose_as_away AS Away_seasonal_losses
-                FROM
-                (SELECT gi.Game_ID AS GAME_ID,g.Team_Abbreviation_Home AS AT, SUM(CASE WHEN WL_Home = 'W' Then 1 Else 0 End) AS AT_win_as_home, SUM(CASE WHEN WL_Home = 'L' Then 1 Else 0 End) AS AT_lose_as_home
-                FROM Game g JOIN Game_Info gi on g.Team_Abbreviation_Home = gi.AT
-                Where g.Season_ID = gi.season_Id AND g.Game_Date <= gi.Game_Date) AS AT1
-                NATURAL JOIN
-                (SELECT gi.Game_ID AS GAME_ID,g.Team_Abbreviation_Away AS AT, SUM(CASE WHEN WL_Home = 'L' Then 1 Else 0 End) AS AT_win_as_away, SUM(CASE WHEN WL_Home = 'W' Then 1 Else 0 End) AS AT_lose_as_away
-                FROM Game g JOIN Game_Info gi on g.Team_Abbreviation_Away = gi.AT
-                Where g.Season_ID = gi.season_Id AND g.Game_Date <= gi.Game_Date) AS AT2)
-                Select Game_Id, Game_Date,Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Ftm_Home,Ftm_Away,Fgm_Home,Fgm_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses
-                FROM Game_Info Natural JOIN HT_win_loss Natural JOIN  AT_win_loss;
-`,
+FROM Game Join Team T1 on Game.Team_Abbreviation_Home = T1.Abbreviation
+                  Join Team T2 on Game.Team_Abbreviation_Away = T2.Abbreviation
+ WHERE Game_ID = ${Game_ID})
+Select Game_Info.Game_Id, Game_Date,Nickname_Home,Nickname_Away,Pts_Home,Pts_Away,Ftm_Home,Ftm_Away,Fgm_Home,Fgm_Away,Home_seasonal_wins,Home_seasonal_losses,Away_seasonal_wins,Away_seasonal_losses
+FROM Game_Info JOIN HT_win_loss ON Game_Info.Game_ID = HT_win_loss.GAME_ID JOIN AT_win_loss ON Game_Info.Game_ID = AT_win_loss.GAME_ID;`,
       function (error, results, fields) {
         if (error) {
           console.log(error);
