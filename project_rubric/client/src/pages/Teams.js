@@ -18,15 +18,15 @@ class Teams extends React.Component {
         super(props);
 
         this.state = {
-            teamWinLoad: true,
+            teamWinLoad: false,
             teamWinSortType: null,
             teamWinSortColumn: null,
 
-            teamLossLoad: true,
+            teamLossLoad: false,
             teamLossSortType: null,
             teamLossSortColumn: null,
 
-            teamPlayerLoad: true,
+            teamPlayerLoad: false,
             teamPlayerSortType: null,
             teamPlayerSortColumn: null,
 
@@ -607,15 +607,15 @@ class Teams extends React.Component {
 
                                     onClick={() => {
                                         this.setState({
-                                            teamWinLoad: true,
+                                            teamWinLoad: false,
                                             teamWinSortType: null,
                                             teamWinSortColumn: null,
 
-                                            teamLossLoad: true,
+                                            teamLossLoad: false,
                                             teamLossSortType: null,
                                             teamLossSortColumn: null,
 
-                                            teamPlayerLoad: true,
+                                            teamPlayerLoad: false,
                                             teamPlayerSortType: null,
                                             teamPlayerSortColumn: null,
 
@@ -639,14 +639,238 @@ class Teams extends React.Component {
                                     src={"images/" + this.state.showTeamInfo.Nickname + ".png"}
                                     alt={this.state.showTeamInfo.Nickname + "Logo"}
                                     height={200} />
-                                <body>
-                                    {this.state.showTeamInfo.State}, {this.state.showTeamInfo.City}  &nbsp;&nbsp;&nbsp; Founded in {this.state.showTeamInfo.Year_Founded}
-                                </body>
+                                <div>
+                                    {this.state.showTeamInfo.State}, {this.state.showTeamInfo.City}  &nbsp;&nbsp;&nbsp; Founded in <b>{this.state.showTeamInfo.Year_Founded}</b>
+                                </div>
                             </div>
+                            <br></br>
+                            <Grid fluid>
+                                <Row>
+                                    <Col md={12} style={{ textAlign: "center", textAlignVertical: "center" }}>
+                                        <h4><i>Best Game in Each Season</i></h4>
+                                        <div>
+                                            Here are the game that <b>{this.state.showTeamInfo.Nickname}</b> has won by the most points in each of the 10 seasons pre-2018.
+                                        </div>
+                                        <br></br>
+                                        <Table
+                                            wordWrap
+                                            hover={true}
+                                            bordered={true}
+                                            cellBordered={true}
+                                            autoHeight={true}
+                                            headerHeight={80}
+                                            data={this.state.showWinResults}
+                                            loading={this.state.teamWinLoad}
+                                            sortColumn={this.state.teamWinSortColumn}
+                                            sortType={this.state.teamWinSortType}
+                                            onSortColumn={(sortColumn, sortType) => {
+                                                this.setState({
+                                                    teamWinLoad: true,
+                                                });
+
+                                                this.state.showWinResults.sort((a, b) => {
+                                                    let x = a[sortColumn];
+                                                    let y = b[sortColumn];
+
+                                                    return ColumnSort(x, y, sortType);
+                                                });
+
+                                                setTimeout(() => {
+                                                    this.setState({
+                                                        teamWinSortType: sortType,
+                                                        teamWinSortColumn: sortColumn,
+                                                        teamWinLoad: false
+                                                    });
+                                                }, 100);
+                                            }}
+                                        >
+                                            <Column align="center" verticalAlign="middle" sortable>
+                                                <HeaderCell>Season</HeaderCell>
+                                                <Cell dataKey="Season" />
+                                            </Column>
+                                            <ColumnGroup header="This Team" align="center">
+                                                <Column flexGrow={1} sortable align="center">
+                                                    <HeaderCell>Name</HeaderCell>
+                                                    <Cell dataKey="self" />
+                                                </Column>
+
+                                                <Column flexGrow={1} sortable align="center">
+                                                    <HeaderCell>Score</HeaderCell>
+                                                    <Cell dataKey="selfScore" />
+                                                </Column>
+                                            </ColumnGroup>
+
+                                            <ColumnGroup header="The Opponent" align="center">
+                                                <Column flexGrow={1} sortable align="center">
+                                                    <HeaderCell>Name</HeaderCell>
+                                                    <Cell dataKey="opponent" />
+                                                </Column>
+
+                                                <Column flexGrow={1} sortable align="center">
+                                                    <HeaderCell>Score</HeaderCell>
+                                                    <Cell dataKey="opponentScore" />
+                                                </Column>
+                                            </ColumnGroup>
+                                            <Column align="center" verticalAlign="middle" sortable>
+                                                <HeaderCell>Won-by (PTS)</HeaderCell>
+                                                <Cell dataKey="winPts" />
+                                            </Column>
+                                        </Table>
+                                    </Col>
+
+                                    <Col md={12} style={{ textAlign: "center", textAlignVertical: "center" }}>
+                                        <h4><i>Worst Game in Each Season</i></h4>
+                                        <div>
+                                            Here are the game that <b>{this.state.showTeamInfo.Nickname}</b> has lost by the most points in each of the 10 seasons pre-2018.
+                                        </div>
+                                        <br></br>
+                                        <Table
+                                            wordWrap
+                                            hover={true}
+                                            bordered={true}
+                                            cellBordered={true}
+                                            autoHeight={true}
+                                            headerHeight={80}
+                                            data={this.state.showLossResults}
+                                            loading={this.state.teamLossLoad}
+                                            sortColumn={this.state.teamLossSortColumn}
+                                            sortType={this.state.teamLossSortType}
+                                            onSortColumn={(sortColumn, sortType) => {
+                                                this.setState({
+                                                    teamLossLoad: true,
+                                                });
+
+                                                this.state.showLossResults.sort((a, b) => {
+                                                    let x = a[sortColumn];
+                                                    let y = b[sortColumn];
+
+                                                    return ColumnSort(x, y, sortType);
+                                                });
+
+                                                setTimeout(() => {
+                                                    this.setState({
+                                                        teamLossSortType: sortType,
+                                                        teamLossSortColumn: sortColumn,
+                                                        teamLossLoad: false
+                                                    });
+                                                }, 100);
+                                            }}
+                                        >
+                                            <Column align="center" verticalAlign="middle" sortable>
+                                                <HeaderCell>Season</HeaderCell>
+                                                <Cell dataKey="Season" />
+                                            </Column>
+                                            <ColumnGroup header="This Team" align="center">
+                                                <Column flexGrow={1} sortable align="center">
+                                                    <HeaderCell>Name</HeaderCell>
+                                                    <Cell dataKey="self" />
+                                                </Column>
+
+                                                <Column flexGrow={1} sortable align="center">
+                                                    <HeaderCell>Score</HeaderCell>
+                                                    <Cell dataKey="selfScore" />
+                                                </Column>
+                                            </ColumnGroup>
+
+                                            <ColumnGroup header="The Opponent" align="center">
+                                                <Column flexGrow={1} sortable align="center">
+                                                    <HeaderCell>Name</HeaderCell>
+                                                    <Cell dataKey="opponent" />
+                                                </Column>
+
+                                                <Column flexGrow={1} sortable align="center">
+                                                    <HeaderCell>Score</HeaderCell>
+                                                    <Cell dataKey="opponentScore" />
+                                                </Column>
+                                            </ColumnGroup>
+                                            <Column align="center" verticalAlign="middle" sortable>
+                                                <HeaderCell>Lost-by (PTS)</HeaderCell>
+                                                <Cell dataKey="lossPts" />
+                                            </Column>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                                <br></br>
+                                <Row>
+                                    <Col md={24} style={{ textAlign: "center", textAlignVertical: "center" }}>
+                                        <h4><i>Seasonal Best</i></h4>
+                                        <div>
+                                            Who was the best player in <b>{this.state.showTeamInfo.Nickname}</b> in the past few seasons?
+                                        </div>
+                                        <br></br>
+                                        <Table
+                                            wordWrap
+                                            hover={true}
+                                            bordered={true}
+                                            cellBordered={true}
+                                            autoHeight={true}
+                                            headerHeight={40}
+                                            data={this.state.showPlayerResults}
+                                            loading={this.state.teamPlayerLoad}
+                                            sortColumn={this.state.teamPlayerSortColumn}
+                                            sortType={this.state.teamPlayerSortType}
+                                            onSortColumn={(sortColumn, sortType) => {
+                                                this.setState({
+                                                    teamPlayerLoad: true,
+                                                });
+
+                                                this.state.showPlayerResults.sort((a, b) => {
+                                                    let x = a[sortColumn];
+                                                    let y = b[sortColumn];
+
+                                                    return ColumnSort(x, y, sortType);
+                                                });
+
+                                                setTimeout(() => {
+                                                    this.setState({
+                                                        teamPlayerSortType: sortType,
+                                                        teamPlayerSortColumn: sortColumn,
+                                                        teamPlayerLoad: false
+                                                    });
+                                                }, 100);
+                                            }}
+                                        >
+                                            <Column flexGrow={1} align="center" sortable>
+                                                <HeaderCell>Season</HeaderCell>
+                                                <Cell dataKey="Season" />
+                                            </Column>
+
+                                            <Column width={300} sortable align="center">
+                                                <HeaderCell>Name</HeaderCell>
+                                                <Cell dataKey="Player" />
+                                            </Column>
+
+                                            <Column width={200} sortable align="center">
+                                                <HeaderCell>Height (cm)</HeaderCell>
+                                                <Cell dataKey="height" />
+                                            </Column>
+
+                                            <Column width={200} sortable align="center">
+                                                <HeaderCell>Weight (cm)</HeaderCell>
+                                                <Cell dataKey="weight" />
+                                            </Column>
+
+                                            <Column width={200} sortable align="center">
+                                                <HeaderCell>AVG PTS/Game</HeaderCell>
+                                                <Cell dataKey="avgPoints" />
+                                            </Column>
+
+                                            <Column width={200} sortable align="center">
+                                                <HeaderCell>AVG AST/Game</HeaderCell>
+                                                <Cell dataKey="avgAssits" />
+                                            </Column>
+
+                                            <Column width={200} align="middle" sortable>
+                                                <HeaderCell>AVG RB/Game</HeaderCell>
+                                                <Cell dataKey="avgRebounds" />
+                                            </Column>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                            </Grid>
 
 
-
-                        </div>  {/* end of the team details page */}
+                            {/* End of the team detail page*/} </div>
                     }
                 </div>
                 {/* <div>
