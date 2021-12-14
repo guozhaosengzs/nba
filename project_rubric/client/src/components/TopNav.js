@@ -6,7 +6,7 @@ import { IoIosHome, IoMdPerson, IoMdBasketball, IoMdGlasses, IoIosInformationCir
 class TopNav extends React.Component {
     render() {
         return (
-            <Navbar appearance="default">
+            <Navbar appearance="default" >
                 <Navbar.Brand>
                     NBA Database
                 </Navbar.Brand>

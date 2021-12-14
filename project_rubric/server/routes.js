@@ -220,7 +220,7 @@ async function player(req, res) {
     Born as Birth_Year, Birth_City, Birth_State, College,
     Pos, CAST((PTS/G) AS Decimal(5,2)) as PPG, CAST((AST/G) AS DECIMAL(5,2)) as APG,  CAST((TRB/G) AS DECIMAL(5,2)) as RPG, PF, CAST(eFG_Percentage AS DECIMAL(5,2)) as EFG
     from Players natural join Seasons_Stats
-    where Player like "${player}"
+    where Player like '%${player}%'
     order by Season desc;`,
     function (error, results, fields) {
       if (error) {
@@ -254,7 +254,7 @@ async function search_player(req, res) {
       res.writeHead(500, { Error: "Please pass required parameters" });
       res.end();
     } else {
-      if (req.query.All_Time == "True") {
+      if (req.query.All_Time == "true") {
         connection.query(
           `
                 select Player, Pos, sum(G) as Games, sum(PTS) as Points,

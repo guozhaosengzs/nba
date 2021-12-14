@@ -51,6 +51,7 @@ class Home extends React.Component {
   render() {
     return (
       <CustomProvider theme={"dark"}>
+
         <div>
           <TopNav />
           <div style={{ width: "70vw", margin: "0 auto", marginTop: "5vh" }}>
