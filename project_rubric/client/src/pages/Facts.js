@@ -308,7 +308,7 @@ class Facts extends React.Component {
                             </Column>
 
                             <Column flexGrow={1} sortable>
-                                <HeaderCell>PTS / game/</HeaderCell>
+                                <HeaderCell>PTS / game</HeaderCell>
                                 <Cell dataKey="pointsPerGame" />
                             </Column>
 

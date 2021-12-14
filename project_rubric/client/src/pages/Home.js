@@ -99,28 +99,28 @@ class Home extends React.Component {
                 <Cell dataKey="Player" />
               </Column>
 
-              <Column width={100} flexGrow={1} sortable>
+              <Column width={100} align="center" flexGrow={1} sortable>
                 <HeaderCell>Position</HeaderCell>
                 <Cell dataKey="Position" />
               </Column>
 
-              <Column width={100} flexGrow={1} sortable>
+              <Column width={100} align="center" flexGrow={1} sortable>
                 <HeaderCell>PTS</HeaderCell>
                 <Cell dataKey="PointPerSeason" />
               </Column>
 
-              <Column width={100} flexGrow={1} sortable>
+              <Column width={100} align="center" flexGrow={1} sortable>
                 <HeaderCell>AST</HeaderCell>
                 <Cell dataKey="AssistPerSeason" />
               </Column>
 
-              <Column width={100} flexGrow={1} sortable>
+              <Column width={100} align="center" flexGrow={1} sortable>
                 <HeaderCell>PF</HeaderCell>
                 <Cell dataKey="PersonalFoulPerSeason" />
               </Column>
 
-              <Column width={100} flexGrow={1} sortable>
-                <HeaderCell>EFG</HeaderCell>
+              <Column width={100} align="center" flexGrow={1} sortable>
+                <HeaderCell>eFG%</HeaderCell>
                 <Cell dataKey="EFGPerSeason" />
               </Column>
             </Table>
