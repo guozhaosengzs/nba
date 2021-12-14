@@ -1,7 +1,10 @@
 import React from 'react';
+import USAMap from "react-usa-map";
+
 import { Toggle, InputNumber, Grid, Row, Col, FlexboxGrid, Pagination, CustomProvider, InputGroup, Input, Button } from "rsuite";
 import { Table, Column, HeaderCell, Cell } from "rsuite-table";
 import SearchIcon from '@rsuite/icons/Search';
+import ReloadIcon from '@rsuite/icons/Reload';
 import { FaChessPawn, FaUserFriends } from "react-icons/fa";
 import SearchPeopleIcon from '@rsuite/icons/SearchPeople';
 
@@ -44,59 +47,60 @@ class Players extends React.Component {
 
         this.handleQuerySearch = this.handleQuerySearch.bind(this)
         this.showPlayer = this.showPlayer.bind(this)
-        this.getStateTwoDigitCode = this.getStateTwoDigitCode.bind(this)
+        this.getStateFullName = this.getStateFullName.bind(this)
 
         this.stateList = {
-            'Arizona': 'AZ',
-            'Alabama': 'AL',
-            'Alaska': 'AK',
-            'Arkansas': 'AR',
-            'California': 'CA',
-            'Colorado': 'CO',
-            'Connecticut': 'CT',
-            'Delaware': 'DE',
-            'Florida': 'FL',
-            'Georgia': 'GA',
-            'Hawaii': 'HI',
-            'Idaho': 'ID',
-            'Illinois': 'IL',
-            'Indiana': 'IN',
-            'Iowa': 'IA',
-            'Kansas': 'KS',
-            'Kentucky': 'KY',
-            'Louisiana': 'LA',
-            'Maine': 'ME',
-            'Maryland': 'MD',
-            'Massachusetts': 'MA',
-            'Michigan': 'MI',
-            'Minnesota': 'MN',
-            'Mississippi': 'MS',
-            'Missouri': 'MO',
-            'Montana': 'MT',
-            'Nebraska': 'NE',
-            'Nevada': 'NV',
-            'New Hampshire': 'NH',
-            'New Jersey': 'NJ',
-            'New Mexico': 'NM',
-            'New York': 'NY',
-            'North Carolina': 'NC',
-            'North Dakota': 'ND',
-            'Ohio': 'OH',
-            'Oklahoma': 'OK',
-            'Oregon': 'OR',
-            'Pennsylvania': 'PA',
-            'Rhode Island': 'RI',
-            'South Carolina': 'SC',
-            'South Dakota': 'SD',
-            'Tennessee': 'TN',
-            'Texas': 'TX',
-            'Utah': 'UT',
-            'Vermont': 'VT',
-            'Virginia': 'VA',
-            'Washington': 'WA',
-            'West Virginia': 'WV',
-            'Wisconsin': 'WI',
-            'Wyoming': 'WY'
+            AZ: 'Arizona',
+            AL: 'Alabama',
+            AK: 'Alaska',
+            AR: 'Arkansas',
+            CA: 'California',
+            CO: 'Colorado',
+            CT: 'Connecticut',
+            DC: 'District of Columbia',
+            DE: 'Delaware',
+            FL: 'Florida',
+            GA: 'Georgia',
+            HI: 'Hawaii',
+            ID: 'Idaho',
+            IL: 'Illinois',
+            IN: 'Indiana',
+            IA: 'Iowa',
+            KS: 'Kansas',
+            KY: 'Kentucky',
+            LA: 'Louisiana',
+            ME: 'Maine',
+            MD: 'Maryland',
+            MA: 'Massachusetts',
+            MI: 'Michigan',
+            MN: 'Minnesota',
+            MS: 'Mississippi',
+            MO: 'Missouri',
+            MT: 'Montana',
+            NE: 'Nebraska',
+            NV: 'Nevada',
+            NH: 'New Hampshire',
+            NJ: 'New Jersey',
+            NM: 'New Mexico',
+            NY: 'New York',
+            NC: 'North Carolina',
+            ND: 'North Dakota',
+            OH: 'Ohio',
+            OK: 'Oklahoma',
+            OR: 'Oregon',
+            PA: 'Pennsylvania',
+            RI: 'Rhode Island',
+            SC: 'South Carolina',
+            SD: 'South Dakota',
+            TN: 'Tennessee',
+            TX: 'Texas',
+            UT: 'Utah',
+            VT: 'Vermont',
+            VA: 'Virginia',
+            WA: 'Washington',
+            WV: 'West Virginia',
+            WI: 'Wisconsin',
+            WY: 'Wyoming'
         }
     }
 
@@ -169,7 +173,8 @@ class Players extends React.Component {
             this.state.teamQuery,
             this.state.posQuery, this.state.stQuery).then(res => {
                 this.setState({
-                    searchTopPF: res.results
+                    searchTopPF: res.results,
+                    showPlayerInfo: false
                 });
             });
     }
@@ -191,8 +196,8 @@ class Players extends React.Component {
         this.handleQuerySearch()
     }
 
-    getStateTwoDigitCode = function (stateFullName) {
-        return this.stateList[stateFullName];
+    getStateFullName = function (stateAbbr) {
+        return this.stateList[stateAbbr];
     }
 
 
@@ -200,12 +205,37 @@ class Players extends React.Component {
         return (
             <CustomProvider theme={"dark"}>
                 <div>
-                    {this.getStateTwoDigitCode('California')}
                     <TopNav />
                     <div style={{ width: "81vw", margin: "0 auto", marginTop: "2vh" }}>
                         <h2>Players</h2>
                         <h5> Here are 6 "Top lists" based on different attributes of a player, feel free to filter and click on the players! </h5>
-                        The names that has an asterisk (*) indicates that the player has been elected to the Hall of Fame.
+                        <h5>(The names that has an asterisk (*) indicates that the player has been elected to the Hall of Fame.)</h5>
+                        <br></br>
+                        <br></br>
+
+                        <div style={{ textAlign: "center", width: "70vw", margin: "0 auto", marginTop: "2vh" }}>
+                            <h5>Click on the map to select a state and only see the players born from there!</h5>
+                            <USAMap
+                                height={400}
+                                onClick={(event) => {
+                                    var stateFullName = this.getStateFullName(event.target.dataset.name);
+                                    this.setState({
+                                        stQuery: stateFullName
+                                    }, this.handleQuerySearch);
+                                }} />
+                        </div>
+                        <br></br>
+                        <div style={{ textAlign: "center" }}>
+                            <Button
+                                color="violet" 
+                                appearance="ghost"
+                                onClick={() => this.setState({
+                                        stQuery: ""
+                                    }, this.handleQuerySearch)}>
+                                <ReloadIcon />
+                                &nbsp;&nbsp;&nbsp; You current state selection is - &nbsp; {this.state.stQuery} - &nbsp;, click to clear.
+                            </Button>
+                        </div>
                         <br></br>
                         <br></br>
                         <div>
@@ -370,7 +400,7 @@ class Players extends React.Component {
                                 </Table>
                             </Col>
                             <Col sm={8}>
-                                <h4 style={{ textAlign: 'left' }}>Feild Goal %</h4>
+                                <h4 style={{ textAlign: 'left' }}>Field Goal %</h4>
                                 <Table data={this.state.searchTopFG}
                                     autoHeight
                                     onRowClick={data => {
