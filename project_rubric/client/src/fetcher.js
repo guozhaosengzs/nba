@@ -106,11 +106,10 @@ const getTeamSeaonalPlayer = async (id) => {
     return res.json()
 }
 
-const getPlayerSearch = async (atime, season, attr, name, team, pos) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/search/players?All_Time=${atime}&Season=${season}&Attribute=${attr}&Name=${name}&Team=${team}&Position=${pos}`, {
+const getPlayerSearch = async (atime, season, attr, name, team, pos, state) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/search/players?All_Time=${atime}&Season=${season}&Attribute=${attr}&Name=${name}&Team=${team}&Position=${pos}&State=${state}&`, {
         method: 'GET',
     })
-    
     return res.json()
 }
 

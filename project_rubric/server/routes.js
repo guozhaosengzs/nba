@@ -246,6 +246,7 @@ async function search_player(req, res) {
     res.end();
   } else {
     const attribute = req.query.Attribute;
+    console.log(attribute)
     const name = req.query.Name ? "%" + req.query.Name + "%" : "%";
     const team = req.query.Team ? "%" + req.query.Team + "%" : "%";
     const position = req.query.Position ? "%" + req.query.Position + "%" : "%";
@@ -254,7 +255,7 @@ async function search_player(req, res) {
       res.writeHead(500, { Error: "Please pass required parameters" });
       res.end();
     } else {
-      if (req.query.All_Time == "True") {
+      if (req.query.All_Time == "true") {
         connection.query(
           `
                 select Player, Pos, sum(G) as Games, sum(PTS) as Points,
@@ -268,6 +269,8 @@ async function search_player(req, res) {
               console.log(error);
               res.json({ error: error });
             } else if (results) {
+              console.log(attribute)
+              console.log(results)
               res.json({ results: results });
             }
           }
