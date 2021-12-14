@@ -254,7 +254,7 @@ async function search_player(req, res) {
       res.writeHead(500, { Error: "Please pass required parameters" });
       res.end();
     } else {
-      if (req.query.All_Time == true) {
+      if (req.query.All_Time == "True") {
         connection.query(
           `
                 select Player, Pos, sum(G) as Games, sum(PTS) as Points,
