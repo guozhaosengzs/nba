@@ -643,8 +643,10 @@ class Teams extends React.Component {
                                     {this.state.showTeamInfo.State}, {this.state.showTeamInfo.City}  &nbsp;&nbsp;&nbsp; Founded in {this.state.showTeamInfo.Year_Founded}
                                 </body>
                             </div>
-                        </div>
 
+
+
+                        </div>  {/* end of the team details page */}
                     }
                 </div>
                 {/* <div>

@@ -347,7 +347,7 @@ async function search_team_win(req, res) {
         from Game
         where
               TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id})),
-        rank_win as(select Season_ID as Season, self, opponent, selfScore, opponentScore, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY winPts DESC ) as rankList
+        rank_win as(select Season_ID as Season, self, opponent, selfScore, opponentScore, winPts, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY winPts DESC ) as rankList
         from all_games)
         select *
         from rank_win
@@ -386,7 +386,7 @@ async function search_team_loses(req, res) {
         from Game
         where
               TEAM_ABBREVIATION_HOME in (select Abbreviation from Team WHERE ID = ${team_id})),
-        rank_loss AS(select Season_ID as Season, self, opponent, selfScore, opponentScore,ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY lossPts DESC ) as rankList from all_games )
+        rank_loss AS(select Season_ID as Season, self, opponent, selfScore, opponentScore, lossPts, ROW_NUMBER() over (PARTITION BY Season_ID ORDER BY lossPts DESC ) as rankList from all_games )
         SELECT * FROM rank_loss WHERE ranklist = 1
         order by  Season DESC LIMIT 10;`,
       function (error, results, fields) {
