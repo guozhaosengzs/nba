@@ -218,11 +218,10 @@ async function player(req, res) {
     `
     select Year as Season, Tm as Team, Height, Weight,
     Born as Birth_Year, Birth_City, Birth_State, College,
-    Pos, (PTS/G) as PPG, (AST/G) as APG, (TRB/G) as RPG, PF, eFG_Percentage as EFG
+    Pos, CAST((PTS/G) AS Decimal(5,2)) as PPG, CAST((AST/G) AS DECIMAL(5,2)) as APG,  CAST((TRB/G) AS DECIMAL(5,2)) as RPG, PF, CAST(eFG_Percentage AS DECIMAL(5,2)) as EFG
     from Players natural join Seasons_Stats
     where Player like "${player}"
-    order by Season desc;
-    `,
+    order by Season desc;`,
     function (error, results, fields) {
       if (error) {
         console.log(error);
