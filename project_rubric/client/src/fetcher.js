@@ -74,6 +74,38 @@ const getMostContributing = async (page, pagesize) => {
     return res.json()
 }
 
+const getTeamInfo = async (id) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/search/team_info?Team_ID=${id}`, {
+        method: 'GET',
+    })
+
+    return res.json()
+}
+
+const getTeamSeaonalBest = async (id) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/search/team_win?Team_ID=${id}`, {
+        method: 'GET',
+    })
+
+    return res.json()
+}
+
+const getTeamSeaonalWorst = async (id) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/search/team_loses?Team_ID=${id}`, {
+        method: 'GET',
+    })
+
+    return res.json()
+}
+
+const getTeamSeaonalPlayer = async (id) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/search/team_player?Team_ID=${id}`, {
+        method: 'GET',
+    })
+
+    return res.json()
+}
+
 export {
     getAllGames,
     getAllPlayersAvg,
@@ -84,5 +116,9 @@ export {
     getMostContributing,
     getSearchedGames,
     getGameTeamInfo,
-    getGamePlayerInfo
+    getGamePlayerInfo,
+    getTeamInfo,
+    getTeamSeaonalBest,
+    getTeamSeaonalWorst,
+    getTeamSeaonalPlayer
 }

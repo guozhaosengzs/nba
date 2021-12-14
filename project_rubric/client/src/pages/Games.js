@@ -30,39 +30,7 @@ class Games extends React.Component {
             showGameResult: null,
             showTeamResult: null,
             showPlayerResult: null,
-
-            teams: ['ATL',
-                'BOS',
-                'CLE',
-                'NOP',
-                'CHI',
-                'DAL',
-                'DEN',
-                'GSW',
-                'HOU',
-                'LAL',
-                'MIA',
-                'LAC',
-                'MIL',
-                'MIN',
-                'BKN',
-                'NYK',
-                'ORL',
-                'IND',
-                'PHI',
-                'PHX',
-                'POR',
-                'SAC',
-                'SAS',
-                'OKC',
-                'TOR',
-                'UTA',
-                'MEM',
-                'WAS',
-                'DET',
-                'CHA',
-            ],
-
+            
             homeQuery: "undefined",
             awayQuery: "undefined",
             cityQuery: "undefined",
@@ -128,7 +96,7 @@ class Games extends React.Component {
                         </h5>
                     </div>
                     <div style={{ width: "70vw", margin: "0 auto", marginTop: "3vh" }}>
-                        <FlexboxGrid justify="end">
+                        <FlexboxGrid justify="end" align="bottom">
                             <FlexboxGrid.Item colspan={5}>
                                 <div style={{ width: '10vw', padding: 5, align: 'right' }}>
                                     Home Team Abbreviation
@@ -426,11 +394,12 @@ class Games extends React.Component {
                                         </FlexboxGrid>
                                         <br></br>
                                         <Row>
-                                            <Col lg={8} style={{ textAlign: "center" }}>
+                                            <Col md={8} style={{ textAlign: "center" }}>
                                                 <h5>
                                                     <Table
+                                                        wordWrap
                                                         autoHeight={true}
-                                                        headerHeight={40}
+                                                        headerHeight={60}
                                                         data={[this.state.showGameResult]}
                                                     >
                                                         <Column flexGrow={1} align="center">
@@ -449,14 +418,15 @@ class Games extends React.Component {
                                                     </Table>
                                                 </h5>
                                             </Col>
-                                            <Col lg={8}>
+                                            <Col md={8}>
 
                                             </Col>
-                                            <Col lg={8} style={{ textAlign: "center" }}>
+                                            <Col md={8} style={{ textAlign: "center" }}>
                                                 <h5>
                                                     <Table
+                                                        wordWrap
                                                         autoHeight={true}
-                                                        headerHeight={40}
+                                                        headerHeight={60}
                                                         data={[this.state.showGameResult]}
                                                     >
                                                         <Column flexGrow={1} align="center">
