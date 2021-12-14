@@ -78,7 +78,7 @@ const getTeamInfo = async (id) => {
     var res = await fetch(`http://${config.server_host}:${config.server_port}/search/team_info?Team_ID=${id}`, {
         method: 'GET',
     })
-
+    
     return res.json()
 }
 

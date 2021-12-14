@@ -30,7 +30,6 @@ class Games extends React.Component {
             showGameResult: null,
             showTeamResult: null,
             showPlayerResult: null,
-            
             homeQuery: "undefined",
             awayQuery: "undefined",
             cityQuery: "undefined",
