@@ -3,6 +3,7 @@ import React from "react";
 import { PanelGroup, Panel, Grid, Row, Col, FlexboxGrid, Pagination, CustomProvider, InputGroup, Input, DateRangePicker, Button } from "rsuite";
 import { Table, ColumnGroup, Column, HeaderCell, Cell } from "rsuite-table";
 import { RadarChart, RadarLine, BarChart, Bars } from "@rsuite/charts";
+// eslint-disable-next-line
 import echarts from 'echarts';
 
 import SearchIcon from '@rsuite/icons/Search';
