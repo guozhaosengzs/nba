@@ -258,7 +258,7 @@ async function search_player(req, res) {
         connection.query(
           `
                 select Player, Pos, sum(G) as Games, sum(PTS) as Points,
-                sum(AST) as Assits, sum(TRB) as Rebounds, sum(PF) as PFs, sum(FG) as FGs
+                sum(AST) as Assists, sum(TRB) as Rebounds, sum(PF) as PFs, sum(FG) as FGs
                 from Seasons_Stats
                 where Player like '${name}' and Tm like '${team}' and Pos like '${position}'
                 group by Player
@@ -277,7 +277,7 @@ async function search_player(req, res) {
         connection.query(
           `
                 select Player, Pos, sum(G) as Games, sum(PTS) as Points,
-                sum(AST) as Assits, sum(TRB) as Rebounds, sum(PF) as PFs, sum(FG) as FGs
+                sum(AST) as Assists, sum(TRB) as Rebounds, sum(PF) as PFs, sum(FG) as FGs
                 from Seasons_Stats
                 where Player like '${name}' and Tm like '${team}' and Pos like '${position}' and Year = ${season}
                 group by Player
