@@ -3,6 +3,7 @@ import React from "react";
 import { PanelGroup, Panel, Grid, Row, Col, FlexboxGrid, Pagination, CustomProvider, InputGroup, Input, DateRangePicker, Button } from "rsuite";
 import { Table, ColumnGroup, Column, HeaderCell, Cell } from "rsuite-table";
 import { RadarChart, RadarLine, BarChart, Bars } from "@rsuite/charts";
+import echarts from 'echarts';
 
 import SearchIcon from '@rsuite/icons/Search';
 
@@ -234,11 +235,12 @@ class Games extends React.Component {
                         </FlexboxGrid>
                         <br></br>
                         <Table
+                            wordWrap
                             hover={true}
                             bordered={true}
                             cellBordered={true}
                             autoHeight={true}
-                            headerHeight={80}
+                            headerHeight={100}
 
                             data={this.state.gameResults.filter(
                                 (_, i) =>
