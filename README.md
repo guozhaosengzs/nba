@@ -93,6 +93,10 @@ npm start
 The website should then be automatically opened by the default browser.
 
 * Please contact zsguo@seas.upenn.edu should you ran into any problem following the steps above.
+<br>
+<br>
+<br>
+<br>
 
 ### Appendix. Entity–relationship model
 ![erd](updated_erd.png)
