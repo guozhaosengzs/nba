@@ -145,6 +145,7 @@ class Players extends React.Component {
                     <div style={{ width: "81vw", margin: "0 auto", marginTop: "2vh" }}>
                         <h2>Players</h2>
                         <h5> Here are 6 "Top lists" based on different attributes of a player, feel free to filter and click on the players! </h5>
+                        The names that has an asterisk (*) indicates that the player has been elected to the Hall of Fame.
                         <br></br>
                         <br></br>
                         <div>
